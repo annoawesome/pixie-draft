@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build",
+			"label": "tsc: build"
+		},
+		{
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/src/public/"
+			},
+			"command": "npx vite build",
+			"group": "build",
+			"label": "vite: build"
+		},
+		{
+			"dependsOn": ["tsc: build", "vite: build"],
+			"group": "build",
+			"label": "Build App"
+		}
+	],
+
+}

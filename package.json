@@ -1,0 +1,25 @@
+{
+  "name": "project-name",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "homepage": "https://github.com/annoawesome/ts-node-fullstack#readme",
+  "bugs": {
+    "url": "https://github.com/annoawesome/ts-node-fullstack/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annoawesome/ts-node-fullstack.git"
+  },
+  "license": "MIT",
+  "author": "Seth Hoong",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "typescript-eslint": "^8.54.0"
+  }
+}
