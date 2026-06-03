@@ -1,6 +1,6 @@
 {
-  "name": "project-name",
-  "version": "1.0.0",
+  "name": "pixie-draft",
+  "version": "0.0.0",
   "private": true,
   "description": "",
   "homepage": "https://github.com/annoawesome/ts-node-fullstack#readme",
@@ -19,7 +19,11 @@
     "test": "node ."
   },
   "devDependencies": {
+    "@types/express": "5.0.6",
     "eslint": "^9.39.2",
     "typescript-eslint": "^8.54.0"
+  },
+  "dependencies": {
+    "express": "5.2.1"
   }
 }
