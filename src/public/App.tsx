@@ -24,25 +24,32 @@ function Library({ stories }: { stories: Story[] }) {
   );
 }
 
-function getStories(): Story[] {
-  /* not implemented */
-  console.log("Fetching stories...");
-  console.log("Not implemented");
+async function getStories(): Promise<Story[]> {
+  const response = await fetch("/api/v0/stories");
+
+  try {
+    if (!response.ok) {
+      throw new Error(`HTTP status ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching stories:", error);
+  }
+
   return [];
 }
 
-function saveStory(story: Story) {
+async function saveStory(story: Story) {
   /* not implemented */
   console.log("Saving story:", story);
   console.log("Not implemented");
 }
 
 // TODO: Load story from backend when selected in library via http/REST API
-function loadStory(id: string): Story {
-  /* not implemented */
-  console.log("Loading story with id:", id);
-  console.log("Not implemented");
-  return { id, title: "Sample Story", content: "This is a sample story." };
+async function loadStory(id: string): Promise<Story> {
+  const response = await fetch(`/api/v0/stories/${id}`);
+  return response.json();
 }
 
 function mutateStoryTitle(story: Story, newTitle: string) {
@@ -62,8 +69,13 @@ export default function App() {
   });
 
   useEffect(() => {
-    const fetchedStories = getStories();
-    setStories(fetchedStories);
+    getStories().then((stories) => {
+      if (stories.length > 0) {
+        setSelectedStory(stories[0]);
+      }
+
+      setStories(stories);
+    });
   }, []);
 
   return (
