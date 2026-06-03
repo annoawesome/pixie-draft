@@ -5,6 +5,9 @@
       "type": "typescript",
       "tsconfig": "tsconfig.json",
       "problemMatcher": ["$tsc"],
+      "presentation": {
+        "reveal": "silent"
+      },
       "group": "build",
       "label": "tsc: build"
     },
@@ -12,6 +15,9 @@
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/src/public/"
+      },
+      "presentation": {
+        "reveal": "silent"
       },
       "command": "npx vite build --emptyOutDir",
       "group": "build",
@@ -21,6 +27,18 @@
       "dependsOn": ["tsc: build", "vite: build"],
       "group": "build",
       "label": "Build App"
+    },
+    {
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/src/public/"
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "command": "npx vite --host",
+      "group": "build",
+      "label": "vite: dev"
     }
   ]
 }
