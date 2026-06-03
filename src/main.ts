@@ -9,6 +9,7 @@ const app = express();
 
 initializeDatabase();
 
+app.use(express.json());
 app.use("/api/v0/stories", storiesRouter);
 
 app.use(express.static("public"));
