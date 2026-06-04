@@ -14,9 +14,9 @@ function StoryCard({
     const id = story.id;
 
     loadStory(id).then((fullStory) => {
-      console.log("Loaded story:", fullStory);
-
-      setSelectedStory(fullStory);
+      if (fullStory) {
+        setSelectedStory(fullStory);
+      }
     });
   };
 
@@ -38,8 +38,10 @@ export default function Library({
 }) {
   const onClickNewStoryButton = () => {
     createStory("New Story", "Once upon a time...").then((newStory) => {
-      setSelectedStory(newStory);
-      setStories((prev) => [...prev, newStory]);
+      if (newStory) {
+        setSelectedStory(newStory);
+        setStories((prev) => [...prev, newStory]);
+      }
     });
   };
 

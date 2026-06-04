@@ -16,11 +16,13 @@ export default function App() {
 
   useEffect(() => {
     getStories().then((stories) => {
-      if (stories.length > 0) {
-        setSelectedStory(stories[0]);
-      }
+      if (stories) {
+        if (stories.length > 0) {
+          setSelectedStory(stories[0]);
+        }
 
-      setStories(stories);
+        setStories(stories);
+      }
     });
   }, []);
 

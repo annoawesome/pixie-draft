@@ -1,6 +1,6 @@
 import Story from "../type/storyType";
 
-export async function getStories(): Promise<Story[]> {
+export async function getStories(): Promise<Story[] | null> {
   const response = await fetch("/api/v0/stories");
 
   try {
@@ -8,18 +8,22 @@ export async function getStories(): Promise<Story[]> {
       throw new Error(`HTTP status ${response.status}`);
     }
 
-    return await response.json();
+    const stories = await response.json();
+
+    console.log("Fetched stories:", stories);
+
+    return stories;
   } catch (error) {
     console.error("Error fetching stories:", error);
   }
 
-  return [];
+  return null;
 }
 
 export async function createStory(
   title: string,
   content: string,
-): Promise<Story> {
+): Promise<Story | null> {
   const response = await fetch("/api/v0/stories", {
     method: "POST",
     headers: {
@@ -33,12 +37,16 @@ export async function createStory(
       throw new Error(`HTTP status ${response.status}`);
     }
 
-    return await response.json();
+    const story = await response.json();
+
+    console.log("Created story:", story);
+
+    return story;
   } catch (error) {
     console.error("Error creating story:", error);
   }
 
-  return { id: "", title, content };
+  return null;
 }
 
 export async function saveStory(story: Story) {
@@ -50,18 +58,41 @@ export async function saveStory(story: Story) {
     body: JSON.stringify(story),
   });
 
+  if (response.ok) {
+    console.log("Saved story");
+  } else {
+    console.error(`Error saving story: HTTP status code ${response.status}`);
+  }
+
   return response.ok;
 }
 
-export async function loadStory(id: string): Promise<Story> {
+export async function loadStory(id: string): Promise<Story | null> {
   const response = await fetch(`/api/v0/stories/${id}`);
-  return response.json();
+
+  try {
+    const story = await response.json();
+
+    console.log("Loaded story:", story);
+
+    return story;
+  } catch (error) {
+    console.error("Error loading story:", error);
+  }
+
+  return null;
 }
 
 export async function deleteStory(id: string) {
   const response = await fetch(`/api/v0/stories/${id}`, {
     method: "DELETE",
   });
+
+  if (response.ok) {
+    console.log("Deleted story");
+  } else {
+    console.error(`Error deleting story: HTTP status code ${response.status}`);
+  }
 
   return response.ok;
 }
