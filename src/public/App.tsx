@@ -115,6 +115,34 @@ function Editor({
   );
 }
 
+function AsideSettings({
+  selectedStory,
+  setSelectedStory,
+  stories,
+  setStories,
+}: {
+  selectedStory: Story | null;
+  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
+  stories: Story[];
+  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+}) {
+  return (
+    <aside id="aside-settings">
+      <button
+        onClick={() => {
+          if (selectedStory) {
+            deleteStory(selectedStory.id);
+            setStories(removeStoryFromStories(stories, selectedStory));
+            setSelectedStory(null);
+          }
+        }}
+      >
+        Delete
+      </button>
+    </aside>
+  );
+}
+
 async function getStories(): Promise<Story[]> {
   const response = await fetch("/api/v0/stories");
 
@@ -193,6 +221,11 @@ function updateStoriesFromUpdatedStory(stories: Story[], updatedStory: Story) {
   );
 }
 
+// offline helper function that removes the story contained in stories
+function removeStoryFromStories(stories: Story[], storyToRemove: Story) {
+  return stories.filter((story) => story.id !== storyToRemove.id);
+}
+
 export default function App() {
   const [stories, setStories] = React.useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = React.useState<Story | null>({
@@ -219,6 +252,12 @@ export default function App() {
         setStories={setStories}
       />
       <Editor
+        selectedStory={selectedStory}
+        setSelectedStory={setSelectedStory}
+        stories={stories}
+        setStories={setStories}
+      />
+      <AsideSettings
         selectedStory={selectedStory}
         setSelectedStory={setSelectedStory}
         stories={stories}
