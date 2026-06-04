@@ -1,0 +1,29 @@
+import React from "react";
+
+import { deleteStory, removeStoryFromStories } from "../api/storiesApi";
+import Story from "../type/storyType";
+
+export default function AsideSettings({
+  selectedStory,
+  setSelectedStory,
+  stories,
+  setStories,
+}: {
+  selectedStory: Story | null;
+  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
+  stories: Story[];
+  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+}) {
+  const onClickDelete = () => {
+    if (selectedStory) {
+      deleteStory(selectedStory.id);
+      setStories(removeStoryFromStories(stories, selectedStory));
+      setSelectedStory(null);
+    }
+  };
+  return (
+    <aside id="aside-settings">
+      <button onClick={onClickDelete}>Delete</button>
+    </aside>
+  );
+}

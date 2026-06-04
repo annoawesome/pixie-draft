@@ -145,3 +145,6 @@ vite.config.ts.timestamp-*
 # Dev Container config
 # Template has its own devcontainer config, which may be overwritten depending on project needs and user preferences.
 .devcontainer/
+
+# Test environment
+/test_environment

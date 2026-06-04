@@ -1,20 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
+
+import { getStories } from "./api/storiesApi";
+import Story from "./type/storyType";
+import Library from "./component/Library";
+import Editor from "./component/Editor";
+import AsideSettings from "./component/AsideSettings";
 
 export default function App() {
+  const [stories, setStories] = React.useState<Story[]>([]);
+  const [selectedStory, setSelectedStory] = React.useState<Story | null>({
+    id: "",
+    title: "",
+    content: "",
+  });
+
+  useEffect(() => {
+    getStories().then((stories) => {
+      if (stories) {
+        if (stories.length > 0) {
+          setSelectedStory(stories[0]);
+        }
+
+        setStories(stories);
+      }
+    });
+  }, []);
+
   return (
     <div className="three-column-layout">
-      <div id="library">
-        <button className="story-card">
-          <h2>Story 1</h2>
-        </button>
-        <button className="story-card">
-          <h2>Story 2</h2>
-        </button>
-      </div>
-      <div id="editor">
-        <input type="text" id="story-title" placeholder="Story Title" />
-        <textarea id="story-content" placeholder="Write your story here..." />
-      </div>
+      <Library
+        stories={stories}
+        setSelectedStory={setSelectedStory}
+        setStories={setStories}
+      />
+      <Editor
+        selectedStory={selectedStory}
+        setSelectedStory={setSelectedStory}
+        stories={stories}
+        setStories={setStories}
+      />
+      <AsideSettings
+        selectedStory={selectedStory}
+        setSelectedStory={setSelectedStory}
+        stories={stories}
+        setStories={setStories}
+      />
     </div>
   );
 }
