@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { getStories } from "./api/storiesApi";
 import Story from "./type/storyType";
@@ -8,25 +8,31 @@ import AsideSettings from "./component/AsideSettings";
 import AuthenticatePrompt from "./component/AuthenticatePrompt";
 
 export default function App() {
-  const [stories, setStories] = React.useState<Story[]>([]);
-  const [selectedStory, setSelectedStory] = React.useState<Story | null>({
+  const [stories, setStories] = useState<Story[]>([]);
+  const [selectedStory, setSelectedStory] = useState<Story | null>({
     id: "",
     title: "",
     content: "",
   });
 
-  const loggedIn = false;
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    getStories().then((stories) => {
-      if (stories) {
-        if (stories.length > 0) {
-          setSelectedStory(stories[0]);
-        }
+    getStories()
+      .then((stories) => {
+        setLoggedIn(true);
 
-        setStories(stories);
-      }
-    });
+        if (stories) {
+          if (stories.length > 0) {
+            setSelectedStory(stories[0]);
+          }
+          setStories(stories);
+        }
+      })
+      .catch((error) => {
+        // probably failed because unauthroized
+        console.log(error);
+      });
   }, []);
 
   if (loggedIn) {

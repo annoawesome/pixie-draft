@@ -10,6 +10,8 @@ export default function AuthenticatePrompt() {
     if (typeof password === "string") {
       login(password).then((success) => {
         console.log(success ? "Logged in" : "Wrong password");
+
+        window.location.reload();
       });
     }
   };

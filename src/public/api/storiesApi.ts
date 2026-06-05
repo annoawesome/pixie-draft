@@ -1,23 +1,16 @@
 import Story from "../type/storyType";
 
-export async function getStories(): Promise<Story[] | null> {
+export async function getStories(): Promise<Story[]> {
   const response = await fetch("/api/v0/stories");
 
-  try {
-    if (!response.ok) {
-      throw new Error(`HTTP status ${response.status}`);
-    }
-
-    const stories = await response.json();
-
-    console.log("Fetched stories:", stories);
-
-    return stories;
-  } catch (error) {
-    console.error("Error fetching stories:", error);
+  if (!response.ok) {
+    throw new Error(`HTTP status ${response.status}`);
   }
 
-  return null;
+  const stories = await response.json();
+  console.log("Fetched stories:", stories);
+
+  return stories;
 }
 
 export async function createStory(
