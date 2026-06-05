@@ -5,6 +5,7 @@ import Story from "./type/storyType";
 import Library from "./component/Library";
 import Editor from "./component/Editor";
 import AsideSettings from "./component/AsideSettings";
+import AuthenticatePrompt from "./component/AuthenticatePrompt";
 
 export default function App() {
   const [stories, setStories] = React.useState<Story[]>([]);
@@ -13,6 +14,8 @@ export default function App() {
     title: "",
     content: "",
   });
+
+  const loggedIn = false;
 
   useEffect(() => {
     getStories().then((stories) => {
@@ -26,25 +29,29 @@ export default function App() {
     });
   }, []);
 
-  return (
-    <div className="three-column-layout">
-      <Library
-        stories={stories}
-        setSelectedStory={setSelectedStory}
-        setStories={setStories}
-      />
-      <Editor
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        stories={stories}
-        setStories={setStories}
-      />
-      <AsideSettings
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        stories={stories}
-        setStories={setStories}
-      />
-    </div>
-  );
+  if (loggedIn) {
+    return (
+      <div className="three-column-layout">
+        <Library
+          stories={stories}
+          setSelectedStory={setSelectedStory}
+          setStories={setStories}
+        />
+        <Editor
+          selectedStory={selectedStory}
+          setSelectedStory={setSelectedStory}
+          stories={stories}
+          setStories={setStories}
+        />
+        <AsideSettings
+          selectedStory={selectedStory}
+          setSelectedStory={setSelectedStory}
+          stories={stories}
+          setStories={setStories}
+        />
+      </div>
+    );
+  } else {
+    return <AuthenticatePrompt />;
+  }
 }
