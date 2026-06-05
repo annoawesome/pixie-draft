@@ -2,6 +2,7 @@ import express from "express";
 import "dotenv/config";
 
 import storiesRouter from "./router/stories.js";
+import authRouter from "./router/authRouter.js";
 import initializeDatabase from "./init/initializeDatabase.js";
 
 const port = process.env.PIXIE_PORT || 8080;
@@ -13,6 +14,7 @@ initializeDatabase(dbDirectory);
 
 app.use(express.json());
 app.use("/api/v0/stories", storiesRouter);
+app.use("/api/v0/auth", authRouter);
 
 app.use(express.static("public"));
 
