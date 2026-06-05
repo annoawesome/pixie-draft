@@ -4,8 +4,11 @@ import getStoriesPreview from "../dao/getStoriesPreview.js";
 import createStory from "../dao/createStory.js";
 import updateStory from "../dao/updateStory.js";
 import deleteStory from "../dao/deleteStory.js";
+import { validateAuthentication } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+router.use(validateAuthentication);
 
 router.get("/", async (req, res) => {
   try {
