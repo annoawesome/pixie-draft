@@ -7,6 +7,7 @@ import {
   updateStoriesFromUpdatedStory,
 } from "../api/storiesApi";
 import Story from "../type/storyType";
+import { generateResponse } from "../api/koboldCppApi";
 
 export default function Editor({
   apiToken,
@@ -55,9 +56,21 @@ export default function Editor({
   };
 
   const onGenerate = () => {
+    if (!selectedStory) {
+      alert("No story loaded to generate with");
+      return;
+    }
+
     setLocked(true);
 
     // call LLM api
+    generateResponse("http://localhost:5001", selectedStory.content)
+      .then((text) => {
+        setSelectedStory((prev) =>
+          prev ? mutateStoryContent(prev, prev.content + text) : null,
+        );
+      })
+      .finally(() => setLocked(false));
   };
 
   return (
