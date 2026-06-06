@@ -9,11 +9,13 @@ import {
 import Story from "../type/storyType";
 
 export default function Editor({
+  apiToken,
   selectedStory,
   stories,
   setSelectedStory,
   setStories,
 }: {
+  apiToken: string;
   selectedStory: Story | null;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   stories: Story[];
@@ -29,7 +31,7 @@ export default function Editor({
 
   const onBlurStoryTitle = () => {
     if (selectedStory) {
-      saveStory(selectedStory);
+      saveStory(apiToken, selectedStory);
       setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
     }
   };
@@ -46,7 +48,7 @@ export default function Editor({
 
   const onBlurStoryContent = () => {
     if (selectedStory) {
-      saveStory(selectedStory);
+      saveStory(apiToken, selectedStory);
     }
   };
 

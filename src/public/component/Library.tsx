@@ -4,16 +4,18 @@ import Story from "../type/storyType";
 import { createStory, loadStory } from "../api/storiesApi";
 
 function StoryCard({
+  apiToken,
   story,
   setSelectedStory,
 }: {
+  apiToken: string;
   story: Story;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
 }) {
   const onClickStoryCard = () => {
     const id = story.id;
 
-    loadStory(id).then((fullStory) => {
+    loadStory(apiToken, id).then((fullStory) => {
       if (fullStory) {
         setSelectedStory(fullStory);
       }
@@ -28,21 +30,25 @@ function StoryCard({
 }
 
 export default function Library({
+  apiToken,
   stories,
   setSelectedStory,
   setStories,
 }: {
+  apiToken: string;
   stories: Story[];
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
   const onClickNewStoryButton = () => {
-    createStory("New Story", "Once upon a time...").then((newStory) => {
-      if (newStory) {
-        setSelectedStory(newStory);
-        setStories((prev) => [...prev, newStory]);
-      }
-    });
+    createStory(apiToken, "New Story", "Once upon a time...").then(
+      (newStory) => {
+        if (newStory) {
+          setSelectedStory(newStory);
+          setStories((prev) => [...prev, newStory]);
+        }
+      },
+    );
   };
 
   return (
@@ -50,6 +56,7 @@ export default function Library({
       {stories.map((story) => (
         <StoryCard
           key={story.id}
+          apiToken={apiToken}
           story={story}
           setSelectedStory={setSelectedStory}
         />

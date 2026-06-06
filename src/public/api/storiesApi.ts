@@ -1,32 +1,31 @@
 import Story from "../type/storyType";
 
-export async function getStories(): Promise<Story[] | null> {
-  const response = await fetch("/api/v0/stories");
+export async function getStories(apiToken: string): Promise<Story[]> {
+  const response = await fetch("/api/v0/stories", {
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+    },
+  });
 
-  try {
-    if (!response.ok) {
-      throw new Error(`HTTP status ${response.status}`);
-    }
-
-    const stories = await response.json();
-
-    console.log("Fetched stories:", stories);
-
-    return stories;
-  } catch (error) {
-    console.error("Error fetching stories:", error);
+  if (!response.ok) {
+    throw new Error(`HTTP status ${response.status}`);
   }
 
-  return null;
+  const stories = await response.json();
+  console.log("Fetched stories:", stories);
+
+  return stories;
 }
 
 export async function createStory(
+  apiToken: string,
   title: string,
   content: string,
 ): Promise<Story | null> {
   const response = await fetch("/api/v0/stories", {
     method: "POST",
     headers: {
+      Authorization: `Bearer ${apiToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ title, content }),
@@ -49,10 +48,11 @@ export async function createStory(
   return null;
 }
 
-export async function saveStory(story: Story) {
+export async function saveStory(apiToken: string, story: Story) {
   const response = await fetch(`/api/v0/stories/${story.id}`, {
     method: "PUT",
     headers: {
+      Authorization: `Bearer ${apiToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(story),
@@ -67,8 +67,15 @@ export async function saveStory(story: Story) {
   return response.ok;
 }
 
-export async function loadStory(id: string): Promise<Story | null> {
-  const response = await fetch(`/api/v0/stories/${id}`);
+export async function loadStory(
+  apiToken: string,
+  id: string,
+): Promise<Story | null> {
+  const response = await fetch(`/api/v0/stories/${id}`, {
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+    },
+  });
 
   try {
     const story = await response.json();
@@ -83,9 +90,12 @@ export async function loadStory(id: string): Promise<Story | null> {
   return null;
 }
 
-export async function deleteStory(id: string) {
+export async function deleteStory(apiToken: string, id: string) {
   const response = await fetch(`/api/v0/stories/${id}`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+    },
   });
 
   if (response.ok) {
