@@ -8,24 +8,18 @@ export async function validateAuthentication(
   res: Response,
   next: NextFunction,
 ) {
-  const authCookie = req.signedCookies.authentication;
+  const authorization = req.headers.authorization;
 
-  if (typeof authCookie !== "string") {
+  if (!authorization || !authorization.startsWith("Bearer ")) {
     res.sendStatus(401);
     return;
   }
 
-  jwt.verify(authCookie, getSecret(), (error, decoded) => {
-    if (
-      decoded &&
-      typeof decoded !== "string" &&
-      typeof decoded.password === "string"
-    ) {
-      if (decoded.password === process.env.PIXIE_PASSWORD) {
-        next();
-      } else {
-        res.sendStatus(401);
-      }
+  const token = authorization.substring(7);
+
+  jwt.verify(token, getSecret(), (error) => {
+    if (!error) {
+      next();
     } else {
       res.sendStatus(401);
     }

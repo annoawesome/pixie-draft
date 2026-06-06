@@ -8,17 +8,20 @@ router.post("/", (req, res) => {
   const { password }: { password: string } = req.body;
 
   if (password === process.env.PIXIE_PASSWORD) {
-    // give them some kind of authentication cookie
-    jwt.sign({ password }, getSecret(), { expiresIn: "15m" }, (err, token) => {
+    const refreshToken = jwt.sign({ id: crypto.randomUUID() }, getSecret(), {
+      expiresIn: "15m",
+    });
+
+    jwt.sign({ password }, getSecret(), { expiresIn: "7d" }, (err, token) => {
       if (token) {
         res.cookie("authentication", token, {
-          maxAge: 1e3 * 60 * 15, // 15 minutes
+          maxAge: 1e3 * 60 * 60 * 24 * 7, // 7 days
           httpOnly: true,
           signed: true,
           sameSite: "lax",
         });
 
-        res.sendStatus(200);
+        res.status(200).send(refreshToken);
       } else {
         res.sendStatus(500);
       }

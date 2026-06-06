@@ -4,11 +4,13 @@ import { deleteStory, removeStoryFromStories } from "../api/storiesApi";
 import Story from "../type/storyType";
 
 export default function AsideSettings({
+  apiToken,
   selectedStory,
   setSelectedStory,
   stories,
   setStories,
 }: {
+  apiToken: string;
   selectedStory: Story | null;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   stories: Story[];
@@ -16,7 +18,7 @@ export default function AsideSettings({
 }) {
   const onClickDelete = () => {
     if (selectedStory) {
-      deleteStory(selectedStory.id);
+      deleteStory(apiToken, selectedStory.id);
       setStories(removeStoryFromStories(stories, selectedStory));
       setSelectedStory(null);
     }

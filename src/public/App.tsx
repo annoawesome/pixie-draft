@@ -15,13 +15,11 @@ export default function App() {
     content: "",
   });
 
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [apiToken, setApiToken] = useState<string>("");
 
   useEffect(() => {
-    getStories()
+    getStories(apiToken)
       .then((stories) => {
-        setLoggedIn(true);
-
         if (stories) {
           if (stories.length > 0) {
             setSelectedStory(stories[0]);
@@ -33,23 +31,26 @@ export default function App() {
         // probably failed because unauthroized
         console.log(error);
       });
-  }, []);
+  }, [apiToken]);
 
-  if (loggedIn) {
+  if (apiToken) {
     return (
       <div className="three-column-layout">
         <Library
           stories={stories}
+          apiToken={apiToken}
           setSelectedStory={setSelectedStory}
           setStories={setStories}
         />
         <Editor
+          apiToken={apiToken}
           selectedStory={selectedStory}
           setSelectedStory={setSelectedStory}
           stories={stories}
           setStories={setStories}
         />
         <AsideSettings
+          apiToken={apiToken}
           selectedStory={selectedStory}
           setSelectedStory={setSelectedStory}
           stories={stories}
@@ -58,6 +59,6 @@ export default function App() {
       </div>
     );
   } else {
-    return <AuthenticatePrompt />;
+    return <AuthenticatePrompt setApiToken={setApiToken} />;
   }
 }

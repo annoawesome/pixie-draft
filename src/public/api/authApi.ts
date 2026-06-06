@@ -11,5 +11,9 @@ export async function login(password: string) {
 
   const response = await fetch(request);
 
-  return response.ok;
+  if (!response.ok) {
+    throw new Error(`Error ${response.status}: ${response.statusText}`);
+  }
+
+  return response.text();
 }

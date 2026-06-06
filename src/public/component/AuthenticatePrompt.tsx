@@ -1,17 +1,22 @@
 import React from "react";
 import { login } from "../api/authApi";
 
-export default function AuthenticatePrompt() {
+export default function AuthenticatePrompt({
+  setApiToken,
+}: {
+  setApiToken: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { password } = Object.fromEntries(new FormData(e.target));
 
     if (typeof password === "string") {
-      login(password).then((success) => {
-        console.log(success ? "Logged in" : "Wrong password");
+      login(password).then((apiToken) => {
+        console.log(apiToken ? "Logged in" : "Wrong password");
 
-        window.location.reload();
+        // window.location.reload();
+        setApiToken(apiToken);
       });
     }
   };
