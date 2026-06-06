@@ -22,9 +22,6 @@ export default function App() {
     getStories(apiToken)
       .then((stories) => {
         if (stories) {
-          if (stories.length > 0) {
-            setSelectedStory(stories[0]);
-          }
           setStories(stories);
         }
       })
