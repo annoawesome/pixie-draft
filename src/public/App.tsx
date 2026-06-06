@@ -27,7 +27,7 @@ export default function App() {
       })
       .catch((error) => {
         // probably failed because unauthroized
-        console.log(error);
+        console.error("Error fetching stories:", error);
       });
   }, [apiToken]);
 

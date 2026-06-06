@@ -38,8 +38,6 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  console.log("Body:", req.body);
-
   const { title, content } = req.body;
 
   try {
