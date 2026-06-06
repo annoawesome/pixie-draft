@@ -6,6 +6,7 @@ import Library from "./component/Library";
 import Editor from "./component/Editor";
 import AsideSettings from "./component/AsideSettings";
 import AuthenticatePrompt from "./component/AuthenticatePrompt";
+import { refreshTokens } from "./api/authApi";
 
 export default function App() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -31,6 +32,23 @@ export default function App() {
         // probably failed because unauthroized
         console.log(error);
       });
+  }, [apiToken]);
+
+  // Refresh api token every 12 minutes, 3 minutes before expiration
+  useEffect(() => {
+    if (!apiToken) {
+      return;
+    }
+
+    const timeoutId = setTimeout(
+      async () => {
+        const newApiToken = await refreshTokens();
+        setApiToken(newApiToken);
+      },
+      1e3 * 60 * 12,
+    );
+
+    return () => clearTimeout(timeoutId);
   }, [apiToken]);
 
   if (apiToken) {
