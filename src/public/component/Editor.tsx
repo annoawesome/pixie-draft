@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   mutateStoryContent,
@@ -21,6 +21,8 @@ export default function Editor({
   stories: Story[];
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
+  const [locked, setLocked] = useState(false);
+
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
@@ -52,6 +54,12 @@ export default function Editor({
     }
   };
 
+  const onGenerate = () => {
+    setLocked(true);
+
+    // call LLM api
+  };
+
   return (
     <div id="editor">
       <input
@@ -66,9 +74,13 @@ export default function Editor({
         id="story-content"
         placeholder="Write your story here..."
         value={selectedStory?.content || ""}
+        disabled={locked}
         onChange={onChangeStoryContent}
         onBlur={onBlurStoryContent}
       />
+      <button type="button" onClick={onGenerate}>
+        Generate
+      </button>
     </div>
   );
 }
