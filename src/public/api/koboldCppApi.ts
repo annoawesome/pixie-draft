@@ -6,18 +6,20 @@ interface GenerationOutput {
   results: GenerationResult[];
 }
 
+function isGenerationResult(result): result is GenerationResult {
+  return typeof result === "object" && typeof result.text === "string";
+}
+
 /**
  * Tests whether a response is a generation output.
- *
- * WARNING: Does not inspect whether results are of the right type
  * @param response A JSON object returned by the /generate endpoint
  * @returns Whether the return object is of type `GenerationOutput`
  */
 function isGenerationOutput(response): response is GenerationOutput {
   return (
     typeof response === "object" &&
-    typeof response.results === "object" &&
-    response.results.map
+    Array.isArray(response.results) &&
+    response.results.every(isGenerationResult)
   );
 }
 
