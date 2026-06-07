@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   mutateStoryContent,
@@ -7,6 +7,7 @@ import {
   updateStoriesFromUpdatedStory,
 } from "../api/storiesApi";
 import Story from "../type/storyType";
+import { generateResponse } from "../api/koboldCppApi";
 
 export default function Editor({
   apiToken,
@@ -21,6 +22,9 @@ export default function Editor({
   stories: Story[];
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
+  const [locked, setLocked] = useState(false);
+  const [apiUri, setApiUri] = useState("");
+
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
@@ -52,8 +56,39 @@ export default function Editor({
     }
   };
 
+  const onGenerate = () => {
+    if (!selectedStory) {
+      alert("No story loaded to generate with");
+      return;
+    }
+
+    setLocked(true);
+
+    // call LLM api
+    generateResponse(apiUri, selectedStory.content)
+      .then((text) => {
+        setSelectedStory((prev) =>
+          prev ? mutateStoryContent(prev, prev.content + text) : null,
+        );
+      })
+      .finally(() => setLocked(false));
+  };
+
   return (
     <div id="editor">
+      <input
+        type="text"
+        name="api-uri"
+        id=""
+        value={apiUri}
+        placeholder="Put API URI here..."
+        onChange={(e) => {
+          setApiUri(e.target.value);
+        }}
+        onBlur={(e) => {
+          setApiUri(e.target.value);
+        }}
+      />
       <input
         type="text"
         id="story-title"
@@ -66,9 +101,13 @@ export default function Editor({
         id="story-content"
         placeholder="Write your story here..."
         value={selectedStory?.content || ""}
+        disabled={locked}
         onChange={onChangeStoryContent}
         onBlur={onBlurStoryContent}
       />
+      <button type="button" onClick={onGenerate}>
+        Generate
+      </button>
     </div>
   );
 }

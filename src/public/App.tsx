@@ -16,7 +16,11 @@ export default function App() {
     content: "",
   });
 
-  const [apiToken, setApiToken] = useState<string>("");
+  // Makes development a little easier with vite's dev server
+  // Only temporary, will probably be replaced with something better
+  const [apiToken, setApiToken] = useState<string>(
+    window.location.host === "localhost:5173" ? "DUMMY_TOKEN" : "",
+  );
 
   useEffect(() => {
     getStories(apiToken)
