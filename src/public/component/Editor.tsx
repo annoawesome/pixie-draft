@@ -23,6 +23,7 @@ export default function Editor({
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
   const [locked, setLocked] = useState(false);
+  const [apiUri, setApiUri] = useState("");
 
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
@@ -64,7 +65,7 @@ export default function Editor({
     setLocked(true);
 
     // call LLM api
-    generateResponse("http://localhost:5001", selectedStory.content)
+    generateResponse(apiUri, selectedStory.content)
       .then((text) => {
         setSelectedStory((prev) =>
           prev ? mutateStoryContent(prev, prev.content + text) : null,
@@ -75,6 +76,19 @@ export default function Editor({
 
   return (
     <div id="editor">
+      <input
+        type="text"
+        name="api-uri"
+        id=""
+        value={apiUri}
+        placeholder="Put API URI here..."
+        onChange={(e) => {
+          setApiUri(e.target.value);
+        }}
+        onBlur={(e) => {
+          setApiUri(e.target.value);
+        }}
+      />
       <input
         type="text"
         id="story-title"
