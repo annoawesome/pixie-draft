@@ -89,25 +89,31 @@ export default function Editor({
           setApiUri(e.target.value);
         }}
       />
-      <input
-        type="text"
-        id="story-title"
-        placeholder="Story Title"
-        value={selectedStory?.title}
-        onChange={onChangeStoryTitle}
-        onBlur={onBlurStoryTitle}
-      />
-      <textarea
-        id="story-content"
-        placeholder="Write your story here..."
-        value={selectedStory?.content || ""}
-        disabled={locked}
-        onChange={onChangeStoryContent}
-        onBlur={onBlurStoryContent}
-      />
-      <button type="button" onClick={onGenerate}>
-        Generate
-      </button>
+      {selectedStory ? (
+        <>
+          <input
+            type="text"
+            id="story-title"
+            placeholder="Story Title"
+            value={selectedStory?.title}
+            onChange={onChangeStoryTitle}
+            onBlur={onBlurStoryTitle}
+          />
+          <textarea
+            id="story-content"
+            placeholder="Write your story here..."
+            value={selectedStory?.content || ""}
+            disabled={locked}
+            onChange={onChangeStoryContent}
+            onBlur={onBlurStoryContent}
+          />
+          <button type="button" onClick={onGenerate}>
+            Generate
+          </button>
+        </>
+      ) : (
+        <p>No story selected</p>
+      )}
     </div>
   );
 }

@@ -10,11 +10,7 @@ import { refreshTokens } from "./api/authApi";
 
 export default function App() {
   const [stories, setStories] = useState<Story[]>([]);
-  const [selectedStory, setSelectedStory] = useState<Story | null>({
-    id: "",
-    title: "",
-    content: "",
-  });
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   // Makes development a little easier with vite's dev server
   // Only temporary, will probably be replaced with something better
