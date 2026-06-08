@@ -33,6 +33,7 @@ body {
 #story-content {
   resize: none;
   height: 100%;
+  overflow-y: auto;
 }
 
 #action-bar {
