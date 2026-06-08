@@ -94,6 +94,7 @@ export default function Editor({
           <input
             type="text"
             id="story-title"
+            autoComplete="false"
             placeholder="Story Title"
             value={selectedStory?.title}
             onChange={onChangeStoryTitle}
