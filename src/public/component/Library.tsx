@@ -52,7 +52,7 @@ export default function Library({
   };
 
   return (
-    <div id="library">
+    <div className="flex-column" id="library">
       {stories.map((story) => (
         <StoryCard
           key={story.id}

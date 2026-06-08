@@ -75,7 +75,7 @@ export default function Editor({
   };
 
   return (
-    <div id="editor">
+    <div className="flex-column" id="editor">
       <input
         type="text"
         name="api-uri"

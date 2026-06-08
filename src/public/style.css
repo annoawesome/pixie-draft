@@ -4,23 +4,29 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-#library {
+.flex-column {
   display: flex;
   flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+#library {
+  gap: 8px;
   width: 400px;
 }
 
 .three-column-layout {
-  display: flex;
-  flex-direction: row;
   height: calc(100vh - 64px);
   gap: 32px;
   margin: 32px;
 }
 
 #editor {
-  display: flex;
-  flex-direction: column;
+  gap: 8px;
   width: 100%;
 }
 
@@ -30,11 +36,10 @@ body {
 }
 
 .popup-form {
-  display: flex;
-  flex-direction: column;
   margin: auto;
 
   justify-content: center;
   align-items: center;
+  gap: 8px;
   height: 100vh;
 }

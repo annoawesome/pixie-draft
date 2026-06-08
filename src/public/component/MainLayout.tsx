@@ -27,7 +27,7 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
   }, [apiToken]);
 
   return (
-    <div className="three-column-layout">
+    <div className="three-column-layout flex-row">
       <Library
         stories={stories}
         apiToken={apiToken}
