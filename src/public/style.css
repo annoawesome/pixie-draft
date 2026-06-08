@@ -35,6 +35,19 @@ body {
   height: 100%;
 }
 
+#action-bar {
+  gap: 8px;
+}
+
+#action-bar > div {
+  gap: 8px;
+  width: 100%;
+}
+
+#action-bar-right {
+  flex-direction: row-reverse;
+}
+
 .popup-form {
   margin: auto;
 

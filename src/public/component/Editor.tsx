@@ -107,9 +107,18 @@ export default function Editor({
             onChange={onChangeStoryContent}
             onBlur={onBlurStoryContent}
           />
-          <button type="button" onClick={onGenerate}>
-            Generate
-          </button>
+          <div className="flex-row" id="action-bar">
+            <div className="flex-row" id="action-bar-left">
+              <button type="button">Undo</button>
+              <button type="button">Redo</button>
+              <button type="button">Retry</button>
+            </div>
+            <div className="flex-row" id="action-bar-right">
+              <button type="button" onClick={onGenerate}>
+                Generate
+              </button>
+            </div>
+          </div>
         </>
       ) : (
         <p>No story selected</p>
