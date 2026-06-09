@@ -9,6 +9,7 @@ import {
 import Story from "../type/storyType";
 import { generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
+import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 
 export default function Editor({
   apiToken,
@@ -100,9 +101,15 @@ export default function Editor({
           />
           <div className="flex-row" id="action-bar">
             <div className="flex-row" id="action-bar-left">
-              <button type="button">Undo</button>
-              <button type="button">Redo</button>
-              <button type="button">Retry</button>
+              <button type="button">
+                <UndoIcon />
+              </button>
+              <button type="button">
+                <RedoIcon />
+              </button>
+              <button type="button">
+                <RefreshIcon />
+              </button>
             </div>
             <div className="flex-row" id="action-bar-right">
               <button type="button" onClick={onGenerate}>

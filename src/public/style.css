@@ -81,6 +81,12 @@ button {
   flex-direction: row-reverse;
 }
 
+/* Action bar icons should look square and small */
+#action-bar-left > button {
+  aspect-ratio: 1;
+  padding: 4px;
+}
+
 .popup-form {
   margin: auto;
 
