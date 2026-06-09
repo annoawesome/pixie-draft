@@ -43,6 +43,7 @@ export default function ContentEditable({
     <div
       ref={contentEditableRef}
       id="story-content"
+      className="input-secondary"
       contentEditable={!locked}
       onBlur={() => {
         const contentEditorDiv = contentEditableRef.current;

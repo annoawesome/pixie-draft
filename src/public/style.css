@@ -1,7 +1,26 @@
-body {
+:root {
+  --neutral-color-1: hsl(0, 0%, 6%);
+  --neutral-color-2: hsl(0, 0%, 12%);
+  --neutral-color-3: hsl(0, 0%, 24%);
+  --neutral-color-4: hsl(0, 0%, 30%);
+  --neutral-color-5: hsl(0, 0%, 50%);
+  --neutral-color-6: hsl(0, 0%, 70%);
+  --neutral-color-7: hsl(0, 0%, 76%);
+  --neutral-color-8: hsl(0, 0%, 88%);
+  --neutral-color-9: hsl(0, 0%, 94%);
+}
+
+* {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  color: var(--neutral-color-8);
+
   margin: 0;
   padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background-color: var(--neutral-color-1);
 }
 
 .flex-column {
@@ -14,48 +33,40 @@ body {
   flex-direction: row;
 }
 
-#library {
-  gap: 8px;
-  width: 400px;
+.flex-row-right {
+  display: flex;
+  flex-direction: row-reverse;
 }
 
-.three-column-layout {
-  height: calc(100vh - 64px);
-  gap: 32px;
-  margin: 32px;
-}
-
-#editor {
+.width-fill-max {
   gap: 8px;
   width: 100%;
 }
 
-#story-content {
-  resize: none;
-  height: 100%;
-  overflow-y: auto;
+.input-secondary,
+.button-secondary {
+  background-color: transparent;
 
-  border: 1px solid rgb(128, 128, 128);
+  border: 1px solid var(--neutral-color-4);
   border-radius: 8px;
   padding: 8px;
 }
 
-#story-content > * {
-  margin: 0;
-  margin-bottom: 16px;
+.input-secondary:hover,
+.button-secondary:hover {
+  border-color: var(--neutral-color-5);
 }
 
-#action-bar {
-  gap: 8px;
+.input-secondary {
+  background-color: var(--neutral-color-1);
 }
 
-#action-bar > div {
-  gap: 8px;
-  width: 100%;
+.button-secondary {
+  background-color: var(--neutral-color-2);
 }
 
-#action-bar-right {
-  flex-direction: row-reverse;
+.button-secondary:active {
+  background-color: var(--neutral-color-3);
 }
 
 .popup-form {
@@ -65,4 +76,30 @@ body {
   align-items: center;
   gap: 8px;
   height: 100vh;
+}
+
+#main-app-layout {
+  height: calc(100vh - 64px);
+  gap: 32px;
+  margin: 32px;
+}
+
+.side-column {
+  gap: 8px;
+  width: 400px;
+}
+
+#story-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+#story-content > * {
+  margin-bottom: 16px;
+}
+
+/* Action bar icons should look square and small */
+#action-bar-left > button {
+  aspect-ratio: 1;
+  padding: 4px;
 }

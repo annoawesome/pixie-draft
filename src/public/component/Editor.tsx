@@ -9,6 +9,7 @@ import {
 import Story from "../type/storyType";
 import { generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
+import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 
 export default function Editor({
   apiToken,
@@ -68,10 +69,11 @@ export default function Editor({
   };
 
   return (
-    <div className="flex-column" id="editor">
+    <div className="flex-column width-fill-max" id="editor">
       <input
         type="text"
         name="api-uri"
+        className="input-secondary"
         id=""
         value={apiUri}
         placeholder="Put API URI here..."
@@ -86,6 +88,7 @@ export default function Editor({
         <>
           <input
             type="text"
+            className="input-secondary"
             id="story-title"
             autoComplete="false"
             placeholder="Story Title"
@@ -98,14 +101,27 @@ export default function Editor({
             onUpdate={onBlurStoryContent}
             locked={locked}
           />
-          <div className="flex-row" id="action-bar">
-            <div className="flex-row" id="action-bar-left">
-              <button type="button">Undo</button>
-              <button type="button">Redo</button>
-              <button type="button">Retry</button>
+          <div className="flex-row width-fill-max" id="action-bar">
+            <div className="flex-row width-fill-max" id="action-bar-left">
+              <button className="button-secondary" type="button">
+                <UndoIcon />
+              </button>
+              <button className="button-secondary" type="button">
+                <RedoIcon />
+              </button>
+              <button className="button-secondary" type="button">
+                <RefreshIcon />
+              </button>
             </div>
-            <div className="flex-row" id="action-bar-right">
-              <button type="button" onClick={onGenerate}>
+            <div
+              className="flex-row-right width-fill-max"
+              id="action-bar-right"
+            >
+              <button
+                className="button-secondary"
+                type="button"
+                onClick={onGenerate}
+              >
                 Generate
               </button>
             </div>
