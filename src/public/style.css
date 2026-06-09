@@ -2,6 +2,29 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
+
+  background-color: hsl(0, 0%, 6%);
+  color: hsl(0, 0%, 88%);
+}
+
+input {
+  background-color: hsl(0, 0%, 6%);
+  color: hsl(0, 0%, 88%);
+
+  border: 1px solid hsl(0, 0%, 30%);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 16px;
+}
+
+button {
+  background-color: hsl(0, 0%, 12%);
+  color: hsl(0, 0%, 88%);
+
+  border: 1px solid hsl(0, 0%, 30%);
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 16px;
 }
 
 .flex-column {
@@ -35,7 +58,7 @@ body {
   height: 100%;
   overflow-y: auto;
 
-  border: 1px solid rgb(128, 128, 128);
+  border: 1px solid hsl(0, 0%, 30%);
   border-radius: 8px;
   padding: 8px;
 }
