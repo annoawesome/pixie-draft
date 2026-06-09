@@ -52,12 +52,21 @@ body {
   padding: 8px;
 }
 
+.input-secondary:hover,
+.button-secondary:hover {
+  border-color: var(--neutral-color-5);
+}
+
 .input-secondary {
   background-color: var(--neutral-color-1);
 }
 
 .button-secondary {
   background-color: var(--neutral-color-2);
+}
+
+.button-secondary:active {
+  background-color: var(--neutral-color-3);
 }
 
 .popup-form {
