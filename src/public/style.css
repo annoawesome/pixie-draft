@@ -84,7 +84,7 @@ body {
   margin: 32px;
 }
 
-#library {
+.side-column {
   gap: 8px;
   width: 400px;
 }
