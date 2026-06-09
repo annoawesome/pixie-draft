@@ -23,7 +23,7 @@ function StoryCard({
   };
 
   return (
-    <button className="story-card" onClick={onClickStoryCard}>
+    <button className="button-secondary story-card" onClick={onClickStoryCard}>
       <h2>{story.title}</h2>
     </button>
   );
@@ -61,7 +61,11 @@ export default function Library({
           setSelectedStory={setSelectedStory}
         />
       ))}
-      <button id="new-story-button" onClick={onClickNewStoryButton}>
+      <button
+        className="button-secondary"
+        id="new-story-button"
+        onClick={onClickNewStoryButton}
+      >
         New Story
       </button>
     </div>

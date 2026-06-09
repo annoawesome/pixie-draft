@@ -25,7 +25,9 @@ export default function AsideSettings({
   };
   return (
     <aside className="flex-column" id="aside-settings">
-      <button onClick={onClickDelete}>Delete</button>
+      <button className="button-secondary" onClick={onClickDelete}>
+        Delete
+      </button>
     </aside>
   );
 }
