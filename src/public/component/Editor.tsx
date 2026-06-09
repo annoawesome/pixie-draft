@@ -8,6 +8,7 @@ import {
 } from "../api/storiesApi";
 import Story from "../type/storyType";
 import { generateResponse } from "../api/koboldCppApi";
+import ContentEditable from "./ContentEditable";
 
 export default function Editor({
   apiToken,
@@ -40,19 +41,11 @@ export default function Editor({
     }
   };
 
-  const onChangeStoryContent = (
-    e: React.ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>,
-  ) => {
-    const mutatedStory = selectedStory
-      ? mutateStoryContent(selectedStory, e.target.value)
-      : null;
-
-    setSelectedStory(mutatedStory);
-  };
-
-  const onBlurStoryContent = () => {
+  const onBlurStoryContent = (newContent: string) => {
     if (selectedStory) {
-      saveStory(apiToken, selectedStory);
+      const mutatedStory = mutateStoryContent(selectedStory, newContent);
+      setSelectedStory(mutatedStory);
+      saveStory(apiToken, mutatedStory);
     }
   };
 
@@ -100,13 +93,10 @@ export default function Editor({
             onChange={onChangeStoryTitle}
             onBlur={onBlurStoryTitle}
           />
-          <textarea
-            id="story-content"
-            placeholder="Write your story here..."
-            value={selectedStory?.content || ""}
-            disabled={locked}
-            onChange={onChangeStoryContent}
-            onBlur={onBlurStoryContent}
+          <ContentEditable
+            value={selectedStory.content}
+            onUpdate={onBlurStoryContent}
+            locked={locked}
           />
           <div className="flex-row" id="action-bar">
             <div className="flex-row" id="action-bar-left">
