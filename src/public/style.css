@@ -40,6 +40,11 @@ body {
   padding: 8px;
 }
 
+#story-content > * {
+  margin: 0;
+  margin-bottom: 16px;
+}
+
 #action-bar {
   gap: 8px;
 }
