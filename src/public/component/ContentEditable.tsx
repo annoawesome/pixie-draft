@@ -18,6 +18,10 @@ function setContentEditableContents(
   contentEditable.innerHTML = splitIntoParagraphs(text);
 }
 
+function pruneRedundantNewlines(text: string) {
+  return text.replace(/\n\s*\n/g, "\n");
+}
+
 export default function ContentEditable({
   value,
   locked,
@@ -44,8 +48,7 @@ export default function ContentEditable({
         const contentEditorDiv = contentEditableRef.current;
 
         if (contentEditorDiv) {
-          console.log(contentEditorDiv.textContent);
-          onUpdate(contentEditorDiv.innerText);
+          onUpdate(pruneRedundantNewlines(contentEditorDiv.innerText));
         }
       }}
     ></div>
