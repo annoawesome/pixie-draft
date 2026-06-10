@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import {
   mutateStoryContent,
+  mutateStoryFromAppendingHistory,
+  mutateStoryFromHistoryPageFlip,
   mutateStoryTitle,
   saveStory,
   updateStoriesFromUpdatedStory,
@@ -44,7 +46,11 @@ export default function Editor({
 
   const onBlurStoryContent = (newContent: string) => {
     if (selectedStory) {
-      const mutatedStory = mutateStoryContent(selectedStory, newContent);
+      const mutatedStory = mutateStoryFromAppendingHistory(
+        selectedStory,
+        newContent,
+      );
+
       setSelectedStory(mutatedStory);
       saveStory(apiToken, mutatedStory);
     }
@@ -103,10 +109,26 @@ export default function Editor({
           />
           <div className="flex-row width-fill-max" id="action-bar">
             <div className="flex-row width-fill-max" id="action-bar-left">
-              <button className="button-secondary" type="button">
+              <button
+                className="button-secondary"
+                type="button"
+                onClick={() => {
+                  setSelectedStory(
+                    mutateStoryFromHistoryPageFlip(selectedStory, -1),
+                  );
+                }}
+              >
                 <UndoIcon />
               </button>
-              <button className="button-secondary" type="button">
+              <button
+                className="button-secondary"
+                type="button"
+                onClick={() => {
+                  setSelectedStory(
+                    mutateStoryFromHistoryPageFlip(selectedStory, 1),
+                  );
+                }}
+              >
                 <RedoIcon />
               </button>
               <button className="button-secondary" type="button">

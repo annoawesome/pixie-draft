@@ -11,6 +11,8 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
     id: "",
     title: "",
     content: "",
+    history: [""],
+    historyIndex: 0,
   });
 
   useEffect(() => {
