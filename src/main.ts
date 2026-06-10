@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 
-import storiesRouter from "./router/stories.js";
+import storiesRouter from "./router/storiesRouter.js";
 import authRouter from "./router/authRouter.js";
 import initializeDatabase from "./init/initializeDatabase.js";
 import { initializeSecret } from "./init/initializeSecrets.js";

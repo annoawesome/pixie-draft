@@ -1,9 +1,9 @@
 import express from "express";
-import getStoryFromId from "../dao/getStoryFromId.js";
-import getStoriesPreview from "../dao/getStoriesPreview.js";
-import createStory from "../dao/createStory.js";
-import updateStory from "../dao/updateStory.js";
-import deleteStory from "../dao/deleteStory.js";
+import getStoryFromId from "../dao/stories/getStoryFromIdDao.js";
+import getStoriesPreview from "../dao/stories/getStoriesPreviewDao.js";
+import createStory from "../dao/stories/createStoryDao.js";
+import updateStory from "../dao/stories/updateStoryDao.js";
+import deleteStory from "../dao/stories/deleteStoryDao.js";
 import { validateAuthentication } from "../middleware/authMiddleware.js";
 
 const router = express.Router();

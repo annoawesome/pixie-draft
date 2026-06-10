@@ -1,6 +1,6 @@
 import fs from "fs";
-import Story from "../type/storyType.js";
-import { getDatabaseFile } from "../init/initializeDatabase.js";
+import Story from "../../type/storyType.js";
+import { getDatabaseFile } from "../../init/initializeDatabase.js";
 
 export default function updateStory(
   id: string,

@@ -1,5 +1,5 @@
 import fs from "fs";
-import { getDatabaseFile } from "../init/initializeDatabase.js";
+import { getDatabaseFile } from "../../init/initializeDatabase.js";
 
 export default function createStory(title: string, content: string) {
   const storiesPath = getDatabaseFile("stories.json");
