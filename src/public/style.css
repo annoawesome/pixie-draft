@@ -109,6 +109,11 @@ body {
   margin-bottom: 16px;
 }
 
+#story-content[contenteditable="false"] {
+  background-color: black;
+  border-color: var(--neutral-color-3);
+}
+
 /* Action bar icons should look square and small */
 #action-bar-left > button {
   aspect-ratio: 1;
