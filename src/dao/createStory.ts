@@ -6,7 +6,21 @@ export default function createStory(title: string, content: string) {
 
   const id = crypto.randomUUID();
   const stories = JSON.parse(fs.readFileSync(storiesPath, "utf-8"));
-  const story = { id, title, content, history: [content], historyIndex: 0 };
+  const story = {
+    id,
+    title,
+    content,
+    history: [
+      {
+        content,
+        treePrev: -1,
+        attributes: {
+          generatedByLlm: false,
+        },
+      },
+    ],
+    historyIndex: 0,
+  };
   stories.push(story);
   fs.writeFileSync(storiesPath, JSON.stringify(stories, null, 2));
 

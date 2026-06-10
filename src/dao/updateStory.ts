@@ -6,7 +6,7 @@ export default function updateStory(
   id: string,
   title: string,
   content: string,
-  history: string[],
+  history: any[],
   historyIndex: number,
 ) {
   const storiesPath = getDatabaseFile("stories.json");
