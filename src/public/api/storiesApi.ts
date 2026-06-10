@@ -121,6 +121,10 @@ export function mutateStoryFromAppendingHistory(
   story: Story,
   newContent: string,
 ): Story {
+  if (newContent === story.content) {
+    return { ...story };
+  }
+
   return {
     ...story,
     content: newContent,
