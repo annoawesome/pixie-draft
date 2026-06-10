@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
-import {
+import { saveStory } from "../api/storiesApi";
+
+import Story, {
   mutateStoryFromAppendingHistory,
   mutateStoryFromHistoryPageFlip,
   mutateStoryTitle,
-  saveStory,
   updateStoriesFromUpdatedStory,
-} from "../api/storiesApi";
-import Story from "../type/storyType";
+} from "../type/storyType";
 import { generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";

@@ -1,7 +1,7 @@
 import React from "react";
 
-import { deleteStory, removeStoryFromStories } from "../api/storiesApi";
-import Story from "../type/storyType";
+import { deleteStory } from "../api/storiesApi";
+import Story, { removeStoryFromStories } from "../type/storyType";
 
 export default function AsideSettings({
   apiToken,
