@@ -23,6 +23,10 @@ body {
   background-color: var(--neutral-color-1);
 }
 
+header {
+  background-color: var(--neutral-color-2);
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -89,8 +93,12 @@ body {
   height: 100vh;
 }
 
+#header-body-layout {
+  height: 100vh;
+}
+
 #main-app-layout {
-  height: calc(100vh - 64px);
+  height: 100%;
   gap: 32px;
   margin: 32px;
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatePrompt from "./component/AuthenticatePrompt";
-import MainLayout from "./component/MainLayout";
 import { refreshTokens } from "./api/authApi";
+import HorizontalLayout from "./component/HorizontalLayout";
 
 export default function App() {
   // Makes development a little easier with vite's dev server
@@ -28,7 +28,7 @@ export default function App() {
   }, [apiToken]);
 
   return apiToken ? (
-    <MainLayout apiToken={apiToken} />
+    <HorizontalLayout apiToken={apiToken} />
   ) : (
     <AuthenticatePrompt setApiToken={setApiToken} />
   );
