@@ -80,6 +80,26 @@ header {
   border-color: var(--neutral-color-3);
 }
 
+.button-tertiary {
+  background-color: var(--neutral-color-2);
+  border: 0;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.button-tertiary:hover {
+  background-color: var(--neutral-color-3);
+}
+
+.button-tertiary:active {
+  background-color: var(--neutral-color-1);
+}
+
+.button-icon {
+  aspect-ratio: 1;
+  padding: 4px;
+}
+
 .path-icon {
   fill: var(--neutral-color-8);
 }
@@ -122,15 +142,15 @@ header {
   border-color: var(--neutral-color-3);
 }
 
-/* Action bar icons should look square and small */
-#action-bar-left > button {
-  aspect-ratio: 1;
-  padding: 4px;
-}
-
 /* Darken icons when buttons are disabled. Currently used only for specific action bar buttons */
 button:disabled .path-icon {
   fill: var(--neutral-color-5);
+}
+
+#header-left,
+#header-right {
+  margin: 8px;
+  gap: 8px;
 }
 
 #login-form {

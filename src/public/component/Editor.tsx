@@ -81,7 +81,7 @@ function ActionBar({
     <div className="flex-row width-fill-max" id="action-bar">
       <div className="flex-row width-fill-max" id="action-bar-left">
         <button
-          className="button-secondary"
+          className="button-secondary button-icon"
           type="button"
           disabled={selectedStory.historyIndex === 0 || locked}
           onClick={onClickUndo}
@@ -89,7 +89,7 @@ function ActionBar({
           <UndoIcon />
         </button>
         <button
-          className="button-secondary"
+          className="button-secondary button-icon"
           type="button"
           disabled={
             selectedStory.historyIndex === selectedStory.history.length - 1 ||
@@ -100,7 +100,7 @@ function ActionBar({
           <RedoIcon />
         </button>
         <button
-          className="button-secondary"
+          className="button-secondary button-icon"
           type="button"
           disabled={
             selectedStory.historyIndex === 0 ||
