@@ -128,7 +128,10 @@ export function mutateStoryFromAppendingHistory(
   return {
     ...story,
     content: newContent,
-    history: [...story.history, newContent],
+    history: [
+      ...(story.history.length >= 50 ? story.history.slice(1) : story.history),
+      newContent,
+    ],
     historyIndex: story.history.length,
   };
 }
