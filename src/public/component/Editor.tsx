@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import {
-  mutateStoryContent,
   mutateStoryFromAppendingHistory,
   mutateStoryFromHistoryPageFlip,
   mutateStoryTitle,
@@ -36,7 +35,9 @@ function ActionBar({
     generateResponse(apiUri, selectedStory.content)
       .then((text) => {
         setSelectedStory((prev) =>
-          prev ? mutateStoryContent(prev, prev.content + text) : null,
+          prev
+            ? mutateStoryFromAppendingHistory(prev, prev.content + text)
+            : null,
         );
       })
       .finally(() => setLocked(false));
