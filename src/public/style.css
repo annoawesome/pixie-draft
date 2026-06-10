@@ -69,6 +69,15 @@ body {
   background-color: var(--neutral-color-3);
 }
 
+.button-secondary:disabled {
+  background-color: var(--neutral-color-1);
+  border-color: var(--neutral-color-3);
+}
+
+.path-icon {
+  fill: var(--neutral-color-8);
+}
+
 .popup-form {
   margin: auto;
 
@@ -102,4 +111,9 @@ body {
 #action-bar-left > button {
   aspect-ratio: 1;
   padding: 4px;
+}
+
+/* Darken icons when buttons are disabled. Currently used only for specific action bar buttons */
+button:disabled .path-icon {
+  fill: var(--neutral-color-5);
 }

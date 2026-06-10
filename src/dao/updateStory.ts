@@ -6,6 +6,8 @@ export default function updateStory(
   id: string,
   title: string,
   content: string,
+  history: any[],
+  historyIndex: number,
 ) {
   const storiesPath = getDatabaseFile("stories.json");
 
@@ -13,7 +15,7 @@ export default function updateStory(
   const index = stories.findIndex((s: Story) => s.id === id);
 
   if (index !== -1) {
-    stories[index] = { id, title, content };
+    stories[index] = { id, title, content, history, historyIndex };
     fs.writeFileSync(storiesPath, JSON.stringify(stories, null, 2));
   }
 }

@@ -106,28 +106,3 @@ export async function deleteStory(apiToken: string, id: string) {
 
   return response.ok;
 }
-
-/* Should probably be moved somewhere else */
-
-export function mutateStoryTitle(story: Story, newTitle: string) {
-  return { ...story, title: newTitle };
-}
-
-export function mutateStoryContent(story: Story, newContent: string) {
-  return { ...story, content: newContent };
-}
-
-// offline helper function that updates the story contained in stories to save a bit of bandwidth
-export function updateStoriesFromUpdatedStory(
-  stories: Story[],
-  updatedStory: Story,
-) {
-  return stories.map((story) =>
-    story.id === updatedStory.id ? updatedStory : story,
-  );
-}
-
-// offline helper function that removes the story contained in stories
-export function removeStoryFromStories(stories: Story[], storyToRemove: Story) {
-  return stories.filter((story) => story.id !== storyToRemove.id);
-}

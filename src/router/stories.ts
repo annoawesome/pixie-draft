@@ -51,10 +51,10 @@ router.post("/", (req, res) => {
 
 router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, history, historyIndex } = req.body;
 
   try {
-    updateStory(id, title, content);
+    updateStory(id, title, content, history, historyIndex);
     res.status(204).send();
   } catch (error) {
     console.error("Error updating story:", error);

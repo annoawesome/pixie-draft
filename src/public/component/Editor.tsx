@@ -1,15 +1,130 @@
 import React, { useState } from "react";
 
-import {
-  mutateStoryContent,
+import { saveStory } from "../api/storiesApi";
+
+import Story, {
+  getCurrentHistoryNode,
+  mutateStoryFromAppendingHistory,
+  mutateStoryFromHistoryPageFlip,
+  mutateStoryFromTreeBacktrack,
   mutateStoryTitle,
-  saveStory,
   updateStoriesFromUpdatedStory,
-} from "../api/storiesApi";
-import Story from "../type/storyType";
+} from "../type/storyType";
 import { generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
+
+function ActionBar({
+  apiToken,
+  apiUri,
+  selectedStory,
+  locked,
+  setSelectedStory,
+  setLocked,
+}: {
+  apiToken: string;
+  apiUri: string;
+  selectedStory: Story;
+  locked: boolean;
+  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
+  setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const generate = (story: Story) => {
+    if (!story) {
+      alert("No story loaded to generate with");
+      return;
+    }
+
+    setLocked(true);
+
+    // call LLM api
+    generateResponse(apiUri, story.content)
+      .then((text) => {
+        const mutatedStory = mutateStoryFromAppendingHistory(
+          story,
+          story.content + text,
+          true,
+        );
+
+        setSelectedStory(mutatedStory);
+        saveStory(apiToken, mutatedStory);
+      })
+      .finally(() => setLocked(false));
+  };
+
+  const onGenerate = () => {
+    generate(selectedStory);
+  };
+
+  const onClickUndo = () => {
+    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, -1);
+
+    setSelectedStory(mutatedStory);
+    saveStory(apiToken, mutatedStory);
+  };
+
+  const onClickRedo = () => {
+    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, 1);
+
+    setSelectedStory(mutatedStory);
+    saveStory(apiToken, mutatedStory);
+  };
+
+  const onClickRetry = () => {
+    const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
+
+    setSelectedStory(mutatedStory);
+    generate(mutatedStory);
+  };
+
+  return (
+    <div className="flex-row width-fill-max" id="action-bar">
+      <div className="flex-row width-fill-max" id="action-bar-left">
+        <button
+          className="button-secondary"
+          type="button"
+          disabled={selectedStory.historyIndex === 0 || locked}
+          onClick={onClickUndo}
+        >
+          <UndoIcon />
+        </button>
+        <button
+          className="button-secondary"
+          type="button"
+          disabled={
+            selectedStory.historyIndex === selectedStory.history.length - 1 ||
+            locked
+          }
+          onClick={onClickRedo}
+        >
+          <RedoIcon />
+        </button>
+        <button
+          className="button-secondary"
+          type="button"
+          disabled={
+            selectedStory.historyIndex === 0 ||
+            !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
+            locked
+          }
+          onClick={onClickRetry}
+        >
+          <RefreshIcon />
+        </button>
+      </div>
+      <div className="flex-row-right width-fill-max" id="action-bar-right">
+        <button
+          className="button-secondary"
+          type="button"
+          disabled={locked}
+          onClick={onGenerate}
+        >
+          Generate
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Editor({
   apiToken,
@@ -44,28 +159,15 @@ export default function Editor({
 
   const onBlurStoryContent = (newContent: string) => {
     if (selectedStory) {
-      const mutatedStory = mutateStoryContent(selectedStory, newContent);
+      const mutatedStory = mutateStoryFromAppendingHistory(
+        selectedStory,
+        newContent,
+        false,
+      );
+
       setSelectedStory(mutatedStory);
       saveStory(apiToken, mutatedStory);
     }
-  };
-
-  const onGenerate = () => {
-    if (!selectedStory) {
-      alert("No story loaded to generate with");
-      return;
-    }
-
-    setLocked(true);
-
-    // call LLM api
-    generateResponse(apiUri, selectedStory.content)
-      .then((text) => {
-        setSelectedStory((prev) =>
-          prev ? mutateStoryContent(prev, prev.content + text) : null,
-        );
-      })
-      .finally(() => setLocked(false));
   };
 
   return (
@@ -101,31 +203,14 @@ export default function Editor({
             onUpdate={onBlurStoryContent}
             locked={locked}
           />
-          <div className="flex-row width-fill-max" id="action-bar">
-            <div className="flex-row width-fill-max" id="action-bar-left">
-              <button className="button-secondary" type="button">
-                <UndoIcon />
-              </button>
-              <button className="button-secondary" type="button">
-                <RedoIcon />
-              </button>
-              <button className="button-secondary" type="button">
-                <RefreshIcon />
-              </button>
-            </div>
-            <div
-              className="flex-row-right width-fill-max"
-              id="action-bar-right"
-            >
-              <button
-                className="button-secondary"
-                type="button"
-                onClick={onGenerate}
-              >
-                Generate
-              </button>
-            </div>
-          </div>
+          <ActionBar
+            apiToken={apiToken}
+            apiUri={apiUri}
+            selectedStory={selectedStory}
+            locked={locked}
+            setSelectedStory={setSelectedStory}
+            setLocked={setLocked}
+          />
         </>
       ) : (
         <p>No story selected</p>
