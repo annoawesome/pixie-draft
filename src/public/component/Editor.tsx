@@ -13,6 +13,70 @@ import { generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 
+function ActionBar({
+  apiUri,
+  selectedStory,
+  setSelectedStory,
+  setLocked,
+}: {
+  apiUri: string;
+  selectedStory: Story;
+  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
+  setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const onGenerate = () => {
+    if (!selectedStory) {
+      alert("No story loaded to generate with");
+      return;
+    }
+
+    setLocked(true);
+
+    // call LLM api
+    generateResponse(apiUri, selectedStory.content)
+      .then((text) => {
+        setSelectedStory((prev) =>
+          prev ? mutateStoryContent(prev, prev.content + text) : null,
+        );
+      })
+      .finally(() => setLocked(false));
+  };
+
+  return (
+    <div className="flex-row width-fill-max" id="action-bar">
+      <div className="flex-row width-fill-max" id="action-bar-left">
+        <button
+          className="button-secondary"
+          type="button"
+          onClick={() => {
+            setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, -1));
+          }}
+        >
+          <UndoIcon />
+        </button>
+        <button
+          className="button-secondary"
+          type="button"
+          onClick={() => {
+            console.log(selectedStory);
+            setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, 1));
+          }}
+        >
+          <RedoIcon />
+        </button>
+        <button className="button-secondary" type="button">
+          <RefreshIcon />
+        </button>
+      </div>
+      <div className="flex-row-right width-fill-max" id="action-bar-right">
+        <button className="button-secondary" type="button" onClick={onGenerate}>
+          Generate
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Editor({
   apiToken,
   selectedStory,
@@ -56,24 +120,6 @@ export default function Editor({
     }
   };
 
-  const onGenerate = () => {
-    if (!selectedStory) {
-      alert("No story loaded to generate with");
-      return;
-    }
-
-    setLocked(true);
-
-    // call LLM api
-    generateResponse(apiUri, selectedStory.content)
-      .then((text) => {
-        setSelectedStory((prev) =>
-          prev ? mutateStoryContent(prev, prev.content + text) : null,
-        );
-      })
-      .finally(() => setLocked(false));
-  };
-
   return (
     <div className="flex-column width-fill-max" id="editor">
       <input
@@ -107,47 +153,12 @@ export default function Editor({
             onUpdate={onBlurStoryContent}
             locked={locked}
           />
-          <div className="flex-row width-fill-max" id="action-bar">
-            <div className="flex-row width-fill-max" id="action-bar-left">
-              <button
-                className="button-secondary"
-                type="button"
-                onClick={() => {
-                  setSelectedStory(
-                    mutateStoryFromHistoryPageFlip(selectedStory, -1),
-                  );
-                }}
-              >
-                <UndoIcon />
-              </button>
-              <button
-                className="button-secondary"
-                type="button"
-                onClick={() => {
-                  setSelectedStory(
-                    mutateStoryFromHistoryPageFlip(selectedStory, 1),
-                  );
-                }}
-              >
-                <RedoIcon />
-              </button>
-              <button className="button-secondary" type="button">
-                <RefreshIcon />
-              </button>
-            </div>
-            <div
-              className="flex-row-right width-fill-max"
-              id="action-bar-right"
-            >
-              <button
-                className="button-secondary"
-                type="button"
-                onClick={onGenerate}
-              >
-                Generate
-              </button>
-            </div>
-          </div>
+          <ActionBar
+            apiUri={apiUri}
+            selectedStory={selectedStory}
+            setSelectedStory={setSelectedStory}
+            setLocked={setLocked}
+          />
         </>
       ) : (
         <p>No story selected</p>
