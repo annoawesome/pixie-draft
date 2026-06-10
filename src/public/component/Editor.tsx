@@ -49,6 +49,7 @@ function ActionBar({
         <button
           className="button-secondary"
           type="button"
+          disabled={selectedStory.historyIndex === 0}
           onClick={() => {
             setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, -1));
           }}
@@ -58,6 +59,9 @@ function ActionBar({
         <button
           className="button-secondary"
           type="button"
+          disabled={
+            selectedStory.historyIndex === selectedStory.history.length - 1
+          }
           onClick={() => {
             console.log(selectedStory);
             setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, 1));

@@ -69,6 +69,11 @@ body {
   background-color: var(--neutral-color-3);
 }
 
+.button-secondary:disabled {
+  background-color: var(--neutral-color-1);
+  border-color: var(--neutral-color-3);
+}
+
 .popup-form {
   margin: auto;
 
