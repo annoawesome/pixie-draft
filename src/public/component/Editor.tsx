@@ -15,12 +15,14 @@ import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 
 function ActionBar({
+  apiToken,
   apiUri,
   selectedStory,
   locked,
   setSelectedStory,
   setLocked,
 }: {
+  apiToken: string;
   apiUri: string;
   selectedStory: Story;
   locked: boolean;
@@ -42,9 +44,14 @@ function ActionBar({
     // call LLM api
     generateResponse(apiUri, story.content)
       .then((text) => {
-        setSelectedStory(
-          mutateStoryFromAppendingHistory(story, story.content + text, true),
+        const mutatedStory = mutateStoryFromAppendingHistory(
+          story,
+          story.content + text,
+          true,
         );
+
+        setSelectedStory(mutatedStory);
+        saveStory(apiToken, mutatedStory);
       })
       .finally(() => setLocked(false));
   };
@@ -57,7 +64,13 @@ function ActionBar({
           type="button"
           disabled={selectedStory.historyIndex === 0 || locked}
           onClick={() => {
-            setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, -1));
+            const mutatedStory = mutateStoryFromHistoryPageFlip(
+              selectedStory,
+              -1,
+            );
+
+            setSelectedStory(mutatedStory);
+            saveStory(apiToken, mutatedStory);
           }}
         >
           <UndoIcon />
@@ -70,8 +83,13 @@ function ActionBar({
             locked
           }
           onClick={() => {
-            console.log(selectedStory);
-            setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, 1));
+            const mutatedStory = mutateStoryFromHistoryPageFlip(
+              selectedStory,
+              1,
+            );
+
+            setSelectedStory(mutatedStory);
+            saveStory(apiToken, mutatedStory);
           }}
         >
           <RedoIcon />
@@ -186,6 +204,7 @@ export default function Editor({
             locked={locked}
           />
           <ActionBar
+            apiToken={apiToken}
             apiUri={apiUri}
             selectedStory={selectedStory}
             locked={locked}
