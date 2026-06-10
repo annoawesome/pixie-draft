@@ -50,6 +50,8 @@ body {
   border: 1px solid var(--neutral-color-4);
   border-radius: 8px;
   padding: 8px;
+
+  transition: border-color 0.15s ease-out;
 }
 
 .input-secondary:hover,
