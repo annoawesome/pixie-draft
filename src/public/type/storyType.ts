@@ -1,12 +1,24 @@
+interface HistoryNode {
+  content: string;
+  treePrev: number;
+  attributes: {
+    generatedByLlm: boolean;
+  };
+}
+
 type Story = {
   id: string;
   title: string;
   content: string;
-  history: string[];
+  history: HistoryNode[];
   historyIndex: number;
 };
 
 export default Story;
+
+export function getCurrentHistoryNode(story: Story) {
+  return story.history[story.historyIndex];
+}
 
 export function mutateStoryTitle(story: Story, newTitle: string) {
   return { ...story, title: newTitle };
@@ -19,17 +31,26 @@ export function mutateStoryContent(story: Story, newContent: string) {
 export function mutateStoryFromAppendingHistory(
   story: Story,
   newContent: string,
+  generatedByLlm: boolean,
 ): Story {
   if (newContent === story.content) {
     return { ...story };
   }
+
+  const historyNode: HistoryNode = {
+    content: newContent,
+    treePrev: story.historyIndex,
+    attributes: {
+      generatedByLlm,
+    },
+  };
 
   return {
     ...story,
     content: newContent,
     history: [
       ...(story.history.length >= 50 ? story.history.slice(1) : story.history),
-      newContent,
+      historyNode,
     ],
     historyIndex: story.history.length,
   };
@@ -53,7 +74,21 @@ export function mutateStoryFromHistoryPageFlip(
 
   return {
     ...story,
-    content: story.history[newIndex],
+    content: story.history[newIndex].content,
+    historyIndex: newIndex,
+  };
+}
+
+export function mutateStoryFromTreeBacktrack(story: Story): Story {
+  const newIndex = clamp(
+    getCurrentHistoryNode(story).treePrev,
+    0,
+    story.history.length - 1,
+  );
+
+  return {
+    ...story,
+    content: story.history[newIndex].content,
     historyIndex: newIndex,
   };
 }

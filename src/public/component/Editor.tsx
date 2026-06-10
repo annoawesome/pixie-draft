@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { saveStory } from "../api/storiesApi";
 
 import Story, {
+  getCurrentHistoryNode,
   mutateStoryFromAppendingHistory,
   mutateStoryFromHistoryPageFlip,
+  mutateStoryFromTreeBacktrack,
   mutateStoryTitle,
   updateStoriesFromUpdatedStory,
 } from "../type/storyType";
@@ -26,7 +28,11 @@ function ActionBar({
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const onGenerate = () => {
-    if (!selectedStory) {
+    generate(selectedStory);
+  };
+
+  const generate = (story: Story) => {
+    if (!story) {
       alert("No story loaded to generate with");
       return;
     }
@@ -34,12 +40,10 @@ function ActionBar({
     setLocked(true);
 
     // call LLM api
-    generateResponse(apiUri, selectedStory.content)
+    generateResponse(apiUri, story.content)
       .then((text) => {
-        setSelectedStory((prev) =>
-          prev
-            ? mutateStoryFromAppendingHistory(prev, prev.content + text)
-            : null,
+        setSelectedStory(
+          mutateStoryFromAppendingHistory(story, story.content + text, true),
         );
       })
       .finally(() => setLocked(false));
@@ -75,7 +79,17 @@ function ActionBar({
         <button
           className="button-secondary"
           type="button"
-          disabled={selectedStory.historyIndex === 0 || locked}
+          disabled={
+            selectedStory.historyIndex === 0 ||
+            !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
+            locked
+          }
+          onClick={() => {
+            const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
+            setSelectedStory(mutatedStory);
+
+            generate(mutatedStory);
+          }}
         >
           <RefreshIcon />
         </button>
@@ -130,6 +144,7 @@ export default function Editor({
       const mutatedStory = mutateStoryFromAppendingHistory(
         selectedStory,
         newContent,
+        false,
       );
 
       setSelectedStory(mutatedStory);
