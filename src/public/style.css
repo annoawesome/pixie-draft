@@ -117,3 +117,18 @@ body {
 button:disabled .path-icon {
   fill: var(--neutral-color-5);
 }
+
+#login-form {
+  width: 400px;
+  flex-grow: 1;
+}
+
+/* A hack to align the label and input */
+#login-form > label {
+  transform: translateX(-8px);
+}
+
+#login-form > input,
+#login-form > label {
+  width: 100%;
+}

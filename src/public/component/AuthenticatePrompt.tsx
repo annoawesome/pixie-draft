@@ -22,11 +22,22 @@ export default function AuthenticatePrompt({
   };
 
   return (
-    <form className="flex-column popup-form" onSubmit={onSubmit}>
+    <form
+      className="flex-column popup-form"
+      id="login-form"
+      onSubmit={onSubmit}
+    >
       <h1>You need to login</h1>
       <label htmlFor="password">Password</label>
-      <input type="password" name="password" id="login-password" />
-      <button type="submit">Login</button>
+      <input
+        type="password"
+        name="password"
+        className="input-secondary"
+        id="login-password"
+      />
+      <button type="submit" className="input-secondary">
+        Login
+      </button>
     </form>
   );
 }
