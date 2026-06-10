@@ -29,10 +29,6 @@ function ActionBar({
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const onGenerate = () => {
-    generate(selectedStory);
-  };
-
   const generate = (story: Story) => {
     if (!story) {
       alert("No story loaded to generate with");
@@ -56,6 +52,31 @@ function ActionBar({
       .finally(() => setLocked(false));
   };
 
+  const onGenerate = () => {
+    generate(selectedStory);
+  };
+
+  const onClickUndo = () => {
+    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, -1);
+
+    setSelectedStory(mutatedStory);
+    saveStory(apiToken, mutatedStory);
+  };
+
+  const onClickRedo = () => {
+    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, 1);
+
+    setSelectedStory(mutatedStory);
+    saveStory(apiToken, mutatedStory);
+  };
+
+  const onClickRetry = () => {
+    const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
+
+    setSelectedStory(mutatedStory);
+    generate(mutatedStory);
+  };
+
   return (
     <div className="flex-row width-fill-max" id="action-bar">
       <div className="flex-row width-fill-max" id="action-bar-left">
@@ -63,15 +84,7 @@ function ActionBar({
           className="button-secondary"
           type="button"
           disabled={selectedStory.historyIndex === 0 || locked}
-          onClick={() => {
-            const mutatedStory = mutateStoryFromHistoryPageFlip(
-              selectedStory,
-              -1,
-            );
-
-            setSelectedStory(mutatedStory);
-            saveStory(apiToken, mutatedStory);
-          }}
+          onClick={onClickUndo}
         >
           <UndoIcon />
         </button>
@@ -82,15 +95,7 @@ function ActionBar({
             selectedStory.historyIndex === selectedStory.history.length - 1 ||
             locked
           }
-          onClick={() => {
-            const mutatedStory = mutateStoryFromHistoryPageFlip(
-              selectedStory,
-              1,
-            );
-
-            setSelectedStory(mutatedStory);
-            saveStory(apiToken, mutatedStory);
-          }}
+          onClick={onClickRedo}
         >
           <RedoIcon />
         </button>
@@ -102,12 +107,7 @@ function ActionBar({
             !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
             locked
           }
-          onClick={() => {
-            const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
-            setSelectedStory(mutatedStory);
-
-            generate(mutatedStory);
-          }}
+          onClick={onClickRetry}
         >
           <RefreshIcon />
         </button>
