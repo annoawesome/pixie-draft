@@ -15,11 +15,13 @@ import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 function ActionBar({
   apiUri,
   selectedStory,
+  locked,
   setSelectedStory,
   setLocked,
 }: {
   apiUri: string;
   selectedStory: Story;
+  locked: boolean;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -49,7 +51,7 @@ function ActionBar({
         <button
           className="button-secondary"
           type="button"
-          disabled={selectedStory.historyIndex === 0}
+          disabled={selectedStory.historyIndex === 0 || locked}
           onClick={() => {
             setSelectedStory(mutateStoryFromHistoryPageFlip(selectedStory, -1));
           }}
@@ -60,7 +62,8 @@ function ActionBar({
           className="button-secondary"
           type="button"
           disabled={
-            selectedStory.historyIndex === selectedStory.history.length - 1
+            selectedStory.historyIndex === selectedStory.history.length - 1 ||
+            locked
           }
           onClick={() => {
             console.log(selectedStory);
@@ -69,12 +72,21 @@ function ActionBar({
         >
           <RedoIcon />
         </button>
-        <button className="button-secondary" type="button">
+        <button
+          className="button-secondary"
+          type="button"
+          disabled={selectedStory.historyIndex === 0 || locked}
+        >
           <RefreshIcon />
         </button>
       </div>
       <div className="flex-row-right width-fill-max" id="action-bar-right">
-        <button className="button-secondary" type="button" onClick={onGenerate}>
+        <button
+          className="button-secondary"
+          type="button"
+          disabled={locked}
+          onClick={onGenerate}
+        >
           Generate
         </button>
       </div>
@@ -161,6 +173,7 @@ export default function Editor({
           <ActionBar
             apiUri={apiUri}
             selectedStory={selectedStory}
+            locked={locked}
             setSelectedStory={setSelectedStory}
             setLocked={setLocked}
           />
