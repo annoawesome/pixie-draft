@@ -3,6 +3,7 @@ import AuthenticatePrompt from "./component/AuthenticatePrompt";
 import { refreshTokens } from "./api/authApi";
 import HorizontalLayout from "./component/HorizontalLayout";
 import { CurrentPage } from "./type/currentPageType";
+import Settings from "./component/Settings";
 
 export default function App() {
   // Makes development a little easier with vite's dev server
@@ -36,7 +37,7 @@ export default function App() {
         <HorizontalLayout apiToken={apiToken} setCurrentPage={setCurrentPage} />
       );
     } else if (currentPage === "endpoints") {
-      return <h1>Settings</h1>;
+      return <Settings />;
     }
   }
 

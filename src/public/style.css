@@ -27,6 +27,10 @@ header {
   background-color: var(--neutral-color-2);
 }
 
+h1 {
+  font-size: 24px;
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -166,4 +170,49 @@ button:disabled .path-icon {
 #login-form > input,
 #login-form > label {
   width: 100%;
+}
+
+/* Settings */
+#settings-layout {
+  height: 100vh;
+}
+
+/* Settings sidebar */
+#settings-sidebar {
+  gap: 16px;
+  padding: 16px;
+  width: 400px;
+  background-color: var(--neutral-color-2);
+  border-right: 1px solid var(--neutral-color-3);
+}
+
+#settings-sidebar button {
+  padding: 16px;
+  text-align: left;
+}
+
+/* Settings section */
+.settings-section {
+  padding: 16px;
+  height: calc(100% - 32px);
+}
+
+/* Endpoints */
+#settings-endpoints-section {
+  gap: 16px;
+}
+
+#settings-endpoints-list {
+  padding: 16px 64px;
+  gap: 16px;
+}
+
+#settings-endpoints-editor {
+  padding: 16px;
+  height: 100%;
+  gap: 16px;
+
+  background-color: var(--neutral-color-2);
+  border: 1px solid var(--neutral-color-3);
+  border-radius: 8px;
 }
