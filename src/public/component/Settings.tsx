@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getSettings } from "../api/settingsApi";
 
 interface Endpoint {
   id: string;
@@ -54,20 +55,25 @@ function EndpointEditor() {
   );
 }
 
-function EndpointsSettings() {
-  const endpoints: Endpoint[] = [
-    {
-      id: "",
-      name: "My Endpoint",
-      uri: "my_endpoint",
-    },
-  ];
+function EndpointsSettings({ apiToken }: { apiToken: string }) {
+  const [endpoints, setEndpoints] = useState<Endpoint[] | null>(null);
+
+  useEffect(() => {
+    getSettings(apiToken).then((settings) => {
+      // WARNING: not type checked or validated at all!
+      setEndpoints(settings.endpoints);
+    });
+  }, []);
 
   return (
     <div className="flex-row settings-section" id="settings-endpoints-section">
       <div className="width-fill-max">
         <h1>Endpoints</h1>
-        <EndpointsList endpoints={endpoints} />
+        {endpoints ? (
+          <EndpointsList endpoints={endpoints} />
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
       <div className="flex-column width-fill-max">
         <EndpointEditor />
@@ -76,7 +82,7 @@ function EndpointsSettings() {
   );
 }
 
-export default function Settings() {
+export default function Settings({ apiToken }: { apiToken: string }) {
   return (
     <div className="flex-row" id="settings-layout">
       <aside className="flex-column" id="settings-sidebar">
@@ -85,7 +91,7 @@ export default function Settings() {
         </button>
       </aside>
       <main className="width-fill-max" id="">
-        <EndpointsSettings />
+        <EndpointsSettings apiToken={apiToken} />
       </main>
     </div>
   );

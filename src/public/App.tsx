@@ -37,7 +37,7 @@ export default function App() {
         <HorizontalLayout apiToken={apiToken} setCurrentPage={setCurrentPage} />
       );
     } else if (currentPage === "endpoints") {
-      return <Settings />;
+      return <Settings apiToken={apiToken} />;
     }
   }
 
