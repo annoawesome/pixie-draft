@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import fetchUserSettings from "../dao/settings/fetchUserSettings.js";
 import updateUserSettings from "../dao/settings/updateUserSettings.js";
+import patchUserSettings from "../dao/settings/patchUserSettings.js";
 
 export function getSettings(req: Request, res: Response) {
   try {
@@ -24,5 +25,18 @@ export function updateSettings(req: Request, res: Response) {
 }
 
 export function patchSettings(req: Request, res: Response) {
-  res.sendStatus(501);
+  try {
+    const { setting } = req.params;
+    const settingContent = req.body;
+
+    if (typeof setting === "string") {
+      patchUserSettings(setting, settingContent);
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(400);
+    }
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
 }
