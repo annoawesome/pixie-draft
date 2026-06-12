@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSettings } from "../api/settingsApi";
+import { getSettings, updateSettings } from "../api/settingsApi";
 
 interface Endpoint {
   id: string;
@@ -9,13 +9,13 @@ interface Endpoint {
 
 function EndpointCard({
   endpoint,
-  selectedEndpointId,
-  setSelectedEndpointId,
+  selectedEndpoint,
+  setSelectedEndpoint,
   locked,
 }: {
   endpoint: Endpoint;
-  selectedEndpointId: string;
-  setSelectedEndpointId: React.Dispatch<React.SetStateAction<string>>;
+  selectedEndpoint: Endpoint | null;
+  setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
   locked: boolean;
 }) {
   return (
@@ -23,11 +23,11 @@ function EndpointCard({
       className="button-secondary"
       disabled={locked}
       id={
-        endpoint.id === selectedEndpointId
+        endpoint.id === selectedEndpoint?.id
           ? "settings-selected-endpoint-card"
           : undefined
       }
-      onClick={() => setSelectedEndpointId(endpoint.id)}
+      onClick={() => setSelectedEndpoint(endpoint)}
     >
       <h2>{endpoint.name}</h2>
       <p>{endpoint.uri}</p>
@@ -37,14 +37,14 @@ function EndpointCard({
 
 function EndpointsList({
   endpoints,
-  selectedEndpointId,
-  setSelectedEndpointId,
+  selectedEndpoint,
+  setSelectedEndpoint,
 }: {
   endpoints: Endpoint[];
-  selectedEndpointId: string;
-  setSelectedEndpointId: React.Dispatch<React.SetStateAction<string>>;
+  selectedEndpoint: Endpoint | null;
+  setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
 }) {
-  console.log("Selected endpoint id is:", selectedEndpointId);
+  console.log("Selected endpoint is:", selectedEndpoint);
   return (
     <div className="flex-column" id="settings-endpoints-list">
       <EndpointCard
@@ -53,16 +53,16 @@ function EndpointsList({
           name: "Automatic",
           uri: "auto-generated",
         }}
-        selectedEndpointId={selectedEndpointId}
-        setSelectedEndpointId={setSelectedEndpointId}
+        selectedEndpoint={selectedEndpoint}
+        setSelectedEndpoint={setSelectedEndpoint}
         locked={true}
       />
       {endpoints.map((endpoint, index) => (
         <EndpointCard
           key={index}
           endpoint={endpoint}
-          selectedEndpointId={selectedEndpointId}
-          setSelectedEndpointId={setSelectedEndpointId}
+          selectedEndpoint={selectedEndpoint}
+          setSelectedEndpoint={setSelectedEndpoint}
           locked={false}
         />
       ))}
@@ -71,33 +71,82 @@ function EndpointsList({
 }
 
 function EndpointEditor({
-  selectedEndpointId,
+  apiToken,
+  selectedEndpoint,
   endpoints,
+  setSelectedEndpoint,
   setEndpoints,
 }: {
-  selectedEndpointId: string;
+  apiToken: string;
+  selectedEndpoint: Endpoint;
   endpoints: Endpoint[];
+  setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
   setEndpoints: React.Dispatch<React.SetStateAction<Endpoint[] | null>>;
 }) {
+  const onSubmitEndpointsEditor = (
+    event: React.SubmitEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
+    const { name, uri } = Object.fromEntries(new FormData(event.target));
+
+    if (typeof name === "string" && typeof uri === "string") {
+      const updatedEndpoints = endpoints.map((endpoint) => {
+        if (endpoint.id === selectedEndpoint.id) {
+          return {
+            ...selectedEndpoint,
+          };
+        }
+
+        return endpoint;
+      });
+
+      setEndpoints(updatedEndpoints);
+
+      // TODO: make this into a patch based system instead
+      updateSettings(apiToken, {
+        endpoints: updatedEndpoints,
+      });
+    } else {
+      alert("Somehow, what you put in wasn't a string. Try again.");
+    }
+  };
+
+  const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedEndpoint({
+      ...selectedEndpoint,
+      name: event.target.value,
+    });
+  };
+
+  const onChangeUri = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedEndpoint({
+      ...selectedEndpoint,
+      uri: event.target.value,
+    });
+  };
+
   return (
-    <form className="flex-column" id="settings-endpoints-editor">
+    <form
+      className="flex-column"
+      id="settings-endpoints-editor"
+      onSubmit={onSubmitEndpointsEditor}
+    >
       <input
         type="text"
-        name=""
+        name="name"
         className="input-secondary"
         id=""
         placeholder="My Endpoint"
-        value={
-          endpoints.find((endpoint) => endpoint.id === selectedEndpointId)?.name
-        }
+        value={selectedEndpoint.name}
+        onChange={onChangeName}
       />
       <input
         type="text"
+        name="uri"
         className="input-secondary"
         placeholder="http://localhost:5001"
-        value={
-          endpoints.find((endpoint) => endpoint.id === selectedEndpointId)?.uri
-        }
+        value={selectedEndpoint.uri}
+        onChange={onChangeUri}
       />
       <button type="submit" className="button-secondary">
         Save
@@ -108,7 +157,9 @@ function EndpointEditor({
 
 function EndpointsSettings({ apiToken }: { apiToken: string }) {
   const [endpoints, setEndpoints] = useState<Endpoint[] | null>(null);
-  const [selectedEndpointId, setSelectedEndpointId] = useState<string>("");
+  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint | null>(
+    null,
+  );
 
   useEffect(() => {
     getSettings(apiToken).then((settings) => {
@@ -124,18 +175,20 @@ function EndpointsSettings({ apiToken }: { apiToken: string }) {
         {endpoints ? (
           <EndpointsList
             endpoints={endpoints}
-            selectedEndpointId={selectedEndpointId}
-            setSelectedEndpointId={setSelectedEndpointId}
+            selectedEndpoint={selectedEndpoint}
+            setSelectedEndpoint={setSelectedEndpoint}
           />
         ) : (
           <p>Loading...</p>
         )}
       </div>
       <div className="flex-column width-fill-max">
-        {selectedEndpointId && endpoints ? (
+        {selectedEndpoint && endpoints ? (
           <EndpointEditor
-            selectedEndpointId={selectedEndpointId}
+            apiToken={apiToken}
+            selectedEndpoint={selectedEndpoint}
             endpoints={endpoints}
+            setSelectedEndpoint={setSelectedEndpoint}
             setEndpoints={setEndpoints}
           />
         ) : (
