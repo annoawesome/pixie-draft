@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getSettings, patchSettings } from "../api/settingsApi";
-
-interface Endpoint {
-  id: string;
-  name: string;
-  uri: string;
-}
+import Endpoint from "../type/endpointType";
 
 function EndpointCard({
   endpoint,

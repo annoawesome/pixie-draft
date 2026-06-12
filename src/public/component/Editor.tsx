@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { saveStory } from "../api/storiesApi";
 
@@ -10,9 +10,11 @@ import Story, {
   mutateStoryTitle,
   updateStoriesFromUpdatedStory,
 } from "../type/storyType";
-import { generateResponse } from "../api/koboldCppApi";
+import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
+import { getSettings } from "../api/settingsApi";
+import Endpoint from "../type/endpointType";
 
 function ActionBar({
   apiToken,
@@ -170,22 +172,26 @@ export default function Editor({
     }
   };
 
+  useEffect(() => {
+    getSettings(apiToken).then((settings) => {
+      let uri = "http://localhost:5001";
+      const endpointProfiles: Endpoint[] = settings.endpoints;
+
+      if (endpointProfiles[0]) {
+        uri = endpointProfiles[0].uri;
+      }
+
+      fetchModel(uri).then((model) => {
+        if (model) {
+          console.log(`Model found via URI "${uri}":`, model);
+          setApiUri(uri);
+        }
+      });
+    });
+  }, []);
+
   return (
     <div className="flex-column width-fill-max" id="editor">
-      <input
-        type="text"
-        name="api-uri"
-        className="input-secondary"
-        id=""
-        value={apiUri}
-        placeholder="Put API URI here..."
-        onChange={(e) => {
-          setApiUri(e.target.value);
-        }}
-        onBlur={(e) => {
-          setApiUri(e.target.value);
-        }}
-      />
       {selectedStory ? (
         <>
           <input

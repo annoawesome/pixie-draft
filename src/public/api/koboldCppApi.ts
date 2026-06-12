@@ -54,3 +54,15 @@ export async function generateResponse(baseUrl: string, prompt: string) {
 
   throw new Error("Did not respond with generation output:", output);
 }
+
+export async function fetchModel(baseUri: string): Promise<string> {
+  const request = new Request(baseUri + "/api/v1/model");
+  const response = await fetch(request);
+  const body = await response.json();
+
+  if (typeof body.result === "string") {
+    return body.result;
+  }
+
+  return "";
+}
