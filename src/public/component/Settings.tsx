@@ -136,6 +136,7 @@ function EndpointEditor({
         name="name"
         className="input-secondary"
         id=""
+        autoComplete="false"
         placeholder="My Endpoint"
         value={selectedEndpoint.name}
         onChange={onChangeName}
@@ -144,6 +145,7 @@ function EndpointEditor({
         type="text"
         name="uri"
         className="input-secondary"
+        autoComplete="false"
         placeholder="http://localhost:5001"
         value={selectedEndpoint.uri}
         onChange={onChangeUri}
