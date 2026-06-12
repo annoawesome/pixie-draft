@@ -216,3 +216,8 @@ button:disabled .path-icon {
   border: 1px solid var(--neutral-color-3);
   border-radius: 8px;
 }
+
+#settings-selected-endpoint-card {
+  border-color: rgb(0, 200, 255);
+  background-color: rgb(0, 50, 100);
+}
