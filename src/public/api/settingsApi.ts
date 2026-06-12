@@ -31,3 +31,26 @@ export async function updateSettings(apiToken: string, settings: unknown) {
     throw new Error(`HTTP status ${response.status}`);
   }
 }
+
+export async function patchSettings(
+  apiToken: string,
+  settingName: string,
+  setting: unknown,
+) {
+  const request = new Request("/api/v0/settings/" + settingName, {
+    method: "PATCH",
+    headers: new Headers({
+      Authorization: "Bearer " + apiToken,
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify(setting),
+  });
+
+  const response = await fetch(request);
+
+  if (response.ok) {
+    console.log(`Updated settings with patch to '${settingName}':`, setting);
+  } else {
+    throw new Error(`HTTP status ${response.status}`);
+  }
+}

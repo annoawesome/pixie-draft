@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getSettings, updateSettings } from "../api/settingsApi";
+import { getSettings, patchSettings } from "../api/settingsApi";
 
 interface Endpoint {
   id: string;
@@ -60,10 +60,7 @@ function EndpointsList({
     ];
 
     setEndpoints(updatedEndpoints);
-    // TODO: make this into a patch based system instead
-    updateSettings(apiToken, {
-      endpoints: updatedEndpoints,
-    });
+    patchSettings(apiToken, "endpoints", updatedEndpoints);
   };
 
   return (
@@ -130,10 +127,7 @@ function EndpointEditor({
 
       setEndpoints(updatedEndpoints);
 
-      // TODO: make this into a patch based system instead
-      updateSettings(apiToken, {
-        endpoints: updatedEndpoints,
-      });
+      patchSettings(apiToken, "endpoints", updatedEndpoints);
     } else {
       alert("Somehow, what you put in wasn't a string. Try again.");
     }
@@ -147,10 +141,7 @@ function EndpointEditor({
     setEndpoints(updatedEndpoints);
     setSelectedEndpoint(null);
 
-    // TODO: make this into a patch based system instead
-    updateSettings(apiToken, {
-      endpoints: updatedEndpoints,
-    });
+    patchSettings(apiToken, "endpoints", updatedEndpoints);
   };
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
