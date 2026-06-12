@@ -36,17 +36,45 @@ function EndpointCard({
 }
 
 function EndpointsList({
+  apiToken,
   endpoints,
   selectedEndpoint,
+  setEndpoints,
   setSelectedEndpoint,
 }: {
+  apiToken: string;
   endpoints: Endpoint[];
   selectedEndpoint: Endpoint | null;
+  setEndpoints: React.Dispatch<React.SetStateAction<Endpoint[] | null>>;
   setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
 }) {
   console.log("Selected endpoint is:", selectedEndpoint);
+  const onClickCreateNewProfile = () => {
+    const updatedEndpoints = [
+      ...endpoints,
+      {
+        id: crypto.randomUUID(),
+        name: "My Endpoint",
+        uri: "http://example.com",
+      },
+    ];
+
+    setEndpoints(updatedEndpoints);
+    // TODO: make this into a patch based system instead
+    updateSettings(apiToken, {
+      endpoints: updatedEndpoints,
+    });
+  };
+
   return (
     <div className="flex-column" id="settings-endpoints-list">
+      <button
+        type="button"
+        className="button-secondary"
+        onClick={onClickCreateNewProfile}
+      >
+        Create new profile
+      </button>
       <EndpointCard
         endpoint={{
           id: "automatic",
@@ -111,6 +139,20 @@ function EndpointEditor({
     }
   };
 
+  const onClickDelete = () => {
+    const updatedEndpoints = endpoints.filter(
+      (endpoint) => endpoint.id !== selectedEndpoint.id,
+    );
+
+    setEndpoints(updatedEndpoints);
+    setSelectedEndpoint(null);
+
+    // TODO: make this into a patch based system instead
+    updateSettings(apiToken, {
+      endpoints: updatedEndpoints,
+    });
+  };
+
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedEndpoint({
       ...selectedEndpoint,
@@ -150,9 +192,18 @@ function EndpointEditor({
         value={selectedEndpoint.uri}
         onChange={onChangeUri}
       />
-      <button type="submit" className="button-secondary">
-        Save
-      </button>
+      <div className="flex-row" id="settings-endpoints-editor-actions">
+        <button type="submit" className="button-secondary">
+          Save
+        </button>
+        <button
+          type="button"
+          className="button-secondary button-destructive"
+          onClick={onClickDelete}
+        >
+          Delete
+        </button>
+      </div>
     </form>
   );
 }
@@ -176,7 +227,9 @@ function EndpointsSettings({ apiToken }: { apiToken: string }) {
         <h1>Endpoints</h1>
         {endpoints ? (
           <EndpointsList
+            apiToken={apiToken}
             endpoints={endpoints}
+            setEndpoints={setEndpoints}
             selectedEndpoint={selectedEndpoint}
             setSelectedEndpoint={setSelectedEndpoint}
           />
