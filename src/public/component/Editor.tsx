@@ -10,10 +10,11 @@ import Story, {
   mutateStoryTitle,
   updateStoriesFromUpdatedStory,
 } from "../type/storyType";
-import { generateResponse } from "../api/koboldCppApi";
+import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
+import Pulse from "./Pulse";
 
 function ActionBar({
   apiToken,
@@ -30,6 +31,7 @@ function ActionBar({
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const [modelLoaded, setModelLoaded] = useState("");
   const generate = (story: Story) => {
     if (!story) {
       alert("No story loaded to generate with");
@@ -78,6 +80,16 @@ function ActionBar({
     generate(mutatedStory);
   };
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchModel(apiUri)
+        .then(setModelLoaded)
+        .catch(() => setModelLoaded(""));
+    }, 5e3);
+
+    return () => clearInterval(intervalId);
+  }, [apiUri]);
+
   return (
     <div className="flex-row width-fill-max" id="action-bar">
       <div className="flex-row width-fill-max" id="action-bar-left">
@@ -122,6 +134,9 @@ function ActionBar({
         >
           Generate
         </button>
+        <div className="flex-row" id="endpoint-status-indicator">
+          <Pulse active={modelLoaded.length > 0} />
+        </div>
       </div>
     </div>
   );
