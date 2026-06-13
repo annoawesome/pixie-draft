@@ -1,7 +1,12 @@
 import fs from "fs";
 import { getDatabaseFile } from "../../init/initializeDatabase.js";
 
-export default function createStory(title: string, content: string) {
+export default function createStory(
+  title: string,
+  content: string,
+  history?: unknown[],
+  historyIndex?: number,
+) {
   const storiesPath = getDatabaseFile("stories.json");
 
   const id = crypto.randomUUID();
@@ -10,7 +15,7 @@ export default function createStory(title: string, content: string) {
     id,
     title,
     content,
-    history: [
+    history: history || [
       {
         content,
         treePrev: -1,
@@ -19,7 +24,7 @@ export default function createStory(title: string, content: string) {
         },
       },
     ],
-    historyIndex: 0,
+    historyIndex: historyIndex || 0,
   };
   stories.push(story);
   fs.writeFileSync(storiesPath, JSON.stringify(stories, null, 2));

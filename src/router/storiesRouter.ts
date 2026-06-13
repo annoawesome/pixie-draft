@@ -38,10 +38,10 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, history, historyIndex } = req.body;
 
   try {
-    const story = createStory(title, content);
+    const story = createStory(title, content, history, historyIndex);
     res.status(201).json(story);
   } catch (error) {
     console.error("Error creating story:", error);

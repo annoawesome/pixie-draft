@@ -1,4 +1,4 @@
-interface HistoryNode {
+export interface HistoryNode {
   content: string;
   treePrev: number;
   attributes: {
