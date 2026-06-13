@@ -130,6 +130,11 @@ h1 {
   font-size: 12px;
 }
 
+.scrollable {
+  scrollbar-color: var(--neutral-color-4) transparent;
+  scrollbar-width: thin;
+}
+
 .popup-form {
   margin: auto;
 
@@ -196,12 +201,17 @@ h1 {
 }
 
 #main-app-layout {
-  height: 100%;
+  flex-grow: 1;
+  min-height: 0;
   gap: 32px;
   margin: 32px;
 }
 
+/* Side columns */
+
 .side-column {
+  min-height: 0;
+  overflow-y: auto;
   gap: 8px;
   width: 400px;
 }
@@ -286,6 +296,8 @@ button:disabled .path-icon {
 }
 
 #settings-endpoints-list {
+  min-height: 0;
+  overflow-y: auto;
   padding: 16px 64px;
   gap: 16px;
 }

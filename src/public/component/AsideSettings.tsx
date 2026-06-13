@@ -60,7 +60,7 @@ export default function AsideSettings({
   };
 
   return (
-    <aside className="flex-column side-column" id="aside-settings">
+    <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
         <>
           <button className="button-secondary" onClick={onClickExportAsText}>
