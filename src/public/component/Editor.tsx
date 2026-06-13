@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { saveStory } from "../api/storiesApi";
 
@@ -10,9 +10,11 @@ import Story, {
   mutateStoryTitle,
   updateStoriesFromUpdatedStory,
 } from "../type/storyType";
-import { generateResponse } from "../api/koboldCppApi";
+import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
+import * as endpointProfilesService from "../service/endpointProfilesService";
+import Pulse from "./Pulse";
 
 function ActionBar({
   apiToken,
@@ -29,6 +31,7 @@ function ActionBar({
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const [modelLoaded, setModelLoaded] = useState("");
   const generate = (story: Story) => {
     if (!story) {
       alert("No story loaded to generate with");
@@ -77,11 +80,21 @@ function ActionBar({
     generate(mutatedStory);
   };
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchModel(apiUri)
+        .then(setModelLoaded)
+        .catch(() => setModelLoaded(""));
+    }, 5e3);
+
+    return () => clearInterval(intervalId);
+  }, [apiUri]);
+
   return (
     <div className="flex-row width-fill-max" id="action-bar">
       <div className="flex-row width-fill-max" id="action-bar-left">
         <button
-          className="button-secondary"
+          className="button-secondary button-icon"
           type="button"
           disabled={selectedStory.historyIndex === 0 || locked}
           onClick={onClickUndo}
@@ -89,7 +102,7 @@ function ActionBar({
           <UndoIcon />
         </button>
         <button
-          className="button-secondary"
+          className="button-secondary button-icon"
           type="button"
           disabled={
             selectedStory.historyIndex === selectedStory.history.length - 1 ||
@@ -100,7 +113,7 @@ function ActionBar({
           <RedoIcon />
         </button>
         <button
-          className="button-secondary"
+          className="button-secondary button-icon"
           type="button"
           disabled={
             selectedStory.historyIndex === 0 ||
@@ -121,6 +134,9 @@ function ActionBar({
         >
           Generate
         </button>
+        <div className="flex-row" id="endpoint-status-indicator">
+          <Pulse active={modelLoaded.length > 0} />
+        </div>
       </div>
     </div>
   );
@@ -170,22 +186,18 @@ export default function Editor({
     }
   };
 
+  useEffect(() => {
+    endpointProfilesService
+      .fetchUriFromEndpointProfiles(apiToken)
+      .then((uri) => {
+        if (uri) {
+          setApiUri(uri);
+        }
+      });
+  }, []);
+
   return (
     <div className="flex-column width-fill-max" id="editor">
-      <input
-        type="text"
-        name="api-uri"
-        className="input-secondary"
-        id=""
-        value={apiUri}
-        placeholder="Put API URI here..."
-        onChange={(e) => {
-          setApiUri(e.target.value);
-        }}
-        onBlur={(e) => {
-          setApiUri(e.target.value);
-        }}
-      />
       {selectedStory ? (
         <>
           <input

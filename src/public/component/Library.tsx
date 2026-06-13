@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Story from "../type/storyType";
 import { createStory, loadStory } from "../api/storiesApi";
@@ -40,6 +40,8 @@ export default function Library({
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
+  const [search, setSearch] = useState("");
+
   const onClickNewStoryButton = () => {
     createStory(apiToken, "New Story", "Once upon a time...").then(
       (newStory) => {
@@ -51,9 +53,31 @@ export default function Library({
     );
   };
 
+  const filteredStories = stories.filter(
+    (story) =>
+      story.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
+      search.length === 0,
+  );
+
   return (
     <div className="flex-column side-column" id="library">
-      {stories.map((story) => (
+      <input
+        type="search"
+        name=""
+        className="input-secondary"
+        id=""
+        placeholder="Search"
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+      />
+      {search.length > 0 ? (
+        <p className="text-secondary">
+          {filteredStories.length} out of {stories.length} stories found
+        </p>
+      ) : (
+        ""
+      )}
+      {filteredStories.map((story) => (
         <StoryCard
           key={story.id}
           apiToken={apiToken}

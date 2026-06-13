@@ -3,19 +3,30 @@ import path from "path";
 
 let databasePath = "./";
 
-export default function initializeDatabase(databaseDirectory: string) {
-  databasePath = databaseDirectory;
+function initializeJson(fileName: string, defaultValue?: unknown) {
+  const jsonFilePath = getDatabaseFile(fileName + ".json");
 
-  const storiesFilePath = getDatabaseFile("stories.json");
-
-  if (!fs.existsSync(storiesFilePath)) {
-    fs.writeFileSync(storiesFilePath, "[]", "utf-8");
-    console.log("Initialized stories.json");
+  if (!fs.existsSync(jsonFilePath)) {
+    fs.writeFileSync(
+      jsonFilePath,
+      JSON.stringify(defaultValue) || "[]",
+      "utf-8",
+    );
+    console.log(`Initialized ${fileName}.json`);
 
     return true;
   }
 
   return false;
+}
+
+export default function initializeDatabase(databaseDirectory: string) {
+  databasePath = databaseDirectory;
+
+  initializeJson("stories");
+  initializeJson("settings", {
+    endpoints: [],
+  });
 }
 
 export function getDatabaseFile(fileName: string) {

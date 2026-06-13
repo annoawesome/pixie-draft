@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatePrompt from "./component/AuthenticatePrompt";
-import MainLayout from "./component/MainLayout";
 import { refreshTokens } from "./api/authApi";
+import HorizontalLayout from "./component/HorizontalLayout";
+import { CurrentPage } from "./type/currentPageType";
+import Settings from "./component/Settings";
 
 export default function App() {
   // Makes development a little easier with vite's dev server
@@ -9,6 +11,8 @@ export default function App() {
   const [apiToken, setApiToken] = useState<string>(
     window.location.host === "localhost:5173" ? "DUMMY_TOKEN" : "",
   );
+
+  const [currentPage, setCurrentPage] = useState<CurrentPage>("main");
 
   // Refresh api token every 12 minutes, 3 minutes before expiration
   useEffect(() => {
@@ -27,9 +31,15 @@ export default function App() {
     return () => clearTimeout(timeoutId);
   }, [apiToken]);
 
-  return apiToken ? (
-    <MainLayout apiToken={apiToken} />
-  ) : (
-    <AuthenticatePrompt setApiToken={setApiToken} />
-  );
+  if (apiToken) {
+    if (currentPage === "main") {
+      return (
+        <HorizontalLayout apiToken={apiToken} setCurrentPage={setCurrentPage} />
+      );
+    } else if (currentPage === "endpoints") {
+      return <Settings apiToken={apiToken} setCurrentPage={setCurrentPage} />;
+    }
+  }
+
+  return <AuthenticatePrompt setApiToken={setApiToken} />;
 }

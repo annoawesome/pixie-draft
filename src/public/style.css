@@ -23,6 +23,14 @@ body {
   background-color: var(--neutral-color-1);
 }
 
+header {
+  background-color: var(--neutral-color-2);
+}
+
+h1 {
+  font-size: 24px;
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -41,6 +49,16 @@ body {
 .width-fill-max {
   gap: 8px;
   width: 100%;
+}
+
+.sidebar {
+  gap: 16px;
+  width: 400px;
+}
+
+.sidebar-small {
+  gap: 16px;
+  width: fit-content;
 }
 
 .input-secondary,
@@ -76,8 +94,40 @@ body {
   border-color: var(--neutral-color-3);
 }
 
+.button-tertiary {
+  background-color: var(--neutral-color-2);
+  border: 0;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.button-tertiary:hover {
+  background-color: var(--neutral-color-3);
+}
+
+.button-tertiary:active {
+  background-color: var(--neutral-color-1);
+}
+
+.button-destructive {
+  background-color: rgb(200, 0, 0);
+  font-weight: bold;
+  border: 0;
+}
+
+.button-icon {
+  aspect-ratio: 1;
+  padding: 4px;
+}
+
 .path-icon {
   fill: var(--neutral-color-8);
+  transform: translateY(2px);
+}
+
+.text-secondary {
+  color: var(--neutral-color-5);
+  font-size: 12px;
 }
 
 .popup-form {
@@ -89,8 +139,64 @@ body {
   height: 100vh;
 }
 
+/* Pulse effect */
+.pulse-container {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.circle {
+  border-radius: 50%;
+  position: absolute;
+
+  width: 10px;
+  height: 10px;
+  transform: translateX(50%) translateY(50%);
+}
+
+.circle-active {
+  background-color: rgb(40, 220, 0);
+}
+
+.circle-inactive {
+  background-color: rgb(220, 40, 20);
+}
+
+.pulse {
+  background-color: rgb(40, 220, 0);
+  border-radius: 50%;
+  opacity: 0;
+
+  position: absolute;
+  height: 20px;
+  width: 20px;
+
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1, 1);
+    opacity: 0;
+  }
+}
+
+/* Components */
+
+#header-body-layout {
+  height: 100vh;
+}
+
 #main-app-layout {
-  height: calc(100vh - 64px);
+  height: 100%;
   gap: 32px;
   margin: 32px;
 }
@@ -114,15 +220,25 @@ body {
   border-color: var(--neutral-color-3);
 }
 
-/* Action bar icons should look square and small */
-#action-bar-left > button {
-  aspect-ratio: 1;
-  padding: 4px;
-}
-
 /* Darken icons when buttons are disabled. Currently used only for specific action bar buttons */
 button:disabled .path-icon {
   fill: var(--neutral-color-5);
+}
+
+#endpoint-status-indicator {
+  align-items: center;
+}
+
+/* Headers and footers */
+#header-left,
+#header-right {
+  margin: 8px;
+  gap: 8px;
+}
+
+#footer-blurb {
+  text-align: center;
+  margin-bottom: 8px;
 }
 
 #login-form {
@@ -138,4 +254,60 @@ button:disabled .path-icon {
 #login-form > input,
 #login-form > label {
   width: 100%;
+}
+
+/* Settings */
+#settings-layout {
+  height: 100vh;
+}
+
+/* Settings sidebar */
+#settings-sidebar {
+  padding: 16px;
+  background-color: var(--neutral-color-2);
+  border-right: 1px solid var(--neutral-color-3);
+}
+
+#settings-sidebar > button {
+  padding: 16px;
+  text-align: left;
+}
+
+/* Settings section */
+.settings-section {
+  padding: 16px;
+  height: calc(100% - 32px);
+}
+
+/* Endpoints */
+#settings-endpoints-section {
+  gap: 16px;
+}
+
+#settings-endpoints-list {
+  padding: 16px 64px;
+  gap: 16px;
+}
+
+#settings-endpoints-editor {
+  padding: 16px;
+  height: 100%;
+  gap: 16px;
+
+  background-color: var(--neutral-color-2);
+  border: 1px solid var(--neutral-color-3);
+  border-radius: 8px;
+}
+
+#settings-selected-endpoint-card {
+  border-color: rgb(0, 200, 255);
+  background-color: rgb(0, 50, 100);
+}
+
+#settings-endpoints-editor-actions {
+  gap: 8px;
+}
+
+#settings-endpoints-editor-actions button {
+  flex-grow: 1;
 }

@@ -31,7 +31,7 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
   }, [apiToken]);
 
   return (
-    <div className="flex-row" id="main-app-layout">
+    <main className="flex-row" id="main-app-layout">
       <Library
         stories={stories}
         apiToken={apiToken}
@@ -52,6 +52,6 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
         stories={stories}
         setStories={setStories}
       />
-    </div>
+    </main>
   );
 }
