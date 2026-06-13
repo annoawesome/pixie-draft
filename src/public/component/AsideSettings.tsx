@@ -69,7 +69,7 @@ export default function AsideSettings({
           <button className="button-secondary" onClick={onClickExportAsJson}>
             Download as JSON
           </button>
-
+          <div className="separator"></div>
           <button className="button-secondary" onClick={onClickDelete}>
             Delete
           </button>
