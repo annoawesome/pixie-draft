@@ -1,6 +1,6 @@
 import React from "react";
 
-import { createStory, deleteStory } from "../api/storiesApi";
+import { createStory, deleteStory, saveStory } from "../api/storiesApi";
 import Story, { removeStoryFromStories } from "../type/storyType";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
@@ -51,8 +51,17 @@ export default function AsideSettings({
         selectedStory.content,
       ).then((newStory) => {
         if (newStory) {
-          setSelectedStory(newStory);
-          setStories((prev) => [...prev, newStory]);
+          // A hack to copy the history as well
+          const updatedStory: Story = {
+            ...newStory,
+            history: selectedStory.history,
+            historyIndex: selectedStory.historyIndex,
+          };
+
+          saveStory(apiToken, updatedStory);
+
+          setSelectedStory(updatedStory);
+          setStories((prev) => [...prev, updatedStory]);
         }
       });
     }
