@@ -229,10 +229,16 @@ button:disabled .path-icon {
   align-items: center;
 }
 
+/* Headers and footers */
 #header-left,
 #header-right {
   margin: 8px;
   gap: 8px;
+}
+
+#footer-blurb {
+  text-align: center;
+  margin-bottom: 8px;
 }
 
 #login-form {
