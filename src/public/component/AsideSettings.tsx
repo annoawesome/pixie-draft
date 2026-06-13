@@ -1,6 +1,6 @@
 import React from "react";
 
-import { deleteStory } from "../api/storiesApi";
+import { createStory, deleteStory } from "../api/storiesApi";
 import Story, { removeStoryFromStories } from "../type/storyType";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
@@ -43,6 +43,21 @@ export default function AsideSettings({
     }
   };
 
+  const onClickDuplicate = () => {
+    if (selectedStory) {
+      createStory(
+        apiToken,
+        selectedStory.title + " (Copy)",
+        selectedStory.content,
+      ).then((newStory) => {
+        if (newStory) {
+          setSelectedStory(newStory);
+          setStories((prev) => [...prev, newStory]);
+        }
+      });
+    }
+  };
+
   const onClickExportAsText = () => {
     downloadText(
       selectedStory?.content ?? "",
@@ -63,6 +78,10 @@ export default function AsideSettings({
     <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
         <>
+          <button className="button-secondary" onClick={onClickDuplicate}>
+            Duplicate Story
+          </button>
+          <div className="separator"></div>
           <button className="button-secondary" onClick={onClickExportAsText}>
             Download as text
           </button>
