@@ -60,7 +60,7 @@ function EndpointsList({
   };
 
   return (
-    <div className="flex-column" id="settings-endpoints-list">
+    <div className="flex-column scrollable" id="settings-endpoints-list">
       <button
         type="button"
         className="button-secondary"
@@ -214,7 +214,7 @@ export default function EndpointProfilesSettings({
 
   return (
     <div className="flex-row settings-section" id="settings-endpoints-section">
-      <div className="width-fill-max">
+      <div className="width-fill-max flex-column">
         <h1>Endpoints</h1>
         {endpoints ? (
           <EndpointsList

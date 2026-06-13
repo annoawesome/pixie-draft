@@ -85,7 +85,7 @@ export default function Settings({
         setHideSidebar={setHideSidebar}
         setCurrentPage={setCurrentPage}
       />
-      <main className="width-fill-max" id="">
+      <main className="width-fill-max" id="settings-column">
         <EndpointProfilesSettings apiToken={apiToken} />
       </main>
     </div>

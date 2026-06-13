@@ -296,6 +296,8 @@ button:disabled .path-icon {
 }
 
 #settings-endpoints-list {
+  min-height: 0;
+  overflow-y: auto;
   padding: 16px 64px;
   gap: 16px;
 }
