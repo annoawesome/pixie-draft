@@ -51,6 +51,16 @@ h1 {
   width: 100%;
 }
 
+.sidebar {
+  gap: 16px;
+  width: 400px;
+}
+
+.sidebar-small {
+  gap: 16px;
+  width: fit-content;
+}
+
 .input-secondary,
 .button-secondary {
   background-color: transparent;
@@ -241,9 +251,7 @@ button:disabled .path-icon {
 
 /* Settings sidebar */
 #settings-sidebar {
-  gap: 16px;
   padding: 16px;
-  width: 400px;
   background-color: var(--neutral-color-2);
   border-right: 1px solid var(--neutral-color-3);
 }
