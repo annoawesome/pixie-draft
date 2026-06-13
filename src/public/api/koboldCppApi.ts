@@ -38,9 +38,18 @@ export async function generateResponse(baseUrl: string, prompt: string) {
     body: JSON.stringify({
       prompt,
       temperature: 1.25,
-      top_p: 1,
       min_p: 0.05,
       dynatemp_range: 0.75,
+      rep_pen: 1.05,
+      rep_pen_range: 360,
+      rep_pen_slope: 0.7,
+
+      // Disable samplers
+      top_p: 1,
+      top_k: 0,
+      top_a: 0,
+      typical: 1,
+      tfs: 1,
     }),
   });
 
