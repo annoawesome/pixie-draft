@@ -196,14 +196,22 @@ h1 {
 }
 
 #main-app-layout {
-  height: 100%;
+  flex-grow: 1;
+  min-height: 0;
   gap: 32px;
   margin: 32px;
 }
 
+/* Side columns */
+
 .side-column {
   gap: 8px;
   width: 400px;
+}
+
+#library {
+  min-height: 0;
+  overflow-y: auto;
 }
 
 #story-content {
