@@ -7,15 +7,7 @@ import { getStories } from "../api/storiesApi";
 
 export default function MainLayout({ apiToken }: { apiToken: string }) {
   const [stories, setStories] = useState<Story[]>([]);
-  const [selectedStory, setSelectedStory] = useState<Story | null>({
-    id: "",
-    title: "",
-    content: "",
-    history: [
-      { content: "", treePrev: -1, attributes: { generatedByLlm: false } },
-    ],
-    historyIndex: 0,
-  });
+  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   useEffect(() => {
     getStories(apiToken)

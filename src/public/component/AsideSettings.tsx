@@ -25,9 +25,15 @@ export default function AsideSettings({
   };
   return (
     <aside className="flex-column side-column" id="aside-settings">
-      <button className="button-secondary" onClick={onClickDelete}>
-        Delete
-      </button>
+      {selectedStory ? (
+        <>
+          <button className="button-secondary" onClick={onClickDelete}>
+            Delete
+          </button>
+        </>
+      ) : (
+        <></>
+      )}
     </aside>
   );
 }
