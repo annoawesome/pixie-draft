@@ -125,6 +125,11 @@ h1 {
   transform: translateY(2px);
 }
 
+.text-secondary {
+  color: var(--neutral-color-5);
+  font-size: 12px;
+}
+
 .popup-form {
   margin: auto;
 
