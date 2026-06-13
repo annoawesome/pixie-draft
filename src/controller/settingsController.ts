@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import fetchUserSettings from "../dao/settings/fetchUserSettings.js";
-import updateUserSettings from "../dao/settings/updateUserSettings.js";
-import patchUserSettings from "../dao/settings/patchUserSettings.js";
+import fetchUserSettings from "../dao/settings/fetchUserSettingsDao.js";
+import updateUserSettings from "../dao/settings/updateUserSettingsDao.js";
+import patchUserSettings from "../dao/settings/patchUserSettingsDao.js";
 
 export function getSettings(req: Request, res: Response) {
   try {
