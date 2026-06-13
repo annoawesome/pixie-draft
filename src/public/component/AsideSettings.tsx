@@ -95,7 +95,10 @@ export default function AsideSettings({
             Download as JSON
           </button>
           <div className="separator"></div>
-          <button className="button-secondary" onClick={onClickDelete}>
+          <button
+            className="button-secondary button-destructive"
+            onClick={onClickDelete}
+          >
             Delete
           </button>
         </>
