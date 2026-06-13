@@ -130,6 +130,11 @@ h1 {
   font-size: 12px;
 }
 
+.scrollable {
+  scrollbar-color: var(--neutral-color-4) transparent;
+  scrollbar-width: thin;
+}
+
 .popup-form {
   margin: auto;
 
@@ -205,13 +210,10 @@ h1 {
 /* Side columns */
 
 .side-column {
-  gap: 8px;
-  width: 400px;
-}
-
-#library {
   min-height: 0;
   overflow-y: auto;
+  gap: 8px;
+  width: 400px;
 }
 
 #story-content {
