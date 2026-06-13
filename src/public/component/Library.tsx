@@ -61,6 +61,13 @@ export default function Library({
 
   return (
     <div className="flex-column side-column" id="library">
+      <button
+        className="button-secondary"
+        id="new-story-button"
+        onClick={onClickNewStoryButton}
+      >
+        Create Story
+      </button>
       <input
         type="search"
         name=""
@@ -85,13 +92,6 @@ export default function Library({
           setSelectedStory={setSelectedStory}
         />
       ))}
-      <button
-        className="button-secondary"
-        id="new-story-button"
-        onClick={onClickNewStoryButton}
-      >
-        New Story
-      </button>
     </div>
   );
 }
