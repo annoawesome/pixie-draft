@@ -1,4 +1,4 @@
-import Story from "../type/storyType";
+import Story, { HistoryNode } from "../type/storyType";
 
 export async function getStories(apiToken: string): Promise<Story[]> {
   const response = await fetch("/api/v0/stories", {
@@ -21,6 +21,8 @@ export async function createStory(
   apiToken: string,
   title: string,
   content: string,
+  history?: HistoryNode[],
+  historyIndex?: number,
 ): Promise<Story | null> {
   const response = await fetch("/api/v0/stories", {
     method: "POST",
@@ -28,7 +30,7 @@ export async function createStory(
       Authorization: `Bearer ${apiToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ title, content }),
+    body: JSON.stringify({ title, content, history, historyIndex }),
   });
 
   try {

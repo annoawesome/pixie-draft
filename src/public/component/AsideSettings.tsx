@@ -45,23 +45,20 @@ export default function AsideSettings({
 
   const onClickDuplicate = () => {
     if (selectedStory) {
+      const { title, content, history, historyIndex } = selectedStory;
+
       createStory(
         apiToken,
-        selectedStory.title + " (Copy)",
-        selectedStory.content,
+        title + " (Copy)",
+        content,
+        history,
+        historyIndex,
       ).then((newStory) => {
         if (newStory) {
-          // A hack to copy the history as well
-          const updatedStory: Story = {
-            ...newStory,
-            history: selectedStory.history,
-            historyIndex: selectedStory.historyIndex,
-          };
+          saveStory(apiToken, newStory);
 
-          saveStory(apiToken, updatedStory);
-
-          setSelectedStory(updatedStory);
-          setStories((prev) => [...prev, updatedStory]);
+          setSelectedStory(newStory);
+          setStories((prev) => [...prev, newStory]);
         }
       });
     }
