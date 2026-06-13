@@ -207,7 +207,8 @@ h1 {
 }
 
 #story-content {
-  height: 100%;
+  height: 0px;
+  flex-grow: 1;
   overflow-y: auto;
 }
 
