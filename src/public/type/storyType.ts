@@ -179,6 +179,22 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
   };
 }
 
+export function mutateStoryFromRemovingHistory(story: Story) {
+  return {
+    ...story,
+    history: [
+      {
+        content: story.content,
+        treePrev: -1,
+        attributes: {
+          generatedByLlm: false,
+        },
+      },
+    ],
+    historyIndex: 0,
+  };
+}
+
 // offline helper function that updates the story contained in stories to save a bit of bandwidth
 export function updateStoriesFromUpdatedStory(
   stories: Story[],

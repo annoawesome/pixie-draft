@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 
 import { createStory, deleteStory, saveStory } from "../api/storiesApi";
-import Story, { removeStoryFromStories } from "../type/storyType";
+import Story, {
+  mutateStoryFromRemovingHistory,
+  removeStoryFromStories,
+} from "../type/storyType";
 import Dialog from "./Dialog";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
@@ -131,6 +134,18 @@ export default function AsideSettings({
     );
   };
 
+  const onClickClearHistory = () => {
+    if (!selectedStory) return; // Should never happen!
+
+    const updatedStory = mutateStoryFromRemovingHistory(selectedStory);
+
+    saveStory(apiToken, updatedStory).then((success) => {
+      if (success) {
+        setSelectedStory(updatedStory);
+      }
+    });
+  };
+
   return (
     <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
@@ -146,6 +161,13 @@ export default function AsideSettings({
             Download as JSON
           </button>
           <div className="separator"></div>
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={onClickClearHistory}
+          >
+            Clear History
+          </button>
           <button
             className="button-secondary button-destructive"
             onClick={onClickDelete}
