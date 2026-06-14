@@ -152,7 +152,7 @@ export default function AsideSettings({
           >
             Delete
           </button>
-          <Dialog className="" showDialog={showDialog}>
+          <Dialog showDialog={showDialog}>
             <DialogBox
               selectedStory={selectedStory}
               onClickCancelDelete={onClickCancelDelete}

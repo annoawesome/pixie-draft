@@ -4,8 +4,6 @@ export default function Dialog({
   showDialog,
   children,
 }: {
-  className: string;
-
   showDialog: boolean;
   children: React.ReactNode;
 }) {
