@@ -31,6 +31,21 @@ h1 {
   font-size: 24px;
 }
 
+dialog {
+  max-width: 400px;
+
+  background-color: var(--neutral-color-2);
+  border: 1px solid var(--neutral-color-4);
+  border-radius: 8px;
+
+  margin: auto;
+  padding: 16px;
+}
+
+dialog::backdrop {
+  backdrop-filter: blur(4px);
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -59,6 +74,14 @@ h1 {
 .sidebar-small {
   gap: 16px;
   width: fit-content;
+}
+
+.gap-medium {
+  gap: 16px;
+}
+
+.gap-small {
+  gap: 8px;
 }
 
 .input-secondary,
@@ -110,9 +133,17 @@ h1 {
 }
 
 .button-destructive {
-  background-color: rgb(200, 0, 0);
+  background-color: rgb(100, 30, 30);
   font-weight: bold;
   border: 0;
+}
+
+.button-destructive:hover {
+  background-color: rgb(160, 35, 35);
+}
+
+.button-destructive:active {
+  background-color: var(--neutral-color-3);
 }
 
 .button-icon {
