@@ -32,6 +32,8 @@ h1 {
 }
 
 dialog {
+  max-width: 400px;
+
   background-color: var(--neutral-color-2);
   border: 1px solid var(--neutral-color-4);
   border-radius: 8px;
