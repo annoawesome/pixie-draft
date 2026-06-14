@@ -86,6 +86,37 @@ function clamp(x: number, min: number, max: number) {
 }
 
 /**
+ * Applies a patch from a history node onto the provided content. Patches to the next node's content
+ * are stored in a node's `patch` property. As such, when using this function do this:
+ *
+ * If `reverse` is true, then supply the *previous* history node.
+ *
+ * If `reverse` is false, supply the *current* history node.
+ * @param historyNode The history node to extract the patch from
+ * @param content The current shown content
+ * @param reverse Whether to reverse the patch
+ * @returns The patched content
+ */
+function applyPatchFromHistoryNode(
+  historyNode: HistoryNode,
+  content: string,
+  reverse: boolean,
+) {
+  if (!historyNode.patch)
+    throw new Error(`Failed to find patch to ${reverse ? "undo" : "redo"}`);
+
+  const patchedContent = applyPatch(
+    content,
+    reverse ? reversePatch(historyNode.patch) : historyNode.patch,
+  );
+
+  if (!patchedContent)
+    throw new Error(`Failed to ${reverse ? "undo" : "redo"}`);
+
+  return patchedContent;
+}
+
+/**
  *
  * @param story A story object
  * @param revert If true, undo by one node. Otherwise, redo one node
@@ -106,33 +137,21 @@ export function mutateStoryFromHistoryPageFlip(
   if (revert) {
     const prevHistoryNode = story.history[story.historyIndex - 1];
 
-    if (!prevHistoryNode.patch) throw new Error("Failed to find patch to undo");
-
-    const patchedContent = applyPatch(
-      story.content,
-      reversePatch(prevHistoryNode.patch),
-    );
-
-    if (!patchedContent) throw new Error("Failed to undo");
-
     return {
       ...story,
-      content: patchedContent,
+      content: applyPatchFromHistoryNode(prevHistoryNode, story.content, true),
       historyIndex: newIndex,
     };
   } else {
     const currentHistoryNode = getCurrentHistoryNode(story);
 
-    if (!currentHistoryNode.patch)
-      throw new Error("Failed to find patch to redo");
-
-    const patchedContent = applyPatch(story.content, currentHistoryNode.patch);
-
-    if (!patchedContent) throw new Error("Failed to redo");
-
     return {
       ...story,
-      content: patchedContent,
+      content: applyPatchFromHistoryNode(
+        currentHistoryNode,
+        story.content,
+        false,
+      ),
       historyIndex: newIndex,
     };
   }
