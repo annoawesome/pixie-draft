@@ -164,9 +164,17 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
     story.history.length - 1,
   );
 
+  let content = story.content;
+
+  for (let i = story.historyIndex - 1; i >= newIndex; i--) {
+    const prevHistoryNode = story.history[i];
+
+    content = applyPatchFromHistoryNode(prevHistoryNode, content, true);
+  }
+
   return {
     ...story,
-    content: story.history[newIndex].content,
+    content: content,
     historyIndex: newIndex,
   };
 }
