@@ -1,5 +1,13 @@
+import {
+  applyPatch,
+  reversePatch,
+  StructuredPatch,
+  structuredPatch,
+} from "diff";
+
 export interface HistoryNode {
   content: string;
+  patch?: StructuredPatch;
   treePrev: number;
   attributes: {
     generatedByLlm: boolean;
@@ -37,6 +45,14 @@ export function mutateStoryFromAppendingHistory(
     return { ...story };
   }
 
+  const prevHistoryNode = story.history[story.history.length - 1];
+
+  const updatedPrevHistoryNode: HistoryNode = {
+    ...prevHistoryNode,
+    patch: structuredPatch("", "", prevHistoryNode.content, newContent),
+    content: "",
+  };
+
   const historyNode: HistoryNode = {
     content: newContent,
     treePrev: story.historyIndex,
@@ -49,7 +65,10 @@ export function mutateStoryFromAppendingHistory(
     ...story,
     content: newContent,
     history: [
-      ...(story.history.length >= 50 ? story.history.slice(1) : story.history),
+      ...(story.history.length >= 50
+        ? story.history.slice(1, -1)
+        : story.history.slice(0, -1)),
+      updatedPrevHistoryNode,
       historyNode,
     ],
     historyIndex: story.history.length,
@@ -66,17 +85,57 @@ function clamp(x: number, min: number, max: number) {
   }
 }
 
+/**
+ *
+ * @param story A story object
+ * @param revert If true, undo by one node. Otherwise, redo one node
+ * @returns A new story object
+ */
 export function mutateStoryFromHistoryPageFlip(
   story: Story,
-  rel: number,
+  revert: boolean,
 ): Story {
-  const newIndex = clamp(story.historyIndex + rel, 0, story.history.length - 1);
+  const newIndex = clamp(
+    story.historyIndex + (revert ? -1 : 1),
+    0,
+    story.history.length - 1,
+  );
 
-  return {
-    ...story,
-    content: story.history[newIndex].content,
-    historyIndex: newIndex,
-  };
+  if (newIndex === story.historyIndex) return { ...story };
+
+  if (revert) {
+    const prevHistoryNode = story.history[story.historyIndex - 1];
+
+    if (!prevHistoryNode.patch) throw new Error("Failed to find patch to undo");
+
+    const patchedContent = applyPatch(
+      story.content,
+      reversePatch(prevHistoryNode.patch),
+    );
+
+    if (!patchedContent) throw new Error("Failed to undo");
+
+    return {
+      ...story,
+      content: patchedContent,
+      historyIndex: newIndex,
+    };
+  } else {
+    const currentHistoryNode = getCurrentHistoryNode(story);
+
+    if (!currentHistoryNode.patch)
+      throw new Error("Failed to find patch to redo");
+
+    const patchedContent = applyPatch(story.content, currentHistoryNode.patch);
+
+    if (!patchedContent) throw new Error("Failed to redo");
+
+    return {
+      ...story,
+      content: patchedContent,
+      historyIndex: newIndex,
+    };
+  }
 }
 
 export function mutateStoryFromTreeBacktrack(story: Story): Story {
