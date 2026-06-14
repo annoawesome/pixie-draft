@@ -1,0 +1,16 @@
+services:
+  pixie:
+    image: annocode/pixie-draft
+    ports:
+      - "80:8080"
+    environment:
+      - PIXIE_PORT=8080
+      - PIXIE_DB_DIRECTORY=/app/data
+      # Make sure to fill this out!
+      - PIXIE_PASSWORD=
+      - PIXIE_SECRET=
+      - PIXIE_COOKIE_SECRET=
+    volumes:
+      - pixie-data:/app/data
+volumes:
+  pixie-data:
