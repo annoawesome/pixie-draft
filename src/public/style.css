@@ -138,6 +138,14 @@ dialog::backdrop {
   border: 0;
 }
 
+.button-destructive:hover {
+  background-color: rgb(160, 35, 35);
+}
+
+.button-destructive:active {
+  background-color: var(--neutral-color-3);
+}
+
 .button-icon {
   aspect-ratio: 1;
   padding: 4px;
