@@ -62,6 +62,20 @@ function DialogBox({
   );
 }
 
+function millisecondsToString(milliseconds: number) {
+  return new Date(milliseconds).toLocaleString("en-US", {
+    weekday: "short",
+
+    second: "2-digit",
+    minute: "2-digit",
+    hour: "numeric",
+
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  });
+}
+
 export default function AsideSettings({
   apiToken,
   selectedStory,
@@ -150,6 +164,17 @@ export default function AsideSettings({
     <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
         <>
+          <p className="text-secondary">
+            Created at {millisecondsToString(selectedStory.time.created)}
+          </p>
+          <p className="text-secondary">
+            Viewed at {millisecondsToString(selectedStory.time.accessed)}
+          </p>
+          <p className="text-secondary">
+            Edited at {millisecondsToString(selectedStory.time.modified)}
+          </p>
+          <div className="separator"></div>
+
           <button className="button-secondary" onClick={onClickDuplicate}>
             Duplicate Story
           </button>
