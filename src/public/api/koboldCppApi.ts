@@ -29,11 +29,16 @@ function isGenerationOutput(response): response is GenerationOutput {
  * @param prompt - The prompt sent to the LLM
  * @returns The continuation to be appended to the prompt
  */
-export async function generateResponse(baseUrl: string, prompt: string) {
+export async function generateResponse(
+  baseUrl: string,
+  prompt: string,
+  authorization: string,
+) {
   const request = new Request(baseUrl + "/api/v1/generate", {
     method: "POST",
     headers: new Headers({
       "Content-Type": "application/json",
+      Authorization: "Bearer " + authorization,
     }),
     body: JSON.stringify({
       prompt,

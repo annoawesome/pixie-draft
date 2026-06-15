@@ -15,17 +15,18 @@ import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
 import Pulse from "./Pulse";
+import Endpoint from "../type/endpointType";
 
 function ActionBar({
   apiToken,
-  apiUri,
+  endpointProfile,
   selectedStory,
   locked,
   setSelectedStory,
   setLocked,
 }: {
   apiToken: string;
-  apiUri: string;
+  endpointProfile: Endpoint | null;
   selectedStory: Story;
   locked: boolean;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
@@ -38,10 +39,19 @@ function ActionBar({
       return;
     }
 
+    if (!endpointProfile) {
+      alert("No LLM endpoint is connected");
+      return;
+    }
+
     setLocked(true);
 
     // call LLM api
-    generateResponse(apiUri, story.content)
+    generateResponse(
+      endpointProfile.uri,
+      story.content,
+      endpointProfile.authorization,
+    )
       .then((text) => {
         const mutatedStory = mutateStoryFromAppendingHistory(
           story,
@@ -82,13 +92,15 @@ function ActionBar({
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      fetchModel(apiUri)
+      if (!endpointProfile) return;
+
+      fetchModel(endpointProfile.uri)
         .then(setModelLoaded)
         .catch(() => setModelLoaded(""));
     }, 5e3);
 
     return () => clearInterval(intervalId);
-  }, [apiUri]);
+  }, [endpointProfile]);
 
   return (
     <div className="flex-row width-fill-max" id="action-bar">
@@ -156,7 +168,7 @@ export default function Editor({
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
   const [locked, setLocked] = useState(false);
-  const [apiUri, setApiUri] = useState("");
+  const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
 
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
@@ -188,12 +200,8 @@ export default function Editor({
 
   useEffect(() => {
     endpointProfilesService
-      .fetchUriFromEndpointProfiles(apiToken)
-      .then((uri) => {
-        if (uri) {
-          setApiUri(uri);
-        }
-      });
+      .fetchEndpointFromEndpointProfiles(apiToken)
+      .then(setEndpointProfile);
   }, []);
 
   return (
@@ -217,7 +225,7 @@ export default function Editor({
           />
           <ActionBar
             apiToken={apiToken}
-            apiUri={apiUri}
+            endpointProfile={endpointProfile}
             selectedStory={selectedStory}
             locked={locked}
             setSelectedStory={setSelectedStory}
