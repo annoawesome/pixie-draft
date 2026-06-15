@@ -197,7 +197,7 @@ function EndpointEditor({
         onChange={onChangeUri}
       />
       <input
-        type="text"
+        type="password"
         name="authorization"
         className="input-secondary"
         autoComplete="false"
