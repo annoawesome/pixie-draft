@@ -45,16 +45,17 @@ export function mutateStoryFromAppendingHistory(
     return { ...story };
   }
 
+  const prevContent = story.content;
   const prevHistoryNode = story.history[story.history.length - 1];
 
   const updatedPrevHistoryNode: HistoryNode = {
     ...prevHistoryNode,
-    patch: structuredPatch("", "", prevHistoryNode.content, newContent),
+    patch: structuredPatch("", "", prevContent, newContent),
     content: "",
   };
 
   const historyNode: HistoryNode = {
-    content: newContent,
+    content: "",
     treePrev: story.historyIndex,
     attributes: {
       generatedByLlm,
@@ -184,7 +185,7 @@ export function mutateStoryFromRemovingHistory(story: Story) {
     ...story,
     history: [
       {
-        content: story.content,
+        content: "",
         treePrev: -1,
         attributes: {
           generatedByLlm: false,

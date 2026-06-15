@@ -17,7 +17,7 @@ export default function createStory(
     content,
     history: history || [
       {
-        content,
+        content: "",
         treePrev: -1,
         attributes: {
           generatedByLlm: false,
