@@ -1,5 +1,13 @@
+import {
+  applyPatch,
+  reversePatch,
+  StructuredPatch,
+  structuredPatch,
+} from "diff";
+
 export interface HistoryNode {
   content: string;
+  patch?: StructuredPatch;
   treePrev: number;
   attributes: {
     generatedByLlm: boolean;
@@ -37,8 +45,17 @@ export function mutateStoryFromAppendingHistory(
     return { ...story };
   }
 
+  const prevContent = story.content;
+  const prevHistoryNode = story.history[story.history.length - 1];
+
+  const updatedPrevHistoryNode: HistoryNode = {
+    ...prevHistoryNode,
+    patch: structuredPatch("", "", prevContent, newContent),
+    content: "",
+  };
+
   const historyNode: HistoryNode = {
-    content: newContent,
+    content: "",
     treePrev: story.historyIndex,
     attributes: {
       generatedByLlm,
@@ -49,7 +66,10 @@ export function mutateStoryFromAppendingHistory(
     ...story,
     content: newContent,
     history: [
-      ...(story.history.length >= 50 ? story.history.slice(1) : story.history),
+      ...(story.history.length >= 200
+        ? story.history.slice(1, -1)
+        : story.history.slice(0, -1)),
+      updatedPrevHistoryNode,
       historyNode,
     ],
     historyIndex: story.history.length,
@@ -66,17 +86,76 @@ function clamp(x: number, min: number, max: number) {
   }
 }
 
+/**
+ * Applies a patch from a history node onto the provided content. Patches to the next node's content
+ * are stored in a node's `patch` property. As such, when using this function do this:
+ *
+ * If `reverse` is true, then supply the *previous* history node.
+ *
+ * If `reverse` is false, supply the *current* history node.
+ * @param historyNode The history node to extract the patch from
+ * @param content The current shown content
+ * @param reverse Whether to reverse the patch
+ * @returns The patched content
+ */
+function applyPatchFromHistoryNode(
+  historyNode: HistoryNode,
+  content: string,
+  reverse: boolean,
+) {
+  if (!historyNode.patch)
+    throw new Error(`Failed to find patch to ${reverse ? "undo" : "redo"}`);
+
+  const patchedContent = applyPatch(
+    content,
+    reverse ? reversePatch(historyNode.patch) : historyNode.patch,
+  );
+
+  if (!patchedContent)
+    throw new Error(`Failed to ${reverse ? "undo" : "redo"}`);
+
+  return patchedContent;
+}
+
+/**
+ *
+ * @param story A story object
+ * @param revert If true, undo by one node. Otherwise, redo one node
+ * @returns A new story object
+ */
 export function mutateStoryFromHistoryPageFlip(
   story: Story,
-  rel: number,
+  revert: boolean,
 ): Story {
-  const newIndex = clamp(story.historyIndex + rel, 0, story.history.length - 1);
+  const newIndex = clamp(
+    story.historyIndex + (revert ? -1 : 1),
+    0,
+    story.history.length - 1,
+  );
 
-  return {
-    ...story,
-    content: story.history[newIndex].content,
-    historyIndex: newIndex,
-  };
+  if (newIndex === story.historyIndex) return { ...story };
+
+  if (revert) {
+    const prevHistoryNode = story.history[story.historyIndex - 1];
+
+    return {
+      ...story,
+      content: applyPatchFromHistoryNode(prevHistoryNode, story.content, true),
+      historyIndex: newIndex,
+    };
+  } else {
+    const currentHistoryNode = getCurrentHistoryNode(story);
+
+    return {
+      ...story,
+      content: applyPatchFromHistoryNode(
+        currentHistoryNode,
+        story.content,
+        false,
+      ),
+      historyIndex: newIndex,
+    };
+  }
 }
 
 export function mutateStoryFromTreeBacktrack(story: Story): Story {
@@ -86,10 +165,34 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
     story.history.length - 1,
   );
 
+  let content = story.content;
+
+  for (let i = story.historyIndex - 1; i >= newIndex; i--) {
+    const prevHistoryNode = story.history[i];
+
+    content = applyPatchFromHistoryNode(prevHistoryNode, content, true);
+  }
+
   return {
     ...story,
-    content: story.history[newIndex].content,
+    content: content,
     historyIndex: newIndex,
+  };
+}
+
+export function mutateStoryFromRemovingHistory(story: Story) {
+  return {
+    ...story,
+    history: [
+      {
+        content: "",
+        treePrev: -1,
+        attributes: {
+          generatedByLlm: false,
+        },
+      },
+    ],
+    historyIndex: 0,
   };
 }
 

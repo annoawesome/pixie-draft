@@ -60,14 +60,14 @@ function ActionBar({
   };
 
   const onClickUndo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, -1);
+    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, true);
 
     setSelectedStory(mutatedStory);
     saveStory(apiToken, mutatedStory);
   };
 
   const onClickRedo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, 1);
+    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, false);
 
     setSelectedStory(mutatedStory);
     saveStory(apiToken, mutatedStory);

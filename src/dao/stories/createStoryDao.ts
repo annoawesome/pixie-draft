@@ -17,7 +17,7 @@ export default function createStory(
     content,
     history: history || [
       {
-        content,
+        content: "",
         treePrev: -1,
         attributes: {
           generatedByLlm: false,
@@ -27,7 +27,7 @@ export default function createStory(
     historyIndex: historyIndex || 0,
   };
   stories.push(story);
-  fs.writeFileSync(storiesPath, JSON.stringify(stories, null, 2));
+  fs.writeFileSync(storiesPath, JSON.stringify(stories));
 
   return story;
 }

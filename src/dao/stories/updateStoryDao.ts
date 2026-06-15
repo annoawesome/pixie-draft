@@ -16,6 +16,6 @@ export default function updateStory(
 
   if (index !== -1) {
     stories[index] = { id, title, content, history, historyIndex };
-    fs.writeFileSync(storiesPath, JSON.stringify(stories, null, 2));
+    fs.writeFileSync(storiesPath, JSON.stringify(stories));
   }
 }
