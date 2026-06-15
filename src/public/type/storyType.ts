@@ -31,6 +31,16 @@ type Story = {
 
 export default Story;
 
+export interface StoryPreview {
+  id: string;
+  title: string;
+  time: {
+    created: number;
+    accessed: number;
+    modified: number;
+  };
+}
+
 export function getCurrentHistoryNode(story: Story) {
   return story.history[story.historyIndex];
 }
