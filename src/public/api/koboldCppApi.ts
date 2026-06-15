@@ -42,6 +42,7 @@ export async function generateResponse(
     }),
     body: JSON.stringify({
       prompt,
+      max_length: 150,
       temperature: 1.25,
       min_p: 0.05,
       dynatemp_range: 0.75,
