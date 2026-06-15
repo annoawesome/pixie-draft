@@ -177,6 +177,9 @@ function EndpointEditor({
       id="settings-endpoints-editor"
       onSubmit={onSubmitEndpointsEditor}
     >
+      <label htmlFor="name" className="text-secondary">
+        Profile Name
+      </label>
       <input
         type="text"
         name="name"
@@ -187,6 +190,9 @@ function EndpointEditor({
         value={selectedEndpoint.name}
         onChange={onChangeName}
       />
+      <label htmlFor="authorization" className="text-secondary">
+        Endpoint URI
+      </label>
       <input
         type="text"
         name="uri"
@@ -196,13 +202,16 @@ function EndpointEditor({
         value={selectedEndpoint.uri}
         onChange={onChangeUri}
       />
+      <label htmlFor="authorization" className="text-secondary">
+        Authorization Key
+      </label>
       <input
         type="password"
         name="authorization"
         className="input-secondary"
         autoComplete="false"
         title="Authorization Key"
-        placeholder="Authorization key here..."
+        placeholder="Authorization key here... (Leave this empty if no authorization is needed)"
         value={selectedEndpoint.authorization}
         onChange={onChangeAuthorization}
       />

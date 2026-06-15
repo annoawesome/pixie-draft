@@ -336,11 +336,14 @@ button:disabled .path-icon {
 #settings-endpoints-editor {
   padding: 16px;
   height: 100%;
-  gap: 16px;
 
   background-color: var(--neutral-color-2);
   border: 1px solid var(--neutral-color-3);
   border-radius: 8px;
+}
+
+#settings-endpoints-editor > input {
+  margin-bottom: 8px;
 }
 
 #settings-selected-endpoint-card {
