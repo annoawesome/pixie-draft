@@ -18,6 +18,13 @@ type Story = {
   id: string;
   title: string;
   content: string;
+
+  time: {
+    created: number;
+    accessed: number;
+    modified: number;
+  };
+
   history: HistoryNode[];
   historyIndex: number;
 };
