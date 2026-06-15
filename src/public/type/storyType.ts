@@ -66,7 +66,7 @@ export function mutateStoryFromAppendingHistory(
     ...story,
     content: newContent,
     history: [
-      ...(story.history.length >= 50
+      ...(story.history.length >= 200
         ? story.history.slice(1, -1)
         : story.history.slice(0, -1)),
       updatedPrevHistoryNode,
