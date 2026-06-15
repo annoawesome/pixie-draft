@@ -343,7 +343,7 @@ button:disabled .path-icon {
 }
 
 #settings-endpoints-editor > input {
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 #settings-selected-endpoint-card {
