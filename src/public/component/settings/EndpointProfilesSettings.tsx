@@ -52,6 +52,7 @@ function EndpointsList({
         id: crypto.randomUUID(),
         name: "My Endpoint",
         uri: "http://example.com",
+        authorization: "",
       },
     ];
 
@@ -73,6 +74,7 @@ function EndpointsList({
           id: "automatic",
           name: "Automatic",
           uri: "auto-generated",
+          authorization: "",
         }}
         selectedEndpoint={selectedEndpoint}
         setSelectedEndpoint={setSelectedEndpoint}
@@ -108,9 +110,15 @@ function EndpointEditor({
     event: React.SubmitEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
-    const { name, uri } = Object.fromEntries(new FormData(event.target));
+    const { name, uri, authorization } = Object.fromEntries(
+      new FormData(event.target),
+    );
 
-    if (typeof name === "string" && typeof uri === "string") {
+    if (
+      typeof name === "string" &&
+      typeof uri === "string" &&
+      typeof authorization === "string"
+    ) {
       const updatedEndpoints = endpoints.map((endpoint) => {
         if (endpoint.id === selectedEndpoint.id) {
           return {
@@ -154,12 +162,24 @@ function EndpointEditor({
     });
   };
 
+  const onChangeAuthorization = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setSelectedEndpoint({
+      ...selectedEndpoint,
+      authorization: event.target.value,
+    });
+  };
+
   return (
     <form
       className="flex-column"
       id="settings-endpoints-editor"
       onSubmit={onSubmitEndpointsEditor}
     >
+      <label htmlFor="name" className="text-secondary">
+        Profile Name
+      </label>
       <input
         type="text"
         name="name"
@@ -170,6 +190,9 @@ function EndpointEditor({
         value={selectedEndpoint.name}
         onChange={onChangeName}
       />
+      <label htmlFor="authorization" className="text-secondary">
+        Endpoint URI
+      </label>
       <input
         type="text"
         name="uri"
@@ -178,6 +201,19 @@ function EndpointEditor({
         placeholder="http://localhost:5001"
         value={selectedEndpoint.uri}
         onChange={onChangeUri}
+      />
+      <label htmlFor="authorization" className="text-secondary">
+        Authorization Key
+      </label>
+      <input
+        type="password"
+        name="authorization"
+        className="input-secondary"
+        autoComplete="false"
+        title="Authorization Key"
+        placeholder="Authorization key here... (Leave this empty if no authorization is needed)"
+        value={selectedEndpoint.authorization}
+        onChange={onChangeAuthorization}
       />
       <div className="flex-row" id="settings-endpoints-editor-actions">
         <button type="submit" className="button-secondary">
