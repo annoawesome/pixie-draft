@@ -51,6 +51,7 @@ function EndpointsList({
       {
         id: crypto.randomUUID(),
         name: "My Endpoint",
+        type: "KoboldCpp",
         uri: "http://example.com",
         authorization: "",
       },
@@ -73,6 +74,7 @@ function EndpointsList({
         endpoint={{
           id: "automatic",
           name: "Automatic",
+          type: "KoboldCpp",
           uri: "auto-generated",
           authorization: "",
         }}

@@ -26,6 +26,7 @@ export async function fetchEndpointFromEndpointProfiles(
   return {
     id: "automatic",
     name: "Automatic",
+    type: "KoboldCpp",
     uri: "http://localhost:5001",
     authorization: "",
   };

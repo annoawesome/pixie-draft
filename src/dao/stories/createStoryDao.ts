@@ -1,5 +1,6 @@
 import fs from "fs";
 import { getDatabaseFile } from "../../init/initializeDatabase.js";
+import Story from "../../type/storyType.js";
 
 export default function createStory(
   title: string,
@@ -11,10 +12,16 @@ export default function createStory(
 
   const id = crypto.randomUUID();
   const stories = JSON.parse(fs.readFileSync(storiesPath, "utf-8"));
-  const story = {
+  const story: Story = {
     id,
+    version: "0.0.0",
     title,
+    desc: "",
+    tags: [],
     content,
+
+    attributes: {},
+    encyclopedia: {},
 
     time: {
       created: Date.now(),
