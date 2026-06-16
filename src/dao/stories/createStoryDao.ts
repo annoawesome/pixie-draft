@@ -15,6 +15,13 @@ export default function createStory(
     id,
     title,
     content,
+
+    time: {
+      created: Date.now(),
+      accessed: Date.now(),
+      modified: -1,
+    },
+
     history: history || [
       {
         content: "",

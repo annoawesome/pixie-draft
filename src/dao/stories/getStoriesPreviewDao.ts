@@ -9,5 +9,6 @@ export default function getStoriesPreview() {
   return stories.map((story: Story) => ({
     id: story.id,
     title: story.title,
+    time: story.time,
   }));
 }
