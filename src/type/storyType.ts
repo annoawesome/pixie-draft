@@ -1,7 +1,13 @@
 type Story = {
   id: string;
+  version: string;
   title: string;
+  desc: string;
+  tags: string[];
   content: string;
+
+  attributes: Record<string, string>;
+  encyclopedia: Record<string, string>;
 
   time: {
     created: number;
