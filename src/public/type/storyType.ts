@@ -68,8 +68,8 @@ export function mutateStoryFromAppendingHistory(
     return { ...story };
   }
 
-  const prevContent = story.content;
   const prevHistoryNode = story.history[story.history.length - 1];
+  const prevContent = prevHistoryNode.content;
 
   const updatedPrevHistoryNode: HistoryNode = {
     ...prevHistoryNode,
@@ -78,7 +78,7 @@ export function mutateStoryFromAppendingHistory(
   };
 
   const historyNode: HistoryNode = {
-    content: "",
+    content: newContent,
     treePrev: story.historyIndex,
     attributes: {
       generatedByLlm,
@@ -208,7 +208,7 @@ export function mutateStoryFromRemovingHistory(story: Story) {
     ...story,
     history: [
       {
-        content: "",
+        content: story.content,
         treePrev: -1,
         attributes: {
           generatedByLlm: false,
