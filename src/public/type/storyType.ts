@@ -18,11 +18,28 @@ type Story = {
   id: string;
   title: string;
   content: string;
+
+  time: {
+    created: number;
+    accessed: number;
+    modified: number;
+  };
+
   history: HistoryNode[];
   historyIndex: number;
 };
 
 export default Story;
+
+export interface StoryPreview {
+  id: string;
+  title: string;
+  time: {
+    created: number;
+    accessed: number;
+    modified: number;
+  };
+}
 
 export function getCurrentHistoryNode(story: Story) {
   return story.history[story.historyIndex];
