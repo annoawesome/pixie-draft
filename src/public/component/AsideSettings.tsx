@@ -6,6 +6,7 @@ import Story, {
   removeStoryFromStories,
 } from "../type/storyType";
 import Dialog from "./Dialog";
+import { humanFileSize } from "../util/numberFormatting";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -201,6 +202,13 @@ export default function AsideSettings({
           >
             Delete
           </button>
+          <div className="separator"></div>
+
+          <p className="text-secondary">
+            Story Size:
+            {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
+          </p>
+
           <Dialog showDialog={showDialog}>
             <DialogBox
               selectedStory={selectedStory}
