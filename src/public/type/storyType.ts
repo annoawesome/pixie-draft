@@ -1,13 +1,13 @@
 import {
-  applyPatch,
-  reversePatch,
-  StructuredPatch,
-  structuredPatch,
-} from "diff";
+  applyDiff,
+  applyInvertedDiff,
+  DiffOp,
+  generateDiff,
+} from "../util/rawDiff";
 
 export interface HistoryNode {
   content: string;
-  patch?: StructuredPatch;
+  patch?: DiffOp[];
   treePrev: number;
   attributes: {
     generatedByLlm: boolean;
@@ -73,7 +73,7 @@ export function mutateStoryFromAppendingHistory(
 
   const updatedPrevHistoryNode: HistoryNode = {
     ...prevHistoryNode,
-    patch: structuredPatch("", "", prevContent, newContent),
+    patch: generateDiff(prevContent, newContent),
     content: "",
   };
 
@@ -129,10 +129,9 @@ function applyPatchFromHistoryNode(
   if (!historyNode.patch)
     throw new Error(`Failed to find patch to ${reverse ? "undo" : "redo"}`);
 
-  const patchedContent = applyPatch(
-    content,
-    reverse ? reversePatch(historyNode.patch) : historyNode.patch,
-  );
+  const patchedContent = reverse
+    ? applyInvertedDiff(content, historyNode.patch)
+    : applyDiff(content, historyNode.patch);
 
   if (!patchedContent)
     throw new Error(`Failed to ${reverse ? "undo" : "redo"}`);
