@@ -71,7 +71,7 @@ export default function Library({
   return (
     <div className="flex-column side-column scrollable" id="library">
       <button
-        className="button-secondary"
+        className="button-primary"
         id="new-story-button"
         onClick={onClickNewStoryButton}
       >

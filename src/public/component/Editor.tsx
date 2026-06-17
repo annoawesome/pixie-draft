@@ -151,7 +151,7 @@ function ActionBar({
       </div>
       <div className="flex-row-right width-fill-max" id="action-bar-right">
         <button
-          className="button-secondary"
+          className="button-primary"
           type="button"
           disabled={locked}
           onClick={onGenerate}

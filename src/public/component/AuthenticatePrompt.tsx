@@ -35,7 +35,7 @@ export default function AuthenticatePrompt({
         className="input-secondary"
         id="login-password"
       />
-      <button type="submit" className="input-secondary">
+      <button type="submit" className="button-primary">
         Login
       </button>
     </form>
