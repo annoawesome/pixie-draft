@@ -205,7 +205,18 @@ export default function AsideSettings({
           <div className="separator"></div>
 
           <p className="text-secondary">
-            Story Size:
+            Word count: {selectedStory.content.split(/[\s]+/).length}
+          </p>
+          <p className="text-secondary">
+            Sentence count:{" "}
+            {
+              selectedStory.content
+                .split(/[!?.]+/)
+                .filter((sentence) => sentence.length > 0).length
+            }
+          </p>
+          <p className="text-secondary">
+            Story size:
             {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
           </p>
           <p className="text-secondary">Id: {selectedStory.id}</p>
