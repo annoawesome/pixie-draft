@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import Story from "../type/storyType";
 import { createStory, loadStory } from "../api/storiesApi";
+import { millisecondsToString } from "../util/time";
 
 function StoryCard({
   apiToken,
@@ -23,8 +24,16 @@ function StoryCard({
   };
 
   return (
-    <button className="button-secondary story-card" onClick={onClickStoryCard}>
+    <button
+      className="button-secondary flex-column story-card"
+      onClick={onClickStoryCard}
+    >
       <h2>{story.title}</h2>
+      <p className="text-secondary">
+        {story.time.modified !== -1
+          ? `${millisecondsToString(story.time.modified)}`
+          : "Has not been edited yet"}
+      </p>
     </button>
   );
 }

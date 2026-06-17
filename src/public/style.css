@@ -247,6 +247,11 @@ dialog::backdrop {
   width: 400px;
 }
 
+.story-card {
+  padding: 8px;
+  gap: 8px;
+}
+
 #story-content {
   height: 0px;
   flex-grow: 1;

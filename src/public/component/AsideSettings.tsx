@@ -7,6 +7,7 @@ import Story, {
 } from "../type/storyType";
 import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
+import { millisecondsToString } from "../util/time";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -61,20 +62,6 @@ function DialogBox({
       </div>
     </div>
   );
-}
-
-function millisecondsToString(milliseconds: number) {
-  return new Date(milliseconds).toLocaleString("en-US", {
-    weekday: "short",
-
-    second: "2-digit",
-    minute: "2-digit",
-    hour: "numeric",
-
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  });
 }
 
 export default function AsideSettings({
