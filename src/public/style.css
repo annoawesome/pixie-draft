@@ -269,6 +269,7 @@ button:disabled .path-icon {
 
 #endpoint-status-indicator {
   align-items: center;
+  gap: 4px;
 }
 
 /* Headers and footers */
