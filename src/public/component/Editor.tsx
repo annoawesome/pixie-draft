@@ -159,7 +159,14 @@ function ActionBar({
           Generate
         </button>
         <div className="flex-row" id="endpoint-status-indicator">
-          <Pulse active={modelLoaded.length > 0} />
+          <Pulse
+            active={modelLoaded.length > 0}
+            title={
+              modelLoaded
+                ? `${endpointProfile?.name}\n${modelLoaded}`
+                : "Unable to find model"
+            }
+          />
         </div>
       </div>
     </div>

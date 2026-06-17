@@ -6,6 +6,8 @@ import Story, {
   removeStoryFromStories,
 } from "../type/storyType";
 import Dialog from "./Dialog";
+import { humanFileSize } from "../util/numberFormatting";
+import { millisecondsToString } from "../util/time";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -60,20 +62,6 @@ function DialogBox({
       </div>
     </div>
   );
-}
-
-function millisecondsToString(milliseconds: number) {
-  return new Date(milliseconds).toLocaleString("en-US", {
-    weekday: "short",
-
-    second: "2-digit",
-    minute: "2-digit",
-    hour: "numeric",
-
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  });
 }
 
 export default function AsideSettings({
@@ -164,19 +152,6 @@ export default function AsideSettings({
     <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
         <>
-          <p className="text-secondary">
-            Created at {millisecondsToString(selectedStory.time.created)}
-          </p>
-          <p className="text-secondary">
-            Viewed at {millisecondsToString(selectedStory.time.accessed)}
-          </p>
-          <p className="text-secondary">
-            {selectedStory.time.modified !== -1
-              ? `Edited at ${millisecondsToString(selectedStory.time.modified)}`
-              : "Has not been edited yet"}
-          </p>
-          <div className="separator"></div>
-
           <button className="button-secondary" onClick={onClickDuplicate}>
             Duplicate Story
           </button>
@@ -201,6 +176,35 @@ export default function AsideSettings({
           >
             Delete
           </button>
+          <div className="separator"></div>
+
+          <p className="text-secondary">
+            Word count: {selectedStory.content.split(/[\s]+/).length}
+          </p>
+          <p className="text-secondary">
+            Sentence count:{" "}
+            {
+              selectedStory.content
+                .split(/[!?.]+/)
+                .filter((sentence) => sentence.length > 0).length
+            }
+          </p>
+          <p className="text-secondary">
+            Created: {millisecondsToString(selectedStory.time.created)}
+          </p>
+          <p className="text-secondary">
+            {selectedStory.time.modified !== -1
+              ? `Edited: ${millisecondsToString(selectedStory.time.modified)}`
+              : "Has not been edited yet"}
+          </p>
+          <div className="separator"></div>
+
+          <p className="text-secondary">
+            Story size:
+            {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
+          </p>
+          <p className="text-secondary">Id: {selectedStory.id}</p>
+
           <Dialog showDialog={showDialog}>
             <DialogBox
               selectedStory={selectedStory}
