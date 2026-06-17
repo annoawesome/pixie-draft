@@ -208,6 +208,7 @@ export default function AsideSettings({
             Story Size:
             {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
           </p>
+          <p className="text-secondary">Id: {selectedStory.id}</p>
 
           <Dialog showDialog={showDialog}>
             <DialogBox
