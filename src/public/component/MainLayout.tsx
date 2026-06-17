@@ -27,6 +27,7 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
       <Library
         stories={stories}
         apiToken={apiToken}
+        selectedStory={selectedStory}
         setSelectedStory={setSelectedStory}
         setStories={setStories}
       />

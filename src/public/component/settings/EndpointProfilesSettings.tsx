@@ -16,13 +16,11 @@ function EndpointCard({
 }) {
   return (
     <button
-      className="button-secondary"
-      disabled={locked}
-      id={
-        endpoint.id === selectedEndpoint?.id
-          ? "settings-selected-endpoint-card"
-          : undefined
+      className={
+        "button-secondary " +
+        (selectedEndpoint?.id === endpoint.id ? "button-selected" : "")
       }
+      disabled={locked}
       onClick={() => setSelectedEndpoint(endpoint)}
     >
       <h2>{endpoint.name}</h2>
@@ -218,7 +216,7 @@ function EndpointEditor({
         onChange={onChangeAuthorization}
       />
       <div className="flex-row" id="settings-endpoints-editor-actions">
-        <button type="submit" className="button-secondary">
+        <button type="submit" className="button-primary">
           Save
         </button>
         <button

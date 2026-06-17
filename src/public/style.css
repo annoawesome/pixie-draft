@@ -8,6 +8,16 @@
   --neutral-color-7: hsl(0, 0%, 76%);
   --neutral-color-8: hsl(0, 0%, 88%);
   --neutral-color-9: hsl(0, 0%, 94%);
+
+  --accent-color-1: hsl(277, 40%, 10%);
+  --accent-color-2: hsl(277, 43%, 21%);
+  --accent-color-3: hsl(280, 50%, 34%);
+  --accent-color-4: hsl(282, 58%, 44%);
+  --accent-color-5: hsl(285, 67%, 47%);
+  --accent-color-6: hsl(287, 50%, 51%);
+  --accent-color-7: hsl(290, 34%, 63%);
+  --accent-color-8: hsl(290, 22%, 78%);
+  --accent-color-9: hsl(300, 12%, 92%);
 }
 
 * {
@@ -85,7 +95,8 @@ dialog::backdrop {
 }
 
 .input-secondary,
-.button-secondary {
+.button-secondary,
+.button-primary {
   background-color: transparent;
 
   border: 1px solid var(--neutral-color-4);
@@ -102,6 +113,30 @@ dialog::backdrop {
 
 .input-secondary {
   background-color: var(--neutral-color-1);
+}
+
+.button-primary {
+  border: 0;
+  background-color: var(--accent-color-4);
+  background: linear-gradient(
+    30deg,
+    var(--accent-color-4),
+    var(--accent-color-6)
+  );
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.button-primary:hover {
+  background: var(--accent-color-6);
+}
+
+.button-primary:active {
+  background: var(--accent-color-3);
+}
+
+.button-primary:disabled {
+  background: var(--accent-color-2);
 }
 
 .button-secondary {
@@ -132,6 +167,12 @@ dialog::backdrop {
   background-color: var(--neutral-color-1);
 }
 
+.button-selected {
+  border: 0;
+  margin: 1px;
+  background-color: var(--accent-color-3);
+}
+
 .button-destructive {
   background-color: rgb(100, 30, 30);
   font-weight: bold;
@@ -158,6 +199,11 @@ dialog::backdrop {
 
 .text-secondary {
   color: var(--neutral-color-5);
+  font-size: 12px;
+}
+
+.button-selected .text-secondary {
+  color: var(--accent-color-7);
   font-size: 12px;
 }
 
@@ -350,11 +396,6 @@ button:disabled .path-icon {
 
 #settings-endpoints-editor > input {
   margin-bottom: 16px;
-}
-
-#settings-selected-endpoint-card {
-  border-color: rgb(0, 200, 255);
-  background-color: rgb(0, 50, 100);
 }
 
 #settings-endpoints-editor-actions {
