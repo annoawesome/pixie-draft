@@ -197,6 +197,8 @@ export default function AsideSettings({
               ? `Edited: ${millisecondsToString(selectedStory.time.modified)}`
               : "Has not been edited yet"}
           </p>
+          <div className="separator"></div>
+
           <p className="text-secondary">
             Story size:
             {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
