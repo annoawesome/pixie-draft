@@ -31,7 +31,7 @@ export default function createStory(
 
     history: history || [
       {
-        content: "",
+        content: content,
         treePrev: -1,
         attributes: {
           generatedByLlm: false,
