@@ -19,12 +19,24 @@
       "presentation": {
         "reveal": "silent"
       },
-      "command": "npx vite build --emptyOutDir",
+      "command": "npx vite build --emptyOutDir --minify false --mode development ",
       "group": "build",
-      "label": "vite: build"
+      "label": "vite: build dev"
     },
     {
-      "dependsOn": ["tsc: build", "vite: build"],
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/src/public/"
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "command": "npx vite build --emptyOutDir ",
+      "group": "build",
+      "label": "vite: build prod"
+    },
+    {
+      "dependsOn": ["tsc: build", "vite: build dev"],
       "group": "build",
       "label": "Build App"
     },
