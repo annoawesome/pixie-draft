@@ -152,19 +152,6 @@ export default function AsideSettings({
     <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
         <>
-          <p className="text-secondary">
-            Created at {millisecondsToString(selectedStory.time.created)}
-          </p>
-          <p className="text-secondary">
-            Viewed at {millisecondsToString(selectedStory.time.accessed)}
-          </p>
-          <p className="text-secondary">
-            {selectedStory.time.modified !== -1
-              ? `Edited at ${millisecondsToString(selectedStory.time.modified)}`
-              : "Has not been edited yet"}
-          </p>
-          <div className="separator"></div>
-
           <button className="button-secondary" onClick={onClickDuplicate}>
             Duplicate Story
           </button>
@@ -201,6 +188,14 @@ export default function AsideSettings({
                 .split(/[!?.]+/)
                 .filter((sentence) => sentence.length > 0).length
             }
+          </p>
+          <p className="text-secondary">
+            Created: {millisecondsToString(selectedStory.time.created)}
+          </p>
+          <p className="text-secondary">
+            {selectedStory.time.modified !== -1
+              ? `Edited: ${millisecondsToString(selectedStory.time.modified)}`
+              : "Has not been edited yet"}
           </p>
           <p className="text-secondary">
             Story size:
