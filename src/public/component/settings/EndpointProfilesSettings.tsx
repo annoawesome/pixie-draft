@@ -16,13 +16,11 @@ function EndpointCard({
 }) {
   return (
     <button
-      className="button-secondary"
-      disabled={locked}
-      id={
-        endpoint.id === selectedEndpoint?.id
-          ? "settings-selected-endpoint-card"
-          : undefined
+      className={
+        "button-secondary " +
+        (selectedEndpoint?.id === endpoint.id ? "button-selected" : "")
       }
+      disabled={locked}
       onClick={() => setSelectedEndpoint(endpoint)}
     >
       <h2>{endpoint.name}</h2>

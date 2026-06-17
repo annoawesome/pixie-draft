@@ -7,10 +7,12 @@ import { millisecondsToString } from "../util/time";
 function StoryCard({
   apiToken,
   story,
+  selectedStory,
   setSelectedStory,
 }: {
   apiToken: string;
   story: Story;
+  selectedStory: Story | null;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
 }) {
   const onClickStoryCard = () => {
@@ -25,7 +27,10 @@ function StoryCard({
 
   return (
     <button
-      className="button-secondary flex-column story-card"
+      className={
+        "button-secondary flex-column story-card" +
+        (selectedStory?.id === story.id ? " button-selected" : "")
+      }
       onClick={onClickStoryCard}
     >
       <h2>{story.title}</h2>
@@ -41,10 +46,12 @@ function StoryCard({
 export default function Library({
   apiToken,
   stories,
+  selectedStory,
   setSelectedStory,
   setStories,
 }: {
   apiToken: string;
+  selectedStory: Story | null;
   stories: Story[];
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
@@ -98,6 +105,7 @@ export default function Library({
           key={story.id}
           apiToken={apiToken}
           story={story}
+          selectedStory={selectedStory}
           setSelectedStory={setSelectedStory}
         />
       ))}
