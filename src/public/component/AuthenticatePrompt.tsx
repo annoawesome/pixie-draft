@@ -28,13 +28,17 @@ export default function AuthenticatePrompt({
       onSubmit={onSubmit}
     >
       <h1>You need to login</h1>
-      <label htmlFor="password">Password</label>
-      <input
-        type="password"
-        name="password"
-        className="input-secondary"
-        id="login-password"
-      />
+      <div className="flex-column">
+        <label htmlFor="password" className="text-secondary">
+          Password
+        </label>
+        <input
+          type="password"
+          name="password"
+          className="input-secondary"
+          id="login-password"
+        />
+      </div>
       <button type="submit" className="button-primary">
         Login
       </button>
