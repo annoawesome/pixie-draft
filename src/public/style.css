@@ -124,7 +124,7 @@ dialog::backdrop {
     var(--accent-color-6)
   );
 
-  box-shadow: 0 1px 4px black;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
 .button-primary:hover {
