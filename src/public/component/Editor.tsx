@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { saveStory } from "../api/storiesApi";
 
@@ -19,6 +19,7 @@ import Endpoint from "../type/endpointType";
 
 function ActionBar({
   apiToken,
+  contendEditableRef,
   endpointProfile,
   selectedStory,
   locked,
@@ -26,6 +27,7 @@ function ActionBar({
   setLocked,
 }: {
   apiToken: string;
+  contendEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
   selectedStory: Story;
   locked: boolean;
@@ -61,6 +63,16 @@ function ActionBar({
 
         setSelectedStory(mutatedStory);
         saveStory(apiToken, mutatedStory);
+
+        // There is probably a better way to do this
+        setTimeout(() => {
+          if (contendEditableRef.current) {
+            contendEditableRef.current.scrollTo(
+              0,
+              contendEditableRef.current.scrollHeight,
+            );
+          }
+        }, 100);
       })
       .finally(() => setLocked(false));
   };
@@ -170,6 +182,8 @@ export default function Editor({
   const [locked, setLocked] = useState(false);
   const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
 
+  const contendEditableRef = useRef<HTMLDivElement | null>(null);
+
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
@@ -222,9 +236,11 @@ export default function Editor({
             value={selectedStory.content}
             onUpdate={onBlurStoryContent}
             locked={locked}
+            ref={contendEditableRef}
           />
           <ActionBar
             apiToken={apiToken}
+            contendEditableRef={contendEditableRef}
             endpointProfile={endpointProfile}
             selectedStory={selectedStory}
             locked={locked}

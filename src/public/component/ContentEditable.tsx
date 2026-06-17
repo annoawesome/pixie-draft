@@ -26,12 +26,14 @@ export default function ContentEditable({
   value,
   locked,
   onUpdate,
+  ref,
 }: {
   value: string;
   locked: boolean;
   onUpdate: (newContent: string) => void;
+  ref?: React.RefObject<HTMLDivElement | null>;
 }) {
-  const contentEditableRef = useRef<HTMLDivElement | null>(null);
+  const contentEditableRef = ref || useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (contentEditableRef.current) {
