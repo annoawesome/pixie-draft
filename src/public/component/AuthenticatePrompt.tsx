@@ -2,9 +2,9 @@ import React from "react";
 import { authClient } from "../client/authClient";
 
 export default function AuthenticatePrompt({
-  setApiToken,
+  setAuthenticated,
 }: {
-  setApiToken: React.Dispatch<React.SetStateAction<string>>;
+  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,7 +15,7 @@ export default function AuthenticatePrompt({
       authClient.login(password).then(async () => {
         const apiToken = authClient.getApiToken();
         console.log(apiToken ? "Logged in" : "Wrong password");
-        setApiToken(apiToken);
+        setAuthenticated(!!apiToken);
       });
     }
   };

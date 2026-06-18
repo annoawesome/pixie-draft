@@ -8,23 +8,26 @@ import { authClient } from "./client/authClient";
 export default function App() {
   // Makes development a little easier with vite's dev server
   // Only temporary, will probably be replaced with something better
-  const [apiToken, setApiToken] = useState<string>(
-    window.location.host === "localhost:5173" ? "DUMMY_TOKEN" : "",
+  const [authenticated, setAuthenticated] = useState<boolean>(
+    window.location.host === "localhost:5173",
   );
 
   const [currentPage, setCurrentPage] = useState<CurrentPage>("main");
 
   authClient.setRefreshInterval();
 
-  if (apiToken) {
+  if (authenticated) {
     if (currentPage === "main") {
       return (
-        <HorizontalLayout apiToken={apiToken} setCurrentPage={setCurrentPage} />
+        <HorizontalLayout
+          authenticated={authenticated}
+          setCurrentPage={setCurrentPage}
+        />
       );
     } else if (currentPage === "endpoints") {
       return <Settings setCurrentPage={setCurrentPage} />;
     }
   }
 
-  return <AuthenticatePrompt setApiToken={setApiToken} />;
+  return <AuthenticatePrompt setAuthenticated={setAuthenticated} />;
 }

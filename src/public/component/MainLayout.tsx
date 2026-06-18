@@ -5,7 +5,11 @@ import Editor from "./Editor";
 import Library from "./Library";
 import { storiesClient } from "../client/storiesClient";
 
-export default function MainLayout({ apiToken }: { apiToken: string }) {
+export default function MainLayout({
+  authenticated,
+}: {
+  authenticated: boolean;
+}) {
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
@@ -21,7 +25,7 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
         // probably failed because unauthroized
         console.error("Error fetching stories:", error);
       });
-  }, [apiToken]);
+  }, [authenticated]);
 
   return (
     <main className="flex-row" id="main-app-layout">

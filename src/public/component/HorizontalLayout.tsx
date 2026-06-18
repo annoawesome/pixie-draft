@@ -40,16 +40,16 @@ function Footer() {
 }
 
 export default function HorizontalLayout({
-  apiToken,
+  authenticated,
   setCurrentPage,
 }: {
-  apiToken: string;
+  authenticated: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
   return (
     <div className="flex-column" id="header-body-layout">
       <Header setCurrentPage={setCurrentPage} />
-      <MainLayout apiToken={apiToken} />
+      <MainLayout authenticated={authenticated} />
       <Footer />
     </div>
   );
