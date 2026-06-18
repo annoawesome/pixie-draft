@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 
 import Story from "../type/storyType";
-import { createStory, loadStory } from "../api/storiesApi";
 import { millisecondsToString } from "../util/time";
+import { storiesClient } from "../client/storiesClient";
 
 function StoryCard({
-  apiToken,
   story,
   selectedStory,
   setSelectedStory,
 }: {
-  apiToken: string;
   story: Story;
   selectedStory: Story | null;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
@@ -18,7 +16,7 @@ function StoryCard({
   const onClickStoryCard = () => {
     const id = story.id;
 
-    loadStory(apiToken, id).then((fullStory) => {
+    storiesClient.loadStory(id).then((fullStory) => {
       if (fullStory) {
         setSelectedStory(fullStory);
       }
@@ -44,13 +42,11 @@ function StoryCard({
 }
 
 export default function Library({
-  apiToken,
   stories,
   selectedStory,
   setSelectedStory,
   setStories,
 }: {
-  apiToken: string;
   selectedStory: Story | null;
   stories: Story[];
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
@@ -59,14 +55,14 @@ export default function Library({
   const [search, setSearch] = useState("");
 
   const onClickNewStoryButton = () => {
-    createStory(apiToken, "New Story", "Once upon a time...").then(
-      (newStory) => {
+    storiesClient
+      .createStory("New Story", "Once upon a time...")
+      .then((newStory) => {
         if (newStory) {
           setSelectedStory(newStory);
           setStories((prev) => [...prev, newStory]);
         }
-      },
-    );
+      });
   };
 
   const filteredStories = stories.filter(
@@ -103,7 +99,6 @@ export default function Library({
       {filteredStories.map((story) => (
         <StoryCard
           key={story.id}
-          apiToken={apiToken}
           story={story}
           selectedStory={selectedStory}
           setSelectedStory={setSelectedStory}

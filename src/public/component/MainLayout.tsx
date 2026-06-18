@@ -3,14 +3,15 @@ import Story from "../type/storyType";
 import AsideSettings from "./AsideSettings";
 import Editor from "./Editor";
 import Library from "./Library";
-import { getStories } from "../api/storiesApi";
+import { storiesClient } from "../client/storiesClient";
 
 export default function MainLayout({ apiToken }: { apiToken: string }) {
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
 
   useEffect(() => {
-    getStories(apiToken)
+    storiesClient
+      .loadLibrary()
       .then((stories) => {
         if (stories) {
           setStories(stories);
@@ -26,20 +27,17 @@ export default function MainLayout({ apiToken }: { apiToken: string }) {
     <main className="flex-row" id="main-app-layout">
       <Library
         stories={stories}
-        apiToken={apiToken}
         selectedStory={selectedStory}
         setSelectedStory={setSelectedStory}
         setStories={setStories}
       />
       <Editor
-        apiToken={apiToken}
         selectedStory={selectedStory}
         setSelectedStory={setSelectedStory}
         stories={stories}
         setStories={setStories}
       />
       <AsideSettings
-        apiToken={apiToken}
         selectedStory={selectedStory}
         setSelectedStory={setSelectedStory}
         stories={stories}

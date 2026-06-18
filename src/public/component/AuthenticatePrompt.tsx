@@ -1,5 +1,5 @@
 import React from "react";
-import { login } from "../api/authApi";
+import { authClient } from "../client/authClient";
 
 export default function AuthenticatePrompt({
   setApiToken,
@@ -12,10 +12,9 @@ export default function AuthenticatePrompt({
     const { password } = Object.fromEntries(new FormData(e.target));
 
     if (typeof password === "string") {
-      login(password).then((apiToken) => {
+      authClient.login(password).then(() => {
+        const apiToken = authClient.getApiToken();
         console.log(apiToken ? "Logged in" : "Wrong password");
-
-        // window.location.reload();
         setApiToken(apiToken);
       });
     }
