@@ -18,7 +18,7 @@ export class StoriesClient {
   ): Promise<Story | null> {
     try {
       const response = await storiesApi.createStory(
-        this.authClient.getApiToken(),
+        await this.authClient.getUsableApiToken(),
         title,
         content,
       );
@@ -45,7 +45,7 @@ export class StoriesClient {
   public async duplicateStory(story: Story) {
     try {
       const response = await storiesApi.createStory(
-        this.authClient.getApiToken(),
+        await this.authClient.getUsableApiToken(),
         story.title,
         story.content,
         story.history,
@@ -72,7 +72,9 @@ export class StoriesClient {
    * loadLibrary
    */
   public async loadLibrary(): Promise<Story[]> {
-    const response = await storiesApi.getStories(this.authClient.getApiToken());
+    const response = await storiesApi.getStories(
+      await this.authClient.getUsableApiToken(),
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP status ${response.status}`);
@@ -89,7 +91,7 @@ export class StoriesClient {
    */
   public async loadStory(id: string): Promise<Story | null> {
     const response = await storiesApi.loadStory(
-      this.authClient.getApiToken(),
+      await this.authClient.getUsableApiToken(),
       id,
     );
 
@@ -111,7 +113,7 @@ export class StoriesClient {
    */
   public async saveStory(story: Story) {
     const response = await storiesApi.saveStory(
-      this.authClient.getApiToken(),
+      await this.authClient.getUsableApiToken(),
       story,
     );
 
@@ -129,7 +131,7 @@ export class StoriesClient {
    */
   public async deleteStory(id: string) {
     const response = await storiesApi.deleteStory(
-      this.authClient.getApiToken(),
+      await this.authClient.getUsableApiToken(),
       id,
     );
 

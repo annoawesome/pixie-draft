@@ -12,7 +12,7 @@ export default function AuthenticatePrompt({
     const { password } = Object.fromEntries(new FormData(e.target));
 
     if (typeof password === "string") {
-      authClient.login(password).then(() => {
+      authClient.login(password).then(async () => {
         const apiToken = authClient.getApiToken();
         console.log(apiToken ? "Logged in" : "Wrong password");
         setApiToken(apiToken);

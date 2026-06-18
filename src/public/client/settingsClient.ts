@@ -10,7 +10,7 @@ export class SettingsClient {
 
   public async getSettings() {
     const response = await settingsApi.getSettings(
-      this.authClient.getApiToken(),
+      await this.authClient.getUsableApiToken(),
     );
     const settings = await response.json();
 
@@ -21,7 +21,7 @@ export class SettingsClient {
 
   public async updateSettings(settings: unknown) {
     const response = await settingsApi.updateSettings(
-      this.authClient.getApiToken(),
+      await this.authClient.getUsableApiToken(),
       settings,
     );
 
@@ -34,7 +34,7 @@ export class SettingsClient {
 
   public async updateSetting(settingName: string, setting: unknown) {
     const response = await settingsApi.patchSettings(
-      this.authClient.getApiToken(),
+      await this.authClient.getUsableApiToken(),
       settingName,
       setting,
     );

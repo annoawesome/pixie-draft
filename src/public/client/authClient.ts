@@ -2,6 +2,7 @@ import * as authApi from "../api/authApi";
 
 export class AuthClient {
   private apiToken: string = "";
+  private lastRefreshTime: number = -1;
   private refreshIntervalId = -1;
 
   constructor() {}
@@ -13,6 +14,7 @@ export class AuthClient {
 
     if (response.ok) {
       this.apiToken = await response.text();
+      this.lastRefreshTime = Date.now();
     } else {
       throw new Error(`HTTP status ${response.status}`);
     }
@@ -33,6 +35,7 @@ export class AuthClient {
       console.log("Refreshed API token");
 
       this.apiToken = await response.text();
+      this.lastRefreshTime = Date.now();
     } else {
       throw new Error(`HTTP status ${response.status}`);
     }
@@ -42,6 +45,20 @@ export class AuthClient {
    * getApiToken
    */
   public getApiToken() {
+    return this.apiToken;
+  }
+
+  /**
+   * Get a usable API token, refreshing it automatically if it may have expired
+   */
+  public async getUsableApiToken() {
+    if (
+      this.lastRefreshTime > -1 &&
+      Date.now() - this.lastRefreshTime > 1e3 * 60 * 12
+    ) {
+      await this.refresh();
+    }
+
     return this.apiToken;
   }
 }
