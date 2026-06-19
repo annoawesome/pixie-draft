@@ -27,7 +27,7 @@ export function updateSettings(req: Request, res: Response) {
 
 export function patchSettings(req: Request, res: Response) {
   try {
-    const { rawSettingName } = req.params;
+    const rawSettingName = req.params.setting;
     const { setting, content } = UpdateUserSettingDto.parse({
       setting: rawSettingName,
       content: req.body,
