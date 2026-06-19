@@ -60,6 +60,7 @@ router.put("/:id", (req, res) => {
 
   try {
     const story: Story = StorySchema.parse({ id, ...req.body });
+    story.time.modified = Date.now();
 
     updateStory(story);
     res.status(204).send();
