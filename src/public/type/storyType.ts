@@ -218,14 +218,18 @@ export function mutateStoryFromRemovingHistory(story: Story) {
   };
 }
 
+function compareStoryByTimeModified(a: Story, b: Story) {
+  return b.time.modified - a.time.modified;
+}
+
 // offline helper function that updates the story contained in stories to save a bit of bandwidth
 export function updateStoriesFromUpdatedStory(
   stories: Story[],
   updatedStory: Story,
 ) {
-  return stories.map((story) =>
-    story.id === updatedStory.id ? updatedStory : story,
-  );
+  return stories
+    .map((story) => (story.id === updatedStory.id ? updatedStory : story))
+    .toSorted(compareStoryByTimeModified);
 }
 
 // offline helper function that removes the story contained in stories

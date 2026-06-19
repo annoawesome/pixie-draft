@@ -60,7 +60,7 @@ export default function Library({
       .then((newStory) => {
         if (newStory) {
           setSelectedStory(newStory);
-          setStories((prev) => [...prev, newStory]);
+          setStories((prev) => [newStory, ...prev]);
         }
       });
   };

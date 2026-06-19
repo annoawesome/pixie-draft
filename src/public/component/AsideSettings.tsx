@@ -104,7 +104,7 @@ export default function AsideSettings({
           storiesClient.saveStory(newStory);
 
           setSelectedStory(newStory);
-          setStories((prev) => [...prev, newStory]);
+          setStories((prev) => [newStory, ...prev]);
         }
       });
     }

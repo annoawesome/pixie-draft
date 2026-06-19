@@ -211,8 +211,13 @@ export default function Editor({
         false,
       );
 
+      // Purely a local change that gets overwritten by the back end
+      mutatedStory.time.modified = Date.now();
+
       setSelectedStory(mutatedStory);
       storiesClient.saveStory(mutatedStory);
+
+      setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
     }
   };
 
