@@ -96,7 +96,7 @@ function ActionBar({
       .saveStory(mutatedStory)
       .then(() =>
         setStories((stories) =>
-          updateStoriesFromUpdatedStory(stories, selectedStory),
+          updateStoriesFromUpdatedStory(stories, mutatedStory),
         ),
       );
   };
@@ -109,7 +109,7 @@ function ActionBar({
       .saveStory(mutatedStory)
       .then(() =>
         setStories((stories) =>
-          updateStoriesFromUpdatedStory(stories, selectedStory),
+          updateStoriesFromUpdatedStory(stories, mutatedStory),
         ),
       );
   };
@@ -235,7 +235,7 @@ export default function Editor({
       storiesClient
         .saveStory(mutatedStory)
         .then(() =>
-          setStories(updateStoriesFromUpdatedStory(stories, selectedStory)),
+          setStories(updateStoriesFromUpdatedStory(stories, mutatedStory)),
         );
     }
   };
