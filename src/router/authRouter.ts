@@ -64,4 +64,14 @@ router.post("/refresh", (req, res) => {
   });
 });
 
+router.delete("/", (req, res) => {
+  res.clearCookie("authentication", {
+    httpOnly: true,
+    signed: true,
+    sameSite: "lax",
+  });
+
+  res.sendStatus(204);
+});
+
 export default router;

@@ -1,8 +1,9 @@
 import React from "react";
 
 import MainLayout from "./MainLayout";
-import { BrainIcon, HamburgerMenuIcon } from "./Icons";
+import { BrainIcon, HamburgerMenuIcon, LockIcon } from "./Icons";
 import { CurrentPage } from "../type/currentPageType";
+import { authClient } from "../client/authClient";
 
 function Header({
   setCurrentPage,
@@ -14,6 +15,15 @@ function Header({
       <div className="flex-row width-fill-max" id="header-left">
         <button className="button-tertiary button-icon">
           <HamburgerMenuIcon />
+        </button>
+        <button
+          type="button"
+          className="button-tertiary button-icon"
+          onClick={() =>
+            authClient.logOut().then(() => window.location.reload())
+          }
+        >
+          <LockIcon />
         </button>
       </div>
       <div className="flex-row-right width-fill-max" id="header-right">

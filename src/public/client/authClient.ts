@@ -62,6 +62,14 @@ export class AuthClient {
 
     return this.apiToken;
   }
+
+  public async logOut() {
+    const response = await authApi.deleteTokens();
+
+    if (!response.ok) {
+      throw new HttpError(response.status, "Could not log out");
+    }
+  }
 }
 
 export const authClient = new AuthClient();

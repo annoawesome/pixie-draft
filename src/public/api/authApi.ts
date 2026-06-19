@@ -23,3 +23,13 @@ export async function refreshTokens() {
 
   return response;
 }
+
+export async function deleteTokens() {
+  const request = new Request("/api/v0/auth", {
+    method: "DELETE",
+  });
+
+  const response = await fetch(request);
+
+  return response;
+}
