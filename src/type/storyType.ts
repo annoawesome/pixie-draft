@@ -34,5 +34,16 @@ export const StorySchema = z.object({
   historyIndex: z.number(),
 });
 
+export const StoryCreateDtoSchema = z.object({
+  title: z.string(),
+  content: z.string(),
+
+  history: z.array(HistoryNodeSchema),
+  historyIndex: z.number(),
+});
+
 type Story = z.infer<typeof StorySchema>;
+
+export type HistoryNode = z.infer<typeof HistoryNodeSchema>;
 export default Story;
+export type StoryCreateDto = z.infer<typeof StoryCreateDtoSchema>;

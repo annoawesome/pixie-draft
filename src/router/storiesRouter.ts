@@ -5,7 +5,11 @@ import createStory from "../dao/stories/createStoryDao.js";
 import updateStory from "../dao/stories/updateStoryDao.js";
 import deleteStory from "../dao/stories/deleteStoryDao.js";
 import { validateAuthentication } from "../middleware/authMiddleware.js";
-import Story, { StorySchema } from "../type/storyType.js";
+import Story, {
+  StoryCreateDto,
+  StoryCreateDtoSchema,
+  StorySchema,
+} from "../type/storyType.js";
 
 const router = express.Router();
 
@@ -39,7 +43,8 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { title, content, history, historyIndex } = req.body;
+  const storyCreateDto: StoryCreateDto = StoryCreateDtoSchema.parse(req.body);
+  const { title, content, history, historyIndex } = storyCreateDto;
 
   try {
     const story = createStory(title, content, history, historyIndex);
