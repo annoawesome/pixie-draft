@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Story from "../type/storyType";
+import Story, { sortStories } from "../type/storyType";
 import AsideSettings from "./AsideSettings";
 import Editor from "./Editor";
 import Library from "./Library";
@@ -18,7 +18,7 @@ export default function MainLayout({
       .loadLibrary()
       .then((stories) => {
         if (stories) {
-          setStories(stories);
+          setStories(sortStories(stories));
         }
       })
       .catch((error) => {

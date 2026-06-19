@@ -257,9 +257,15 @@ export function updateStoriesFromUpdatedStory(
   stories: Story[],
   updatedStory: Story,
 ) {
-  return stories
-    .map((story) => (story.id === updatedStory.id ? updatedStory : story))
-    .toSorted(compareStoryByTimeModified);
+  return sortStories(
+    stories.map((story) =>
+      story.id === updatedStory.id ? updatedStory : story,
+    ),
+  );
+}
+
+export function sortStories(stories: Story[]) {
+  return stories.toSorted(compareStoryByTimeModified);
 }
 
 // offline helper function that removes the story contained in stories
