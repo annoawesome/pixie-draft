@@ -1,5 +1,6 @@
 import { authClient, AuthClient } from "./authClient";
 import * as settingsApi from "../api/settingsApi";
+import { HttpError } from "../type/httpError";
 
 export class SettingsClient {
   private authClient;
@@ -28,7 +29,7 @@ export class SettingsClient {
     if (response.ok) {
       console.log("Updated settings:", settings);
     } else {
-      throw new Error(`HTTP status ${response.status}`);
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
   }
 
@@ -42,7 +43,7 @@ export class SettingsClient {
     if (response.ok) {
       console.log(`Updated settings with patch to '${settingName}':`, setting);
     } else {
-      throw new Error(`HTTP status ${response.status}`);
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
   }
 }

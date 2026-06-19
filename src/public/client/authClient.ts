@@ -1,4 +1,5 @@
 import * as authApi from "../api/authApi";
+import { HttpError } from "../type/httpError";
 
 export class AuthClient {
   private apiToken: string = "";
@@ -16,7 +17,7 @@ export class AuthClient {
       this.apiToken = await response.text();
       this.lastRefreshTime = Date.now();
     } else {
-      throw new Error(`HTTP status ${response.status}`);
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
   }
 
@@ -37,7 +38,7 @@ export class AuthClient {
       this.apiToken = await response.text();
       this.lastRefreshTime = Date.now();
     } else {
-      throw new Error(`HTTP status ${response.status}`);
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
   }
 

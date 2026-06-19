@@ -1,4 +1,5 @@
 import * as storiesApi from "../api/storiesApi";
+import { HttpError } from "../type/httpError";
 import Story from "../type/storyType";
 import { authClient, AuthClient } from "./authClient";
 
@@ -24,7 +25,7 @@ export class StoriesClient {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP status ${response.status}`);
+        throw new HttpError(response.status, `HTTP status ${response.status}`);
       }
 
       const story = await response.json();
@@ -53,7 +54,7 @@ export class StoriesClient {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP status ${response.status}`);
+        throw new HttpError(response.status, `HTTP status ${response.status}`);
       }
 
       const createdStory = await response.json();
@@ -77,7 +78,7 @@ export class StoriesClient {
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP status ${response.status}`);
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
 
     const stories = await response.json();
