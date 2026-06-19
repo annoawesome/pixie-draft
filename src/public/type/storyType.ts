@@ -52,7 +52,12 @@ export function getCurrentHistoryNode(story: Story) {
 }
 
 export function mutateStoryTitle(story: Story, newTitle: string) {
-  return { ...story, title: newTitle };
+  return {
+    ...story,
+    title: newTitle,
+    // Purely a local change that gets overwritten by the back end
+    time: { ...story.time, modified: Date.now() },
+  };
 }
 
 export function mutateStoryContent(story: Story, newContent: string) {
