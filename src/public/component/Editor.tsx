@@ -25,6 +25,7 @@ function ActionBar({
   locked,
   setSelectedStory,
   setLocked,
+  setStories,
 }: {
   contendEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
@@ -32,6 +33,7 @@ function ActionBar({
   locked: boolean;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
   const generate = (story: Story) => {
@@ -61,7 +63,13 @@ function ActionBar({
         );
 
         setSelectedStory(mutatedStory);
-        storiesClient.saveStory(mutatedStory);
+        storiesClient
+          .saveStory(mutatedStory)
+          .then(() =>
+            setStories((stories) =>
+              updateStoriesFromUpdatedStory(stories, mutatedStory),
+            ),
+          );
 
         // There is probably a better way to do this
         setTimeout(() => {
@@ -84,14 +92,26 @@ function ActionBar({
     const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, true);
 
     setSelectedStory(mutatedStory);
-    storiesClient.saveStory(mutatedStory);
+    storiesClient
+      .saveStory(mutatedStory)
+      .then(() =>
+        setStories((stories) =>
+          updateStoriesFromUpdatedStory(stories, selectedStory),
+        ),
+      );
   };
 
   const onClickRedo = () => {
     const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, false);
 
     setSelectedStory(mutatedStory);
-    storiesClient.saveStory(mutatedStory);
+    storiesClient
+      .saveStory(mutatedStory)
+      .then(() =>
+        setStories((stories) =>
+          updateStoriesFromUpdatedStory(stories, selectedStory),
+        ),
+      );
   };
 
   const onClickRetry = () => {
@@ -211,13 +231,12 @@ export default function Editor({
         false,
       );
 
-      // Purely a local change that gets overwritten by the back end
-      mutatedStory.time.modified = Date.now();
-
       setSelectedStory(mutatedStory);
-      storiesClient.saveStory(mutatedStory);
-
-      setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
+      storiesClient
+        .saveStory(mutatedStory)
+        .then(() =>
+          setStories(updateStoriesFromUpdatedStory(stories, selectedStory)),
+        );
     }
   };
 
@@ -254,6 +273,7 @@ export default function Editor({
             locked={locked}
             setSelectedStory={setSelectedStory}
             setLocked={setLocked}
+            setStories={setStories}
           />
         </>
       ) : (

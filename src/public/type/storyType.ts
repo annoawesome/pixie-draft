@@ -88,6 +88,12 @@ export function mutateStoryFromAppendingHistory(
   return {
     ...story,
     content: newContent,
+    // Purely a local change that gets overwritten by the back end
+    time: {
+      ...story.time,
+      modified: Date.now(),
+    },
+
     history: [
       ...(story.history.length >= 200
         ? story.history.slice(1, -1)
@@ -163,6 +169,12 @@ export function mutateStoryFromHistoryPageFlip(
     return {
       ...story,
       content: applyPatchFromHistoryNode(prevHistoryNode, story.content, true),
+      // Purely a local change that gets overwritten by the back end
+      time: {
+        ...story.time,
+        modified: Date.now(),
+      },
+
       historyIndex: newIndex,
     };
   } else {
@@ -175,6 +187,12 @@ export function mutateStoryFromHistoryPageFlip(
         story.content,
         false,
       ),
+      // Purely a local change that gets overwritten by the back end
+      time: {
+        ...story.time,
+        modified: Date.now(),
+      },
+
       historyIndex: newIndex,
     };
   }
@@ -198,6 +216,12 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
   return {
     ...story,
     content: content,
+    // Purely a local change that gets overwritten by the back end
+    time: {
+      ...story.time,
+      modified: Date.now(),
+    },
+
     historyIndex: newIndex,
   };
 }
@@ -205,6 +229,12 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
 export function mutateStoryFromRemovingHistory(story: Story) {
   return {
     ...story,
+    // Purely a local change that gets overwritten by the back end
+    time: {
+      ...story.time,
+      modified: Date.now(),
+    },
+
     history: [
       {
         content: story.content,
