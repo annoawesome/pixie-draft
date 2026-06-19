@@ -5,7 +5,7 @@ const EndpointProfileSchema = z.object({
   name: z.string(),
   type: z.string(),
   uri: z.url(),
-  authorizaton: z.string(),
+  authorization: z.string(),
 });
 
 export const UpdateUserSettingDto = z.union([
