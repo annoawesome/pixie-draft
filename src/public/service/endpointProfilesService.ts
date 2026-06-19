@@ -1,11 +1,9 @@
 import { fetchModel } from "../api/koboldCppApi";
-import { getSettings } from "../api/settingsApi";
+import { settingsClient } from "../client/settingsClient";
 import Endpoint from "../type/endpointType";
 
-export async function fetchEndpointFromEndpointProfiles(
-  apiToken: string,
-): Promise<Endpoint> {
-  const settings = await getSettings(apiToken);
+export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
+  const settings = await settingsClient.getSettings();
   const endpointProfiles: Endpoint[] = settings.endpoints;
 
   for (const endpointProfile of endpointProfiles) {

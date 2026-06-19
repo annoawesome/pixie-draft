@@ -1,45 +1,42 @@
 import React, { useEffect, useState } from "react";
 import AuthenticatePrompt from "./component/AuthenticatePrompt";
-import { refreshTokens } from "./api/authApi";
 import HorizontalLayout from "./component/HorizontalLayout";
 import { CurrentPage } from "./type/currentPageType";
 import Settings from "./component/Settings";
+import { authClient } from "./client/authClient";
 
 export default function App() {
   // Makes development a little easier with vite's dev server
   // Only temporary, will probably be replaced with something better
-  const [apiToken, setApiToken] = useState<string>(
-    window.location.host === "localhost:5173" ? "DUMMY_TOKEN" : "",
+  const [authenticated, setAuthenticated] = useState<boolean>(
+    window.location.host === "localhost:5173",
   );
-
+  const [checkedAuth, setCheckedAuth] = useState(false);
   const [currentPage, setCurrentPage] = useState<CurrentPage>("main");
 
-  // Refresh api token every 12 minutes, 3 minutes before expiration
   useEffect(() => {
-    if (!apiToken) {
-      return;
-    }
+    authClient
+      .refresh()
+      .then(() => setAuthenticated(true))
+      .finally(() => setCheckedAuth(true));
+  });
 
-    const timeoutId = setTimeout(
-      async () => {
-        const newApiToken = await refreshTokens();
-        setApiToken(newApiToken);
-      },
-      1e3 * 60 * 12,
-    );
+  authClient.setRefreshInterval();
 
-    return () => clearTimeout(timeoutId);
-  }, [apiToken]);
-
-  if (apiToken) {
+  if (authenticated) {
     if (currentPage === "main") {
       return (
-        <HorizontalLayout apiToken={apiToken} setCurrentPage={setCurrentPage} />
+        <HorizontalLayout
+          authenticated={authenticated}
+          setCurrentPage={setCurrentPage}
+        />
       );
     } else if (currentPage === "endpoints") {
-      return <Settings apiToken={apiToken} setCurrentPage={setCurrentPage} />;
+      return <Settings setCurrentPage={setCurrentPage} />;
     }
+  } else if (!checkedAuth) {
+    return <p>Loading...</p>;
   }
 
-  return <AuthenticatePrompt setApiToken={setApiToken} />;
+  return <AuthenticatePrompt setAuthenticated={setAuthenticated} />;
 }

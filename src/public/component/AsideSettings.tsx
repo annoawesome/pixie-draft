@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { createStory, deleteStory, saveStory } from "../api/storiesApi";
 import Story, {
   mutateStoryFromRemovingHistory,
   removeStoryFromStories,
@@ -8,6 +7,7 @@ import Story, {
 import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
+import { storiesClient } from "../client/storiesClient";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -65,13 +65,11 @@ function DialogBox({
 }
 
 export default function AsideSettings({
-  apiToken,
   selectedStory,
   setSelectedStory,
   stories,
   setStories,
 }: {
-  apiToken: string;
   selectedStory: Story | null;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   stories: Story[];
@@ -89,7 +87,7 @@ export default function AsideSettings({
     setShowDialog(false);
 
     if (selectedStory) {
-      deleteStory(apiToken, selectedStory.id);
+      storiesClient.deleteStory(selectedStory.id);
       setStories(removeStoryFromStories(stories, selectedStory));
       setSelectedStory(null);
     }
@@ -101,17 +99,9 @@ export default function AsideSettings({
 
   const onClickDuplicate = () => {
     if (selectedStory) {
-      const { title, content, history, historyIndex } = selectedStory;
-
-      createStory(
-        apiToken,
-        title + " (Copy)",
-        content,
-        history,
-        historyIndex,
-      ).then((newStory) => {
+      storiesClient.duplicateStory(selectedStory).then((newStory) => {
         if (newStory) {
-          saveStory(apiToken, newStory);
+          storiesClient.saveStory(newStory);
 
           setSelectedStory(newStory);
           setStories((prev) => [...prev, newStory]);
@@ -141,7 +131,7 @@ export default function AsideSettings({
 
     const updatedStory = mutateStoryFromRemovingHistory(selectedStory);
 
-    saveStory(apiToken, updatedStory).then((success) => {
+    storiesClient.saveStory(updatedStory).then((success) => {
       if (success) {
         setSelectedStory(updatedStory);
       }

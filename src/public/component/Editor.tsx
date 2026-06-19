@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { saveStory } from "../api/storiesApi";
+// import { saveStory } from "../api/storiesApi";
 
 import Story, {
   getCurrentHistoryNode,
@@ -16,9 +16,9 @@ import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
+import { storiesClient } from "../client/storiesClient";
 
 function ActionBar({
-  apiToken,
   contendEditableRef,
   endpointProfile,
   selectedStory,
@@ -26,7 +26,6 @@ function ActionBar({
   setSelectedStory,
   setLocked,
 }: {
-  apiToken: string;
   contendEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
   selectedStory: Story;
@@ -62,7 +61,7 @@ function ActionBar({
         );
 
         setSelectedStory(mutatedStory);
-        saveStory(apiToken, mutatedStory);
+        storiesClient.saveStory(mutatedStory);
 
         // There is probably a better way to do this
         setTimeout(() => {
@@ -85,14 +84,14 @@ function ActionBar({
     const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, true);
 
     setSelectedStory(mutatedStory);
-    saveStory(apiToken, mutatedStory);
+    storiesClient.saveStory(mutatedStory);
   };
 
   const onClickRedo = () => {
     const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, false);
 
     setSelectedStory(mutatedStory);
-    saveStory(apiToken, mutatedStory);
+    storiesClient.saveStory(mutatedStory);
   };
 
   const onClickRetry = () => {
@@ -174,13 +173,11 @@ function ActionBar({
 }
 
 export default function Editor({
-  apiToken,
   selectedStory,
   stories,
   setSelectedStory,
   setStories,
 }: {
-  apiToken: string;
   selectedStory: Story | null;
   setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   stories: Story[];
@@ -201,7 +198,7 @@ export default function Editor({
 
   const onBlurStoryTitle = () => {
     if (selectedStory) {
-      saveStory(apiToken, selectedStory);
+      storiesClient.saveStory(selectedStory);
       setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
     }
   };
@@ -215,13 +212,13 @@ export default function Editor({
       );
 
       setSelectedStory(mutatedStory);
-      saveStory(apiToken, mutatedStory);
+      storiesClient.saveStory(selectedStory);
     }
   };
 
   useEffect(() => {
     endpointProfilesService
-      .fetchEndpointFromEndpointProfiles(apiToken)
+      .fetchEndpointFromEndpointProfiles()
       .then(setEndpointProfile);
   }, []);
 
@@ -246,7 +243,6 @@ export default function Editor({
             ref={contendEditableRef}
           />
           <ActionBar
-            apiToken={apiToken}
             contendEditableRef={contendEditableRef}
             endpointProfile={endpointProfile}
             selectedStory={selectedStory}

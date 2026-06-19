@@ -11,11 +11,7 @@ export async function login(password: string) {
 
   const response = await fetch(request);
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: ${response.statusText}`);
-  }
-
-  return response.text();
+  return response;
 }
 
 export async function refreshTokens() {
@@ -25,9 +21,15 @@ export async function refreshTokens() {
 
   const response = await fetch(request);
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: ${response.statusText}`);
-  }
+  return response;
+}
 
-  return response.text();
+export async function deleteTokens() {
+  const request = new Request("/api/v0/auth", {
+    method: "DELETE",
+  });
+
+  const response = await fetch(request);
+
+  return response;
 }

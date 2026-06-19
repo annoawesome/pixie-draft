@@ -70,10 +70,8 @@ function SettingsSidebar({
 }
 
 export default function Settings({
-  apiToken,
   setCurrentPage,
 }: {
-  apiToken: string;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
   const [hideSidebar, setHideSidebar] = useState(false);
@@ -86,7 +84,7 @@ export default function Settings({
         setCurrentPage={setCurrentPage}
       />
       <main className="width-fill-max" id="settings-column">
-        <EndpointProfilesSettings apiToken={apiToken} />
+        <EndpointProfilesSettings />
       </main>
     </div>
   );
