@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AuthenticatePrompt from "./component/AuthenticatePrompt";
 import HorizontalLayout from "./component/HorizontalLayout";
 import { CurrentPage } from "./type/currentPageType";
@@ -11,8 +11,15 @@ export default function App() {
   const [authenticated, setAuthenticated] = useState<boolean>(
     window.location.host === "localhost:5173",
   );
-
+  const [checkedAuth, setCheckedAuth] = useState(false);
   const [currentPage, setCurrentPage] = useState<CurrentPage>("main");
+
+  useEffect(() => {
+    authClient
+      .refresh()
+      .then(() => setAuthenticated(true))
+      .finally(() => setCheckedAuth(true));
+  });
 
   authClient.setRefreshInterval();
 
@@ -27,6 +34,8 @@ export default function App() {
     } else if (currentPage === "endpoints") {
       return <Settings setCurrentPage={setCurrentPage} />;
     }
+  } else if (!checkedAuth) {
+    return <p>Loading...</p>;
   }
 
   return <AuthenticatePrompt setAuthenticated={setAuthenticated} />;
