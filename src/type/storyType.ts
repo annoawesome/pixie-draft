@@ -38,8 +38,8 @@ export const StoryCreateDtoSchema = z.object({
   title: z.string(),
   content: z.string(),
 
-  history: z.array(HistoryNodeSchema),
-  historyIndex: z.number(),
+  history: z.array(HistoryNodeSchema).optional(),
+  historyIndex: z.number().optional(),
 });
 
 type Story = z.infer<typeof StorySchema>;

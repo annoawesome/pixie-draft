@@ -52,7 +52,12 @@ export function getCurrentHistoryNode(story: Story) {
 }
 
 export function mutateStoryTitle(story: Story, newTitle: string) {
-  return { ...story, title: newTitle };
+  return {
+    ...story,
+    title: newTitle,
+    // Purely a local change that gets overwritten by the back end
+    time: { ...story.time, modified: Date.now() },
+  };
 }
 
 export function mutateStoryContent(story: Story, newContent: string) {
@@ -88,6 +93,12 @@ export function mutateStoryFromAppendingHistory(
   return {
     ...story,
     content: newContent,
+    // Purely a local change that gets overwritten by the back end
+    time: {
+      ...story.time,
+      modified: Date.now(),
+    },
+
     history: [
       ...(story.history.length >= 200
         ? story.history.slice(1, -1)
@@ -163,6 +174,12 @@ export function mutateStoryFromHistoryPageFlip(
     return {
       ...story,
       content: applyPatchFromHistoryNode(prevHistoryNode, story.content, true),
+      // Purely a local change that gets overwritten by the back end
+      time: {
+        ...story.time,
+        modified: Date.now(),
+      },
+
       historyIndex: newIndex,
     };
   } else {
@@ -175,6 +192,12 @@ export function mutateStoryFromHistoryPageFlip(
         story.content,
         false,
       ),
+      // Purely a local change that gets overwritten by the back end
+      time: {
+        ...story.time,
+        modified: Date.now(),
+      },
+
       historyIndex: newIndex,
     };
   }
@@ -198,6 +221,12 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
   return {
     ...story,
     content: content,
+    // Purely a local change that gets overwritten by the back end
+    time: {
+      ...story.time,
+      modified: Date.now(),
+    },
+
     historyIndex: newIndex,
   };
 }
@@ -205,6 +234,12 @@ export function mutateStoryFromTreeBacktrack(story: Story): Story {
 export function mutateStoryFromRemovingHistory(story: Story) {
   return {
     ...story,
+    // Purely a local change that gets overwritten by the back end
+    time: {
+      ...story.time,
+      modified: Date.now(),
+    },
+
     history: [
       {
         content: story.content,
@@ -218,14 +253,24 @@ export function mutateStoryFromRemovingHistory(story: Story) {
   };
 }
 
+function compareStoryByTimeModified(a: Story, b: Story) {
+  return b.time.modified - a.time.modified;
+}
+
 // offline helper function that updates the story contained in stories to save a bit of bandwidth
 export function updateStoriesFromUpdatedStory(
   stories: Story[],
   updatedStory: Story,
 ) {
-  return stories.map((story) =>
-    story.id === updatedStory.id ? updatedStory : story,
+  return sortStories(
+    stories.map((story) =>
+      story.id === updatedStory.id ? updatedStory : story,
+    ),
   );
+}
+
+export function sortStories(stories: Story[]) {
+  return stories.toSorted(compareStoryByTimeModified);
 }
 
 // offline helper function that removes the story contained in stories
