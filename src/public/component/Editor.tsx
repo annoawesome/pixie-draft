@@ -212,7 +212,7 @@ export default function Editor({
       );
 
       setSelectedStory(mutatedStory);
-      storiesClient.saveStory(selectedStory);
+      storiesClient.saveStory(mutatedStory);
     }
   };
 
