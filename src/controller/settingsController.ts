@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import fetchUserSettings from "../dao/settings/fetchUserSettingsDao.js";
 import updateUserSettings from "../dao/settings/updateUserSettingsDao.js";
 import patchUserSettings from "../dao/settings/patchUserSettingsDao.js";
+import { UpdateUserSettingDto } from "../type/settingType.js";
 
 export function getSettings(req: Request, res: Response) {
   try {
@@ -26,11 +27,14 @@ export function updateSettings(req: Request, res: Response) {
 
 export function patchSettings(req: Request, res: Response) {
   try {
-    const { setting } = req.params;
-    const settingContent = req.body;
+    const rawSettingName = req.params.setting;
+    const { setting, content } = UpdateUserSettingDto.parse({
+      setting: rawSettingName,
+      content: req.body,
+    });
 
-    if (typeof setting === "string") {
-      patchUserSettings(setting, settingContent);
+    if (setting === "endpoints") {
+      patchUserSettings(setting, content);
       res.sendStatus(200);
     } else {
       res.sendStatus(400);

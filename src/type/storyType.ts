@@ -1,22 +1,49 @@
-type Story = {
-  id: string;
-  version: string;
-  title: string;
-  desc: string;
-  tags: string[];
-  content: string;
+import * as z from "zod";
 
-  attributes: Record<string, string>;
-  encyclopedia: Record<string, string>;
+const DiffModifyOpCode = z.union([z.literal(1), z.literal(3)]);
+const DiffModify = z.tuple([DiffModifyOpCode, z.string()]);
+const DiffOp = z.union([z.number(), DiffModify]);
 
-  time: {
-    created: number;
-    accessed: number;
-    modified: number;
-  };
+const HistoryNodeSchema = z.object({
+  content: z.string(),
+  patch: z.array(DiffOp).optional(),
+  treePrev: z.number(),
+  attributes: z.object({
+    generatedByLlm: z.boolean(),
+  }),
+});
 
-  history: unknown;
-  historyIndex: number;
-};
+export const StorySchema = z.object({
+  id: z.uuidv4(),
+  version: z.string(),
+  title: z.string(),
+  desc: z.string(),
+  tags: z.array(z.string()),
+  content: z.string(),
 
+  attributes: z.record(z.string(), z.string()),
+  encyclopedia: z.record(z.string(), z.string()),
+
+  time: z.object({
+    created: z.number(),
+    accessed: z.number(),
+    modified: z.number(),
+  }),
+
+  history: z.array(HistoryNodeSchema),
+  historyIndex: z.number(),
+});
+
+export const StoryCreateDtoSchema = z.object({
+  title: z.string(),
+  content: z.string(),
+
+  history: z.array(HistoryNodeSchema),
+  historyIndex: z.number(),
+});
+
+type Story = z.infer<typeof StorySchema>;
+
+export type HistoryNode = z.infer<typeof HistoryNodeSchema>;
 export default Story;
+export type StoryCreateDto = z.infer<typeof StoryCreateDtoSchema>;

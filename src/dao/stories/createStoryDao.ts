@@ -1,11 +1,11 @@
 import fs from "fs";
 import { getDatabaseFile } from "../../init/initializeDatabase.js";
-import Story from "../../type/storyType.js";
+import Story, { HistoryNode } from "../../type/storyType.js";
 
 export default function createStory(
   title: string,
   content: string,
-  history?: unknown[],
+  history?: HistoryNode[],
   historyIndex?: number,
 ) {
   const storiesPath = getDatabaseFile("stories.json");
