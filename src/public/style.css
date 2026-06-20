@@ -302,7 +302,7 @@ dialog::backdrop {
   gap: 8px;
 }
 
-/* Hack to to hide the lack of a border when the button is selected */
+/* Hack to hide the lack of a border when the button is selected */
 .story-card.button-selected {
   border: 1px solid transparent;
 }
