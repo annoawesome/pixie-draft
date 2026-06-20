@@ -32,7 +32,7 @@ export default function MainLayout({
   return (
     <main className="flex-row" id="main-app-layout">
       {zenMode ? (
-        ""
+        <div className="flex-column side-column scrollable" id="library"></div>
       ) : (
         <Library
           stories={stories}
@@ -48,7 +48,10 @@ export default function MainLayout({
         setStories={setStories}
       />
       {zenMode ? (
-        ""
+        <aside
+          className="flex-column side-column scrollable"
+          id="aside-settings"
+        ></aside>
       ) : (
         <AsideSettings
           selectedStory={selectedStory}
