@@ -164,13 +164,16 @@ dialog::backdrop {
   background-color: var(--neutral-color-3);
 }
 
+.button-selected.button-tertiary:hover {
+  background-color: var(--accent-color-4);
+}
+
 .button-tertiary:active {
   background-color: var(--neutral-color-1);
 }
 
 .button-selected {
   border: 0;
-  margin: 1px;
   background-color: var(--accent-color-3);
 }
 
@@ -297,6 +300,11 @@ dialog::backdrop {
 .story-card {
   padding: 8px;
   gap: 8px;
+}
+
+/* Hack to hide the lack of a border when the button is selected */
+.story-card.button-selected {
+  border: 1px solid transparent;
 }
 
 #story-content {
