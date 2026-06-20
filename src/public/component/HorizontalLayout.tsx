@@ -40,7 +40,7 @@ function Header({
             "button-tertiary button-icon" + (zenMode ? " button-selected" : "")
           }
           title="Zen Mode: Toggle for distraction-free work"
-          onClick={() => setZenMode((prev) => !prev)}
+          onClick={() => setZenMode(!zenMode)}
         >
           <MeditationIcon />
         </button>
