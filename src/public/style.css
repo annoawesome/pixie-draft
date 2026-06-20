@@ -164,6 +164,10 @@ dialog::backdrop {
   background-color: var(--neutral-color-3);
 }
 
+.button-selected.button-tertiary:hover {
+  background-color: var(--accent-color-4);
+}
+
 .button-tertiary:active {
   background-color: var(--neutral-color-1);
 }
