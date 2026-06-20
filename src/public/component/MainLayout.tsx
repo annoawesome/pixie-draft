@@ -7,8 +7,10 @@ import { storiesClient } from "../client/storiesClient";
 
 export default function MainLayout({
   authenticated,
+  zenMode,
 }: {
   authenticated: boolean;
+  zenMode: boolean;
 }) {
   const [stories, setStories] = useState<Story[]>([]);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
@@ -29,24 +31,32 @@ export default function MainLayout({
 
   return (
     <main className="flex-row" id="main-app-layout">
-      <Library
-        stories={stories}
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        setStories={setStories}
-      />
+      {zenMode ? (
+        ""
+      ) : (
+        <Library
+          stories={stories}
+          selectedStory={selectedStory}
+          setSelectedStory={setSelectedStory}
+          setStories={setStories}
+        />
+      )}
       <Editor
         selectedStory={selectedStory}
         setSelectedStory={setSelectedStory}
         stories={stories}
         setStories={setStories}
       />
-      <AsideSettings
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        stories={stories}
-        setStories={setStories}
-      />
+      {zenMode ? (
+        ""
+      ) : (
+        <AsideSettings
+          selectedStory={selectedStory}
+          setSelectedStory={setSelectedStory}
+          stories={stories}
+          setStories={setStories}
+        />
+      )}
     </main>
   );
 }

@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
 import MainLayout from "./MainLayout";
-import { BrainIcon, HamburgerMenuIcon, LockIcon } from "./Icons";
+import {
+  BrainIcon,
+  HamburgerMenuIcon,
+  LockIcon,
+  MeditationIcon,
+} from "./Icons";
 import { CurrentPage } from "../type/currentPageType";
 import { authClient } from "../client/authClient";
 
 function Header({
+  zenMode,
   setCurrentPage,
+  setZenMode,
 }: {
+  zenMode: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
+  setZenMode: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <header className="flex-row">
@@ -24,6 +33,15 @@ function Header({
           }
         >
           <LockIcon />
+        </button>
+        <button
+          type="button"
+          className={
+            "button-tertiary button-icon" + (zenMode ? " button-selected" : "")
+          }
+          onClick={() => setZenMode((prev) => !prev)}
+        >
+          <MeditationIcon />
         </button>
       </div>
       <div className="flex-row-right width-fill-max" id="header-right">
@@ -56,10 +74,16 @@ export default function HorizontalLayout({
   authenticated: boolean;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
+  const [zenMode, setZenMode] = useState(false);
+
   return (
     <div className="flex-column" id="header-body-layout">
-      <Header setCurrentPage={setCurrentPage} />
-      <MainLayout authenticated={authenticated} />
+      <Header
+        zenMode={zenMode}
+        setCurrentPage={setCurrentPage}
+        setZenMode={setZenMode}
+      />
+      <MainLayout zenMode={zenMode} authenticated={authenticated} />
       <Footer />
     </div>
   );
