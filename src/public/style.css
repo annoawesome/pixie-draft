@@ -174,7 +174,6 @@ dialog::backdrop {
 
 .button-selected {
   border: 0;
-  margin: 1px;
   background-color: var(--accent-color-3);
 }
 
@@ -301,6 +300,11 @@ dialog::backdrop {
 .story-card {
   padding: 8px;
   gap: 8px;
+}
+
+/* Hack to to hide the lack of a border when the button is selected */
+.story-card.button-selected {
+  border: 1px solid transparent;
 }
 
 #story-content {
