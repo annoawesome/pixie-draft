@@ -6,7 +6,7 @@ import initializeDatabase, {
   getDatabaseFile,
 } from "../src/init/initializeDatabase.js";
 
-describe("initialization", () => {
+describe("initialize secrets", () => {
   test("initialize secret with given secret", () => {
     initializeSecret("aBigSecret!");
     expect(getSecret()).toBe("aBigSecret!");
