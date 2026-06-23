@@ -8,6 +8,8 @@ import createStoryDao from "../src/dao/stories/createStoryDao.js";
 import getStoryFromIdDao from "../src/dao/stories/getStoryFromIdDao.js";
 import updateStoryDao from "../src/dao/stories/updateStoryDao.js";
 import deleteStoryDao from "../src/dao/stories/deleteStoryDao.js";
+import fetchUserSettingsDao from "../src/dao/settings/fetchUserSettingsDao.js";
+import patchUserSettingsDao from "../src/dao/settings/patchUserSettingsDao.js";
 
 function readStories() {
   return JSON.parse(
@@ -104,5 +106,48 @@ describe("stories dao", () => {
     const stories = readStories();
 
     expect(stories).toMatchObject([]);
+  });
+});
+
+describe("settings dao", () => {
+  beforeEach(() => {
+    fs.mkdirSync("./test_environment/test/db", { recursive: true });
+    initializeDatabase("./test_environment/test/db");
+  });
+
+  afterEach(() => {
+    fs.rmSync("./test_environment/test/db", { recursive: true, force: true });
+  });
+
+  test("get settings", () => {
+    const settings = fetchUserSettingsDao();
+
+    expect(settings).toMatchObject({
+      endpoints: [],
+    });
+  });
+
+  test("patch settings", () => {
+    patchUserSettingsDao("endpoints", [
+      {
+        id: crypto.randomUUID(),
+        name: "My Endpoint",
+        uri: "http://example.com",
+        authorization: "",
+      },
+    ]);
+
+    const settings = fetchUserSettingsDao();
+
+    expect(settings).toMatchObject({
+      endpoints: [
+        {
+          id: expect.any(String),
+          name: "My Endpoint",
+          uri: "http://example.com",
+          authorization: "",
+        },
+      ],
+    });
   });
 });
