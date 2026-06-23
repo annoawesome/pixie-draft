@@ -6,6 +6,7 @@ import initializeDatabase, {
 } from "../src/init/initializeDatabase.js";
 import createStoryDao from "../src/dao/stories/createStoryDao.js";
 import getStoryFromIdDao from "../src/dao/stories/getStoryFromIdDao.js";
+import getStoriesPreviewDao from "../src/dao/stories/getStoriesPreviewDao.js";
 import updateStoryDao from "../src/dao/stories/updateStoryDao.js";
 import deleteStoryDao from "../src/dao/stories/deleteStoryDao.js";
 import fetchUserSettingsDao from "../src/dao/settings/fetchUserSettingsDao.js";
@@ -83,6 +84,24 @@ describe("stories dao", () => {
       ],
       historyIndex: 0,
     });
+  });
+
+  test("get stories", () => {
+    const story1 = createStoryDao("Title 1", "Content 1");
+    const story2 = createStoryDao("Title 2", "Content 2");
+
+    expect(getStoriesPreviewDao()).toMatchObject([
+      {
+        id: story1.id,
+        title: "Title 1",
+        time: expect.any(Object),
+      },
+      {
+        id: story2.id,
+        title: "Title 2",
+        time: expect.any(Object),
+      },
+    ]);
   });
 
   test("save story", () => {
