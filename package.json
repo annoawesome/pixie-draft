@@ -16,7 +16,8 @@
   "type": "module",
   "main": "dist/main.js",
   "scripts": {
-    "test": "node ."
+    "test": "vitest",
+    "test:run": "vitest run --silent"
   },
   "devDependencies": {
     "@types/cookie-parser": "1.4.10",
@@ -24,7 +25,8 @@
     "@types/jsonwebtoken": "9.0.10",
     "eslint": "9.39.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.54.0"
+    "typescript-eslint": "8.54.0",
+    "vitest": "4.1.9"
   },
   "dependencies": {
     "cookie-parser": "1.4.7",

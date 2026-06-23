@@ -51,6 +51,13 @@
       "command": "npx vite --host",
       "group": "build",
       "label": "vite: dev"
+    },
+    {
+      "type": "npm",
+      "script": "test:run",
+      "group": "test",
+      "label": "npm: run test",
+      "detail": "Run every single test visible to Vitest"
     }
   ]
 }
