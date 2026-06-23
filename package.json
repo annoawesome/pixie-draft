@@ -16,7 +16,8 @@
   "type": "module",
   "main": "dist/main.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "test:run": "vitest run --silent"
   },
   "devDependencies": {
     "@types/cookie-parser": "1.4.10",
