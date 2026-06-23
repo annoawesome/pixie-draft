@@ -22,36 +22,45 @@ function Header({
   return (
     <header className="flex-row">
       <div className="flex-row width-fill-max" id="header-left">
-        <button className="button-tertiary button-icon">
-          <HamburgerMenuIcon />
-        </button>
-        <button
-          type="button"
-          className="button-tertiary button-icon"
-          onClick={() =>
-            authClient.logOut().then(() => window.location.reload())
-          }
-        >
-          <LockIcon />
-        </button>
-        <button
-          type="button"
-          className={
-            "button-tertiary button-icon" + (zenMode ? " button-selected" : "")
-          }
-          title="Zen Mode: Toggle for distraction-free work"
-          onClick={() => setZenMode(!zenMode)}
-        >
-          <MeditationIcon />
-        </button>
+        <div className="div-square-button">
+          <button className="button-tertiary button-icon">
+            <HamburgerMenuIcon />
+          </button>
+        </div>
+        <div className="div-square-button">
+          <button
+            type="button"
+            className="button-tertiary button-icon"
+            onClick={() =>
+              authClient.logOut().then(() => window.location.reload())
+            }
+          >
+            <LockIcon />
+          </button>
+        </div>
+        <div className="div-square-button">
+          <button
+            type="button"
+            className={
+              "button-tertiary button-icon" +
+              (zenMode ? " button-selected" : "")
+            }
+            title="Zen Mode: Toggle for distraction-free work"
+            onClick={() => setZenMode(!zenMode)}
+          >
+            <MeditationIcon />
+          </button>
+        </div>
       </div>
       <div className="flex-row-right width-fill-max" id="header-right">
-        <button
-          className="button-tertiary button-icon"
-          onClick={() => setCurrentPage("endpoints")}
-        >
-          <BrainIcon />
-        </button>
+        <div className="div-square-button">
+          <button
+            className="button-tertiary button-icon"
+            onClick={() => setCurrentPage("endpoints")}
+          >
+            <BrainIcon />
+          </button>
+        </div>
       </div>
     </header>
   );

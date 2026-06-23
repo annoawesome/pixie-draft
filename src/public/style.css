@@ -191,8 +191,17 @@ dialog::backdrop {
   background-color: var(--neutral-color-3);
 }
 
-.button-icon {
+/* Makes the buttons obey aspect ratio on Firefox. I have no idea why this works */
+.div-square-button {
   aspect-ratio: 1;
+}
+
+.div-square-button > * {
+  width: 100%;
+  height: fit-content;
+}
+
+.button-icon {
   padding: 4px;
 }
 
