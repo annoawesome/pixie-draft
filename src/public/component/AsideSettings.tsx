@@ -99,16 +99,14 @@ export default function AsideSettings({
   };
 
   const onClickDuplicate = () => {
-    if (selectedStory) {
-      storiesClient.duplicateStory(selectedStory).then((newStory) => {
-        if (newStory) {
-          storiesClient.saveStory(newStory);
+    if (!selectedStory) return;
 
-          setSelectedStory(newStory);
-          setStories((prev) => [newStory, ...prev]);
-        }
-      });
-    }
+    storiesService.duplicateStoryAndSave(selectedStory).then((newStory) => {
+      if (newStory) {
+        setSelectedStory(newStory);
+        setStories((prev) => [newStory, ...prev]);
+      }
+    });
   };
 
   const onClickExportAsText = () => {

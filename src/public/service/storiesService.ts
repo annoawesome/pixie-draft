@@ -272,3 +272,9 @@ export async function clearHistoryAndSave(story: Story) {
     }
   });
 }
+
+export async function duplicateStoryAndSave(story: Story) {
+  return storiesClient.duplicateStory(
+    updateStoryTitle(story, story.title + " (Copy)"),
+  );
+}
