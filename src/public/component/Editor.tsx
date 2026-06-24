@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// import { saveStory } from "../api/storiesApi";
-
 import Story, {
   getCurrentHistoryNode,
-  mutateStoryFromAppendingHistory,
-  mutateStoryFromHistoryPageFlip,
   mutateStoryFromTreeBacktrack,
   mutateStoryTitle,
   updateStoriesFromUpdatedStory,
@@ -14,6 +10,7 @@ import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
+import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
 import { storiesClient } from "../client/storiesClient";
@@ -37,7 +34,7 @@ function ActionBar({
   setStories: React.Dispatch<React.SetStateAction<Story[]>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
-  const generate = (story: Story) => {
+  const generate = async (story: Story) => {
     if (!story) {
       alert("No story loaded to generate with");
       return;
@@ -50,69 +47,61 @@ function ActionBar({
 
     setLocked(true);
 
-    // call LLM api
-    generateResponse(
-      endpointProfile.uri,
-      story.content,
-      endpointProfile.authorization,
-    )
-      .then((text) => {
-        const mutatedStory = mutateStoryFromAppendingHistory(
-          story,
-          story.content + text,
-          true,
-        );
+    try {
+      // call LLM api
+      const text = await generateResponse(
+        endpointProfile.uri,
+        story.content,
+        endpointProfile.authorization,
+      );
 
-        setSelectedStory(mutatedStory);
-        storiesClient
-          .saveStory(mutatedStory)
-          .then(() =>
-            setStories((stories) =>
-              updateStoriesFromUpdatedStory(stories, mutatedStory),
-            ),
+      const updatedStory = await storiesService.updateStoryContentAndSave(
+        story,
+        story.content + text,
+        true,
+      );
+
+      setSelectedStory(updatedStory);
+      setStories((stories) =>
+        storiesService.repushStoryToTopOfStories(stories, updatedStory),
+      );
+
+      // There is probably a better way to do this
+      setTimeout(() => {
+        if (contendEditableRef.current) {
+          contendEditableRef.current.scrollTo(
+            0,
+            contendEditableRef.current.scrollHeight,
           );
+        }
+      }, 100);
+    } catch {
+      /* empty */
+    }
 
-        // There is probably a better way to do this
-        setTimeout(() => {
-          if (contendEditableRef.current) {
-            contendEditableRef.current.scrollTo(
-              0,
-              contendEditableRef.current.scrollHeight,
-            );
-          }
-        }, 100);
-      })
-      .finally(() => setLocked(false));
+    setLocked(false);
   };
 
   const onGenerate = () => {
     generate(selectedStory);
   };
 
-  const onClickUndo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, true);
+  const onClickUndo = async () => {
+    const updatedStory = await storiesService.undoStoryAndSave(selectedStory);
 
-    setSelectedStory(mutatedStory);
-    storiesClient
-      .saveStory(mutatedStory)
-      .then(() =>
-        setStories((stories) =>
-          updateStoriesFromUpdatedStory(stories, mutatedStory),
-        ),
-      );
+    setSelectedStory(updatedStory);
+    setStories((stories) =>
+      storiesService.repushStoryToTopOfStories(stories, updatedStory),
+    );
   };
 
-  const onClickRedo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, false);
+  const onClickRedo = async () => {
+    const updatedStory = await storiesService.redoStoryAndSave(selectedStory);
 
-    setSelectedStory(mutatedStory);
-    storiesClient
-      .saveStory(mutatedStory)
-      .then(() =>
-        setStories((stories) =>
-          updateStoriesFromUpdatedStory(stories, mutatedStory),
-        ),
-      );
+    setSelectedStory(updatedStory);
+    setStories((stories) =>
+      storiesService.repushStoryToTopOfStories(stories, updatedStory),
+    );
   };
 
   const onClickRetry = () => {
@@ -230,21 +219,21 @@ export default function Editor({
     }
   };
 
-  const onBlurStoryContent = (newContent: string) => {
-    if (selectedStory) {
-      const mutatedStory = mutateStoryFromAppendingHistory(
-        selectedStory,
-        newContent,
-        false,
-      );
+  const onBlurStoryContent = async (newContent: string) => {
+    if (!selectedStory) return;
 
-      setSelectedStory(mutatedStory);
-      storiesClient
-        .saveStory(mutatedStory)
-        .then(() =>
-          setStories(updateStoriesFromUpdatedStory(stories, mutatedStory)),
-        );
-    }
+    const updatedStory = await storiesService.updateStoryContentAndSave(
+      selectedStory,
+      newContent,
+    );
+
+    const updatedStories = storiesService.repushStoryToTopOfStories(
+      stories,
+      updatedStory,
+    );
+
+    setSelectedStory(updatedStory);
+    setStories(updatedStories);
   };
 
   useEffect(() => {
