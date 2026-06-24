@@ -2,6 +2,7 @@ import { storiesClient } from "../client/storiesClient";
 import Story, {
   mutateStoryFromAppendingHistory,
   mutateStoryFromHistoryPageFlip,
+  mutateStoryFromRemovingHistory,
   updateStoriesFromUpdatedStory,
 } from "../type/storyType";
 
@@ -29,6 +30,19 @@ export async function redoStoryAndSave(oldStory: Story) {
   const mutatedStory = mutateStoryFromHistoryPageFlip(oldStory, false);
 
   return storiesClient.saveStory(mutatedStory).then(() => mutatedStory);
+}
+
+export async function clearHistoryAndSave(story: Story) {
+  const updatedStory: Story = mutateStoryFromRemovingHistory(story);
+
+  return storiesClient.saveStory(updatedStory).then((success) => {
+    if (success) {
+      return updatedStory;
+    } else {
+      // Requires some more work with `storiesClient` to remove this silly hack
+      throw new Error();
+    }
+  });
 }
 
 /**

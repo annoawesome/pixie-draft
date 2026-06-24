@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 
-import Story, {
-  mutateStoryFromRemovingHistory,
-  removeStoryFromStories,
-} from "../type/storyType";
+import Story, { removeStoryFromStories } from "../type/storyType";
 import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
 import { storiesClient } from "../client/storiesClient";
+import * as storiesService from "../service/storiesService";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -126,16 +124,17 @@ export default function AsideSettings({
     );
   };
 
-  const onClickClearHistory = () => {
+  const onClickClearHistory = async () => {
     if (!selectedStory) return; // Should never happen!
 
-    const updatedStory = mutateStoryFromRemovingHistory(selectedStory);
+    try {
+      const updatedStory =
+        await storiesService.clearHistoryAndSave(selectedStory);
 
-    storiesClient.saveStory(updatedStory).then((success) => {
-      if (success) {
-        setSelectedStory(updatedStory);
-      }
-    });
+      setSelectedStory(updatedStory);
+    } catch {
+      /* empty */
+    }
   };
 
   return (
