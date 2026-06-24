@@ -39,12 +39,12 @@ function DialogBox({
 }) {
   return (
     <div className="flex-column gap-medium">
-      <h2>Delete "{selectedStory.title}"?</h2>
+      <h1>Delete "{selectedStory.title}"?</h1>
       <p>
         This is an irreversible process. You will lose this story if you choose
         to delete it.
       </p>
-      <div className="flex-row gap-small">
+      <div className="flex-row gap-medium">
         <button
           type="button"
           className="button-secondary width-fill-max"

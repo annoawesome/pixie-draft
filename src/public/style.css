@@ -60,11 +60,11 @@ dialog {
   border-radius: 8px;
 
   margin: auto;
-  padding: 16px;
+  padding: 32px;
 }
 
 dialog::backdrop {
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
 }
 
 .flex-column {
