@@ -35,7 +35,7 @@ body {
 }
 
 header {
-  background-color: var(--neutral-color-2);
+  border-bottom: 1px solid var(--neutral-color-2);
 }
 
 h1 {
@@ -154,7 +154,7 @@ dialog::backdrop {
 }
 
 .button-tertiary {
-  background-color: var(--neutral-color-2);
+  background-color: transparent;
   border: 0;
   border-radius: 8px;
   padding: 4px;
