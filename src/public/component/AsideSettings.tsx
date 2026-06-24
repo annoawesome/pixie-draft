@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 
-import Story from "../type/storyType";
+import Story, { Stories } from "../type/storyType";
 import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
-import { storiesClient } from "../client/storiesClient";
 import * as storiesService from "../service/storiesService";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
@@ -63,17 +62,14 @@ function DialogBox({
 }
 
 export default function AsideSettings({
-  selectedStory,
-  setSelectedStory,
   stories,
   setStories,
 }: {
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  stories: Story[];
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [showDialog, setShowDialog] = useState(false);
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   const onClickDelete = () => {
     if (selectedStory) {
@@ -86,11 +82,11 @@ export default function AsideSettings({
 
     if (!selectedStory) return;
 
-    const success = await storiesClient.deleteStory(selectedStory.id);
+    const updatedStories =
+      await storiesService.deleteSelectedStoryAndSave(stories);
 
-    if (success) {
-      setStories(storiesService.removeStoryFromStories(stories, selectedStory));
-      setSelectedStory(null);
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
@@ -98,15 +94,17 @@ export default function AsideSettings({
     setShowDialog(false);
   };
 
-  const onClickDuplicate = () => {
+  const onClickDuplicate = async () => {
     if (!selectedStory) return;
 
-    storiesService.duplicateStoryAndSave(selectedStory).then((newStory) => {
-      if (newStory) {
-        setSelectedStory(newStory);
-        setStories((prev) => [newStory, ...prev]);
-      }
-    });
+    const updatedStories = await storiesService.duplicateSelectedStoryAndSave(
+      stories,
+      selectedStory,
+    );
+
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   const onClickExportAsText = () => {
@@ -129,10 +127,12 @@ export default function AsideSettings({
     if (!selectedStory) return; // Should never happen!
 
     try {
-      const updatedStory =
-        await storiesService.clearHistoryAndSave(selectedStory);
+      const updatedStories =
+        await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
 
-      setSelectedStory(updatedStory);
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
     } catch {
       /* empty */
     }

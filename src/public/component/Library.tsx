@@ -1,27 +1,28 @@
 import React, { useState } from "react";
 
-import Story from "../type/storyType";
+import { Stories, StoryPreview } from "../type/storyType";
 import { millisecondsToString } from "../util/time";
-import { storiesClient } from "../client/storiesClient";
+import * as storiesService from "../service/storiesService";
 
 function StoryCard({
   story,
-  selectedStory,
-  setSelectedStory,
+  stories,
+  setStories,
 }: {
-  story: Story;
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
+  story: StoryPreview;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
-  const onClickStoryCard = () => {
+  const onClickStoryCard = async () => {
     const id = story.id;
+    const updatedStories = await storiesService.loadStoryAndUpdate(stories, id);
 
-    storiesClient.loadStory(id).then((fullStory) => {
-      if (fullStory) {
-        setSelectedStory(fullStory);
-      }
-    });
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
+
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   return (
     <button
@@ -43,32 +44,29 @@ function StoryCard({
 
 export default function Library({
   stories,
-  selectedStory,
-  setSelectedStory,
   setStories,
 }: {
-  selectedStory: Story | null;
-  stories: Story[];
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [search, setSearch] = useState("");
 
-  const onClickNewStoryButton = () => {
-    storiesClient
-      .createStory("New Story", "Once upon a time...")
-      .then((newStory) => {
-        if (newStory) {
-          setSelectedStory(newStory);
-          setStories((prev) => [newStory, ...prev]);
-        }
-      });
+  const onClickNewStoryButton = async () => {
+    const updatedStories = await storiesService.createStoryAndSave(
+      stories,
+      "New Story",
+      "Once upon a time...",
+    );
+
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
-  const filteredStories = stories.filter(
-    (story) =>
-      story.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
-      search.length === 0,
+  const allPreviews = storiesService.toLibraryPreview(stories);
+  const filteredPreviews = storiesService.searchLibraryPreview(
+    allPreviews,
+    search,
   );
 
   return (
@@ -91,17 +89,17 @@ export default function Library({
       />
       {search.length > 0 ? (
         <p className="text-secondary">
-          {filteredStories.length} out of {stories.length} stories found
+          {filteredPreviews.length} out of {allPreviews.length} stories found
         </p>
       ) : (
         ""
       )}
-      {filteredStories.map((story) => (
+      {filteredPreviews.map((story) => (
         <StoryCard
           key={story.id}
           story={story}
-          selectedStory={selectedStory}
-          setSelectedStory={setSelectedStory}
+          stories={stories}
+          setStories={setStories}
         />
       ))}
     </div>

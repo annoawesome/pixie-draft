@@ -1,5 +1,5 @@
 import { storiesClient } from "../client/storiesClient";
-import Story, { HistoryNode } from "../type/storyType";
+import Story, { HistoryNode, Stories, StoryPreview } from "../type/storyType";
 import { clamp } from "../util/math";
 import { applyDiff, applyInvertedDiff, generateDiff } from "../util/rawDiff";
 
@@ -21,6 +21,81 @@ export function regeneratable(story: Story) {
   );
 }
 
+function isFullStory(story: Story | StoryPreview) {
+  return "content" in story;
+}
+
+function toStoryPreview(story: Story): StoryPreview {
+  return {
+    id: story.id,
+    title: story.title,
+    time: story.time,
+  };
+}
+
+function compareStoryByTimeModified(a: StoryPreview, b: StoryPreview) {
+  return b.time.modified - a.time.modified;
+}
+
+export function toLibraryPreview(stories: Stories, search?: string) {
+  const unsortedLibrary = Object.values(stories).map((baseStory) =>
+    isFullStory(baseStory) ? toStoryPreview(baseStory) : baseStory,
+  );
+
+  if (search) {
+    return searchLibraryPreview(unsortedLibrary, search).sort(
+      compareStoryByTimeModified,
+    );
+  } else {
+    return unsortedLibrary.sort(compareStoryByTimeModified);
+  }
+}
+
+export function searchLibraryPreview(
+  libraryPreviews: StoryPreview[],
+  search: string,
+) {
+  return libraryPreviews.filter((story) =>
+    story.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+  );
+}
+
+export function convertPreviewsToStories(storyPreviews: StoryPreview[]) {
+  const stories: Stories = {};
+
+  for (const storyPreview of storyPreviews) {
+    stories[storyPreview.id] = storyPreview;
+  }
+
+  return stories;
+}
+
+export function getSelectedStory(stories: Stories) {
+  for (const baseStory of Object.values(stories)) {
+    if (isFullStory(baseStory)) {
+      return baseStory;
+    }
+  }
+
+  return null;
+}
+
+function updateSelectedStory(
+  stories: Stories,
+  updaterCallback: (selectedStory: Story) => Story,
+) {
+  const selectedStory = getSelectedStory(stories);
+  if (!selectedStory) return;
+
+  const updatedStory = updaterCallback(selectedStory);
+  const updatedStories: Stories = {
+    ...stories,
+    [selectedStory.id]: updatedStory,
+  };
+
+  return updatedStories;
+}
+
 export function updateStoryTitle(story: Story, newTitle: string) {
   return {
     ...story,
@@ -28,6 +103,15 @@ export function updateStoryTitle(story: Story, newTitle: string) {
     // Purely a local change that gets overwritten by the back end
     time: { ...story.time, modified: Date.now() },
   };
+}
+
+export function locallyUpdateSelectedStoryTitle(
+  stories: Stories,
+  newTitle: string,
+) {
+  return updateSelectedStory(stories, (selectedStory) =>
+    updateStoryTitle(selectedStory, newTitle),
+  );
 }
 
 function updateStoryFromAppendingHistory(
@@ -184,76 +268,133 @@ export function updateStoryFromTreeBacktrack(story: Story): Story {
   };
 }
 
-function compareStoryByTimeModified(a: Story, b: Story) {
-  return b.time.modified - a.time.modified;
-}
-
-/**
- * Sends the updated story back to the top
- * @param stories List of stories
- * @param updatedStory Updated story
- * @returns An updated copy of stories
- */
-export function updateStoriesFromUpdatedStory(
-  stories: Story[],
-  updatedStory: Story,
-) {
-  return sortStories(
-    stories.map((story) =>
-      story.id === updatedStory.id ? updatedStory : story,
-    ),
-  );
-}
-
-export function sortStories(stories: Story[]) {
-  return stories.toSorted(compareStoryByTimeModified);
-}
-
-// offline helper function that removes the story contained in stories
-export function removeStoryFromStories(stories: Story[], storyToRemove: Story) {
-  return stories.filter((story) => story.id !== storyToRemove.id);
+export function locallyUpdateSelectedStoryFromTreeBacktrack(stories: Stories) {
+  return updateSelectedStory(stories, updateStoryFromTreeBacktrack);
 }
 
 /* Integrated */
 
-export async function updateStoryContentAndSave(
-  oldStory: Story,
+export async function createStoryAndSave(
+  stories: Stories,
+  title: string,
+  content: string,
+) {
+  const story = await storiesClient.createStory(title, content);
+
+  if (!story) return;
+
+  const updatedStories: Stories = {
+    ...stories,
+    [story.id]: story,
+  };
+
+  return updatedStories;
+}
+
+export async function duplicateSelectedStoryAndSave(
+  stories: Stories,
+  story: Story,
+) {
+  const dupedStory = await storiesClient.duplicateStory(
+    updateStoryTitle(story, story.title + " (Copy)"),
+  );
+
+  if (!dupedStory) return;
+
+  const updatedStories: Stories = {
+    ...stories,
+    [dupedStory.id]: dupedStory,
+  };
+
+  return updatedStories;
+}
+
+export async function loadStoryAndUpdate(stories: Stories, id: string) {
+  const story = await storiesClient.loadStory(id);
+
+  if (!story) return;
+
+  const updatedStories = { ...stories };
+  const currentSelectedStory = getSelectedStory(updatedStories);
+
+  if (currentSelectedStory) {
+    updatedStories[currentSelectedStory.id] =
+      toStoryPreview(currentSelectedStory);
+  }
+
+  if (updatedStories[id]) {
+    updatedStories[id] = story;
+    return updatedStories;
+  }
+}
+
+export async function saveSelectedStory(stories: Stories) {
+  const selectedStory = getSelectedStory(stories);
+
+  if (selectedStory) {
+    return storiesClient.saveStory(selectedStory);
+  }
+}
+
+export async function updateSelectedStoryContentAndSave(
+  stories: Stories,
   newContent: string,
   generatedByLlm: boolean = false,
 ) {
-  const mutatedStory = updateStoryFromAppendingHistory(
-    oldStory,
-    newContent,
-    generatedByLlm,
+  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+    updateStoryFromAppendingHistory(selectedStory, newContent, generatedByLlm),
   );
+  if (!updatedStories) return;
 
-  return storiesClient.saveStory(mutatedStory).then(() => mutatedStory);
+  const updatedStory = getSelectedStory(updatedStories);
+
+  if (updatedStory) {
+    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
+  }
 }
 
-export async function undoStoryAndSave(oldStory: Story) {
-  const mutatedStory = updateStoryFromHistoryPageFlip(oldStory, true);
+export async function undoSelectedStoryAndSave(stories: Stories) {
+  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+    updateStoryFromHistoryPageFlip(selectedStory, true),
+  );
+  if (!updatedStories) return;
 
-  return storiesClient.saveStory(mutatedStory).then(() => mutatedStory);
+  const updatedStory = getSelectedStory(updatedStories);
+
+  if (updatedStory) {
+    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
+  }
 }
 
-export async function redoStoryAndSave(oldStory: Story) {
-  const mutatedStory = updateStoryFromHistoryPageFlip(oldStory, false);
+export async function redoSelectedStoryAndSave(stories: Stories) {
+  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+    updateStoryFromHistoryPageFlip(selectedStory, false),
+  );
+  if (!updatedStories) return;
 
-  return storiesClient.saveStory(mutatedStory).then(() => mutatedStory);
+  const updatedStory = getSelectedStory(updatedStories);
+
+  if (updatedStory) {
+    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
+  }
 }
 
-export async function clearHistoryAndSave(story: Story) {
+export async function clearHistoryOfSelectedStoryAndSave(stories: Stories) {
+  const selectedStory = getSelectedStory(stories);
+
+  if (!selectedStory) return;
+
   const updatedStory: Story = {
-    ...story,
+    ...selectedStory,
     // Purely a local change that gets overwritten by the back end
     time: {
-      ...story.time,
+      ...selectedStory.time,
       modified: Date.now(),
     },
 
     history: [
       {
-        content: story.content,
+        content: selectedStory.content,
         treePrev: -1,
         attributes: {
           generatedByLlm: false,
@@ -263,18 +404,28 @@ export async function clearHistoryAndSave(story: Story) {
     historyIndex: 0,
   };
 
-  return storiesClient.saveStory(updatedStory).then((success) => {
+  const updatedStories = updateSelectedStory(stories, () => updatedStory);
+
+  if (updatedStories) {
+    const success = await storiesClient.saveStory(updatedStory);
+
     if (success) {
-      return updatedStory;
-    } else {
-      // Requires some more work with `storiesClient` to remove this silly hack
-      throw new Error();
+      return updatedStories;
     }
-  });
+  }
 }
 
-export async function duplicateStoryAndSave(story: Story) {
-  return storiesClient.duplicateStory(
-    updateStoryTitle(story, story.title + " (Copy)"),
-  );
+export async function deleteSelectedStoryAndSave(stories: Stories) {
+  const selectedStory = getSelectedStory(stories);
+
+  if (!selectedStory) return;
+
+  const success = await storiesClient.deleteStory(selectedStory.id);
+
+  if (success) {
+    const updatedStories = { ...stories };
+    delete updatedStories[selectedStory.id];
+
+    return updatedStories;
+  }
 }

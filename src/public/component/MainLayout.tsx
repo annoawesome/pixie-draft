@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Story from "../type/storyType";
+import Story, { StoryPreview } from "../type/storyType";
 import * as storiesService from "../service/storiesService";
 import AsideSettings from "./AsideSettings";
 import Editor from "./Editor";
@@ -13,15 +13,16 @@ export default function MainLayout({
   authenticated: boolean;
   zenMode: boolean;
 }) {
-  const [stories, setStories] = useState<Story[]>([]);
-  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  const [stories, setStories] = useState<Record<string, Story | StoryPreview>>(
+    {},
+  );
 
   useEffect(() => {
     storiesClient
       .loadLibrary()
       .then((stories) => {
         if (stories) {
-          setStories(storiesService.sortStories(stories));
+          setStories(storiesService.convertPreviewsToStories(stories));
         }
       })
       .catch((error) => {
@@ -35,31 +36,16 @@ export default function MainLayout({
       {zenMode ? (
         <div className="flex-column side-column scrollable" id="library"></div>
       ) : (
-        <Library
-          stories={stories}
-          selectedStory={selectedStory}
-          setSelectedStory={setSelectedStory}
-          setStories={setStories}
-        />
+        <Library stories={stories} setStories={setStories} />
       )}
-      <Editor
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        stories={stories}
-        setStories={setStories}
-      />
+      <Editor stories={stories} setStories={setStories} />
       {zenMode ? (
         <aside
           className="flex-column side-column scrollable"
           id="aside-settings"
         ></aside>
       ) : (
-        <AsideSettings
-          selectedStory={selectedStory}
-          setSelectedStory={setSelectedStory}
-          stories={stories}
-          setStories={setStories}
-        />
+        <AsideSettings stories={stories} setStories={setStories} />
       )}
     </main>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Story from "../type/storyType";
+import Story, { Stories } from "../type/storyType";
 import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
@@ -8,28 +8,27 @@ import * as endpointProfilesService from "../service/endpointProfilesService";
 import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
-import { storiesClient } from "../client/storiesClient";
 import SquareButtonContainer from "./SquareButtonContainer";
 
 function ActionBar({
   contendEditableRef,
   endpointProfile,
   selectedStory,
+  stories,
   locked,
-  setSelectedStory,
   setLocked,
   setStories,
 }: {
   contendEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
   selectedStory: Story;
+  stories: Stories;
   locked: boolean;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
-  const generate = async (story: Story) => {
+  const generate = async (stories: Stories, story: Story) => {
     if (!story) {
       alert("No story loaded to generate with");
       return;
@@ -50,16 +49,16 @@ function ActionBar({
         endpointProfile.authorization,
       );
 
-      const updatedStory = await storiesService.updateStoryContentAndSave(
-        story,
-        story.content + text,
-        true,
-      );
+      const updatedStories =
+        await storiesService.updateSelectedStoryContentAndSave(
+          stories,
+          story.content + text,
+          true,
+        );
 
-      setSelectedStory(updatedStory);
-      setStories((stories) =>
-        storiesService.updateStoriesFromUpdatedStory(stories, updatedStory),
-      );
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
 
       // There is probably a better way to do this
       setTimeout(() => {
@@ -78,33 +77,39 @@ function ActionBar({
   };
 
   const onGenerate = () => {
-    generate(selectedStory);
+    generate(stories, selectedStory);
   };
 
   const onClickUndo = async () => {
-    const updatedStory = await storiesService.undoStoryAndSave(selectedStory);
+    const updatedStories =
+      await storiesService.undoSelectedStoryAndSave(stories);
 
-    setSelectedStory(updatedStory);
-    setStories((stories) =>
-      storiesService.updateStoriesFromUpdatedStory(stories, updatedStory),
-    );
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   const onClickRedo = async () => {
-    const updatedStory = await storiesService.redoStoryAndSave(selectedStory);
+    const updatedStories =
+      await storiesService.redoSelectedStoryAndSave(stories);
 
-    setSelectedStory(updatedStory);
-    setStories((stories) =>
-      storiesService.updateStoriesFromUpdatedStory(stories, updatedStory),
-    );
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   const onClickRetry = () => {
-    const mutatedStory =
-      storiesService.updateStoryFromTreeBacktrack(selectedStory);
+    const updatedStories =
+      storiesService.locallyUpdateSelectedStoryFromTreeBacktrack(stories);
 
-    setSelectedStory(mutatedStory);
-    generate(mutatedStory);
+    if (updatedStories) {
+      setStories(updatedStories);
+      const updatedStory = storiesService.getSelectedStory(updatedStories);
+
+      if (updatedStory) {
+        generate(updatedStories, updatedStory);
+      }
+    }
   };
 
   useEffect(() => {
@@ -181,15 +186,11 @@ function ActionBar({
 }
 
 export default function Editor({
-  selectedStory,
   stories,
-  setSelectedStory,
   setStories,
 }: {
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  stories: Story[];
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [locked, setLocked] = useState(false);
   const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
@@ -199,35 +200,30 @@ export default function Editor({
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
-    setSelectedStory((prev) =>
-      prev ? storiesService.updateStoryTitle(prev, e.target.value) : null,
+    const updatedStories = storiesService.locallyUpdateSelectedStoryTitle(
+      stories,
+      e.target.value,
     );
-  };
 
-  const onBlurStoryTitle = () => {
-    if (selectedStory) {
-      storiesClient.saveStory(selectedStory);
-      setStories(
-        storiesService.updateStoriesFromUpdatedStory(stories, selectedStory),
-      );
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
+  const onBlurStoryTitle = () => {
+    storiesService.saveSelectedStory(stories);
+  };
+
   const onBlurStoryContent = async (newContent: string) => {
-    if (!selectedStory) return;
+    const updatedStories =
+      await storiesService.updateSelectedStoryContentAndSave(
+        stories,
+        newContent,
+      );
 
-    const updatedStory = await storiesService.updateStoryContentAndSave(
-      selectedStory,
-      newContent,
-    );
-
-    const updatedStories = storiesService.updateStoriesFromUpdatedStory(
-      stories,
-      updatedStory,
-    );
-
-    setSelectedStory(updatedStory);
-    setStories(updatedStories);
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   useEffect(() => {
@@ -235,6 +231,8 @@ export default function Editor({
       .fetchEndpointFromEndpointProfiles()
       .then(setEndpointProfile);
   }, []);
+
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   return (
     <div className="flex-column width-fill-max" id="editor">
@@ -260,8 +258,8 @@ export default function Editor({
             contendEditableRef={contendEditableRef}
             endpointProfile={endpointProfile}
             selectedStory={selectedStory}
+            stories={stories}
             locked={locked}
-            setSelectedStory={setSelectedStory}
             setLocked={setLocked}
             setStories={setStories}
           />

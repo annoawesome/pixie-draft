@@ -41,3 +41,8 @@ export interface StoryPreview {
     modified: number;
   };
 }
+
+/**
+ * A total list of stories.
+ */
+export type Stories = Record<string, Story | StoryPreview>;
