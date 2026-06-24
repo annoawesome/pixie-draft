@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import Story, { removeStoryFromStories } from "../type/storyType";
+import Story from "../type/storyType";
 import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
@@ -81,12 +81,15 @@ export default function AsideSettings({
     }
   };
 
-  const onClickReallyDelete = () => {
+  const onClickReallyDelete = async () => {
     setShowDialog(false);
 
-    if (selectedStory) {
-      storiesClient.deleteStory(selectedStory.id);
-      setStories(removeStoryFromStories(stories, selectedStory));
+    if (!selectedStory) return;
+
+    const success = await storiesClient.deleteStory(selectedStory.id);
+
+    if (success) {
+      setStories(storiesService.removeStoryFromStories(stories, selectedStory));
       setSelectedStory(null);
     }
   };

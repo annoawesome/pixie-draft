@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Story, {
-  getCurrentHistoryNode,
-  mutateStoryFromTreeBacktrack,
-  mutateStoryTitle,
-  updateStoriesFromUpdatedStory,
-} from "../type/storyType";
+import Story from "../type/storyType";
 import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
@@ -63,7 +58,7 @@ function ActionBar({
 
       setSelectedStory(updatedStory);
       setStories((stories) =>
-        storiesService.repushStoryToTopOfStories(stories, updatedStory),
+        storiesService.updateStoriesFromUpdatedStory(stories, updatedStory),
       );
 
       // There is probably a better way to do this
@@ -91,7 +86,7 @@ function ActionBar({
 
     setSelectedStory(updatedStory);
     setStories((stories) =>
-      storiesService.repushStoryToTopOfStories(stories, updatedStory),
+      storiesService.updateStoriesFromUpdatedStory(stories, updatedStory),
     );
   };
 
@@ -100,12 +95,13 @@ function ActionBar({
 
     setSelectedStory(updatedStory);
     setStories((stories) =>
-      storiesService.repushStoryToTopOfStories(stories, updatedStory),
+      storiesService.updateStoriesFromUpdatedStory(stories, updatedStory),
     );
   };
 
   const onClickRetry = () => {
-    const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
+    const mutatedStory =
+      storiesService.updateStoryFromTreeBacktrack(selectedStory);
 
     setSelectedStory(mutatedStory);
     generate(mutatedStory);
@@ -153,11 +149,7 @@ function ActionBar({
           <button
             className="button-secondary button-icon"
             type="button"
-            disabled={
-              selectedStory.historyIndex === 0 ||
-              !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
-              locked
-            }
+            disabled={!storiesService.regeneratable(selectedStory) || locked}
             onClick={onClickRetry}
           >
             <RefreshIcon />
@@ -208,14 +200,16 @@ export default function Editor({
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
     setSelectedStory((prev) =>
-      prev ? mutateStoryTitle(prev, e.target.value) : null,
+      prev ? storiesService.updateStoryTitle(prev, e.target.value) : null,
     );
   };
 
   const onBlurStoryTitle = () => {
     if (selectedStory) {
       storiesClient.saveStory(selectedStory);
-      setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
+      setStories(
+        storiesService.updateStoriesFromUpdatedStory(stories, selectedStory),
+      );
     }
   };
 
@@ -227,7 +221,7 @@ export default function Editor({
       newContent,
     );
 
-    const updatedStories = storiesService.repushStoryToTopOfStories(
+    const updatedStories = storiesService.updateStoriesFromUpdatedStory(
       stories,
       updatedStory,
     );
