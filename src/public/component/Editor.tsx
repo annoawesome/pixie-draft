@@ -17,6 +17,7 @@ import * as endpointProfilesService from "../service/endpointProfilesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
 import { storiesClient } from "../client/storiesClient";
+import SquareButtonContainer from "./SquareButtonContainer";
 
 function ActionBar({
   contendEditableRef,
@@ -136,37 +137,43 @@ function ActionBar({
   return (
     <div className="flex-row width-fill-max" id="action-bar">
       <div className="flex-row width-fill-max" id="action-bar-left">
-        <button
-          className="button-secondary button-icon"
-          type="button"
-          disabled={selectedStory.historyIndex === 0 || locked}
-          onClick={onClickUndo}
-        >
-          <UndoIcon />
-        </button>
-        <button
-          className="button-secondary button-icon"
-          type="button"
-          disabled={
-            selectedStory.historyIndex === selectedStory.history.length - 1 ||
-            locked
-          }
-          onClick={onClickRedo}
-        >
-          <RedoIcon />
-        </button>
-        <button
-          className="button-secondary button-icon"
-          type="button"
-          disabled={
-            selectedStory.historyIndex === 0 ||
-            !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
-            locked
-          }
-          onClick={onClickRetry}
-        >
-          <RefreshIcon />
-        </button>
+        <SquareButtonContainer>
+          <button
+            className="button-secondary button-icon"
+            type="button"
+            disabled={selectedStory.historyIndex === 0 || locked}
+            onClick={onClickUndo}
+          >
+            <UndoIcon />
+          </button>
+        </SquareButtonContainer>
+        <SquareButtonContainer>
+          <button
+            className="button-secondary button-icon"
+            type="button"
+            disabled={
+              selectedStory.historyIndex === selectedStory.history.length - 1 ||
+              locked
+            }
+            onClick={onClickRedo}
+          >
+            <RedoIcon />
+          </button>
+        </SquareButtonContainer>
+        <SquareButtonContainer>
+          <button
+            className="button-secondary button-icon"
+            type="button"
+            disabled={
+              selectedStory.historyIndex === 0 ||
+              !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
+              locked
+            }
+            onClick={onClickRetry}
+          >
+            <RefreshIcon />
+          </button>
+        </SquareButtonContainer>
       </div>
       <div className="flex-row-right width-fill-max" id="action-bar-right">
         <button

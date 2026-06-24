@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import EndpointProfilesSettings from "./settings/EndpointProfilesSettings";
 import { SidebarIcon, UndoIcon } from "./Icons";
 import { CurrentPage } from "../type/currentPageType";
+import SquareButtonContainer from "./SquareButtonContainer";
 
 function SidebarActionsBar({
   hideSidebar,
@@ -16,25 +17,29 @@ function SidebarActionsBar({
   return (
     <div className="flex-row width-fill-max">
       <div className="flex-row width-fill-max">
-        <button
-          type="button"
-          className="button-tertiary button-icon"
-          title="Return to main editor"
-          hidden={hideSidebar}
-          onClick={() => setCurrentPage("main")}
-        >
-          <UndoIcon />
-        </button>
+        <SquareButtonContainer>
+          <button
+            type="button"
+            className="button-tertiary button-icon"
+            title="Return to main editor"
+            hidden={hideSidebar}
+            onClick={() => setCurrentPage("main")}
+          >
+            <UndoIcon />
+          </button>
+        </SquareButtonContainer>
       </div>
       <div className="flex-row-right width-fill-max">
-        <button
-          type="button"
-          className="button-tertiary button-icon"
-          title="Hide sidebar"
-          onClick={() => setHideSidebar(!hideSidebar)}
-        >
-          <SidebarIcon />
-        </button>
+        <SquareButtonContainer>
+          <button
+            type="button"
+            className="button-tertiary button-icon"
+            title="Hide sidebar"
+            onClick={() => setHideSidebar(!hideSidebar)}
+          >
+            <SidebarIcon />
+          </button>
+        </SquareButtonContainer>
       </div>
     </div>
   );

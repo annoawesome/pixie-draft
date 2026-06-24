@@ -9,6 +9,7 @@ import {
 } from "./Icons";
 import { CurrentPage } from "../type/currentPageType";
 import { authClient } from "../client/authClient";
+import SquareButtonContainer from "./SquareButtonContainer";
 
 function Header({
   zenMode,
@@ -22,12 +23,12 @@ function Header({
   return (
     <header className="flex-row">
       <div className="flex-row width-fill-max" id="header-left">
-        <div className="div-square-button">
+        <SquareButtonContainer>
           <button className="button-tertiary button-icon">
             <HamburgerMenuIcon />
           </button>
-        </div>
-        <div className="div-square-button">
+        </SquareButtonContainer>
+        <SquareButtonContainer>
           <button
             type="button"
             className="button-tertiary button-icon"
@@ -37,8 +38,8 @@ function Header({
           >
             <LockIcon />
           </button>
-        </div>
-        <div className="div-square-button">
+        </SquareButtonContainer>
+        <SquareButtonContainer>
           <button
             type="button"
             className={
@@ -50,17 +51,17 @@ function Header({
           >
             <MeditationIcon />
           </button>
-        </div>
+        </SquareButtonContainer>
       </div>
       <div className="flex-row-right width-fill-max" id="header-right">
-        <div className="div-square-button">
+        <SquareButtonContainer>
           <button
             className="button-tertiary button-icon"
             onClick={() => setCurrentPage("endpoints")}
           >
             <BrainIcon />
           </button>
-        </div>
+        </SquareButtonContainer>
       </div>
     </header>
   );
