@@ -18,6 +18,16 @@
   --accent-color-7: hsl(290, 34%, 63%);
   --accent-color-8: hsl(290, 22%, 78%);
   --accent-color-9: hsl(300, 12%, 92%);
+
+  --destructive-color-1: hsl(0, 87%, 9%);
+  --destructive-color-2: hsl(0, 72%, 17%);
+  --destructive-color-3: hsl(0, 54%, 25%);
+  --destructive-color-4: hsl(0, 64%, 38%);
+  --destructive-color-5: hsl(6, 83%, 47%);
+  --destructive-color-6: hsl(10, 100%, 60%);
+  --destructive-color-7: hsl(10, 96%, 70%);
+  --destructive-color-8: hsl(10, 100%, 83%);
+  --destructive-color-9: hsl(14, 100%, 91%);
 }
 
 * {
@@ -178,17 +188,32 @@ dialog::backdrop {
 }
 
 .button-destructive {
-  background-color: rgb(100, 30, 30);
-  font-weight: bold;
   border: 0;
+  transition: background-color 0.15s ease-out;
 }
 
-.button-destructive:hover {
-  background-color: rgb(160, 35, 35);
+.button-destructive.button-primary {
+  background-color: var(--destructive-color-3);
 }
 
-.button-destructive:active {
-  background-color: var(--neutral-color-3);
+.button-destructive.button-primary:hover {
+  background-color: var(--destructive-color-4);
+}
+
+.button-destructive.button-primary:active {
+  background-color: var(--destructive-color-2);
+}
+
+.button-destructive.button-secondary {
+  background-color: var(--destructive-color-2);
+}
+
+.button-destructive.button-secondary:hover {
+  background-color: var(--destructive-color-3);
+}
+
+.button-destructive.button-secondary:active {
+  background-color: var(--destructive-color-1);
 }
 
 /* Makes the buttons obey aspect ratio on Firefox. I have no idea why this works */
@@ -255,7 +280,7 @@ dialog::backdrop {
 }
 
 .circle-inactive {
-  background-color: rgb(220, 40, 20);
+  background-color: var(--destructive-color-5);
 }
 
 .pulse {

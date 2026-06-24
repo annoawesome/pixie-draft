@@ -54,7 +54,7 @@ function DialogBox({
         </button>
         <button
           type="button"
-          className="button-secondary button-destructive width-fill-max"
+          className="button-primary button-destructive width-fill-max"
           onClick={onClickReallyDelete}
         >
           Yes, Delete
