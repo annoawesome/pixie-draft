@@ -146,6 +146,7 @@ dialog::backdrop {
 
 .button-primary:disabled {
   background-color: var(--accent-color-2);
+  border: 0;
 }
 
 .button-secondary {
