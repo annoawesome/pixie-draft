@@ -4,6 +4,7 @@ import * as storiesService from "../../src/public/service/storiesService";
 import Story, { Stories, StoryPreview } from "../../src/public/type/storyType";
 
 import baseStory from "./baseStory.json";
+import { AuthClient } from "../../src/public/client/authClient";
 
 class StoriesBuilder {
   #stories: Stories = {};
@@ -45,6 +46,53 @@ function buildStory(id: string, title: string, content: string): Story {
     content,
   };
 }
+
+vi.mock(import("../../src/public/client/storiesClient"), () => {
+  const MockedStoryClass = class {
+    private authClient;
+
+    constructor(authClient: AuthClient) {
+      this.authClient = authClient;
+    }
+
+    public async createStory(
+      title: string,
+      content: string,
+    ): Promise<Story | null> {
+      return buildStory("1", title, content);
+    }
+
+    public async duplicateStory(story: Story) {
+      return { ...story, id: "3" };
+    }
+
+    public async loadLibrary(): Promise<StoryPreview[]> {
+      return [
+        buildStoryPreview("2", "Title 2"),
+        buildStoryPreview("3", "Title 3"),
+      ];
+    }
+
+    public async loadStory(id: string): Promise<Story | null> {
+      return buildStory(id, "Title", "Content");
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public async saveStory(story: Story) {
+      return true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public async deleteStory(id: string) {
+      return true;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any;
+
+  const StoriesClient = vi.fn(MockedStoryClass);
+
+  return { StoriesClient, storiesClient: new MockedStoryClass(null) };
+});
 
 describe("stories service", () => {
   beforeEach(() => {
@@ -146,13 +194,86 @@ describe("stories service", () => {
 
   test("locally backtrack story history");
 
-  test("create story and save");
-  test("duplicate selected story and save");
-  test("load story and update");
-  test("save selected story");
+  test("create story and save", async () => {
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
+
+    const story = buildStory("1", "New Story", "Content");
+    const copiedStory = buildStory("3", "New Story (Copy)", "Content");
+
+    const stories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .add(story)
+      .finish();
+    const updatedStories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .add(story)
+      .add(copiedStory)
+      .finish();
+
+    expect(
+      await storiesService.duplicateSelectedStoryAndSave(stories, story),
+    ).toEqual(updatedStories);
+  });
+
+  test("duplicate selected story and save", async () => {
+    const newStory = buildStory("1", "New Story", "Content");
+    const stories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .finish();
+    const updatedStories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .add(newStory)
+      .finish();
+
+    expect(
+      await storiesService.createStoryAndSave(
+        stories,
+        newStory.title,
+        newStory.content,
+      ),
+    ).toEqual(updatedStories);
+  });
+
+  test("load story and update", async () => {
+    const loadedStory = buildStory("1", "Title", "Content");
+
+    const stories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .add(buildStoryPreview(loadedStory.id, loadedStory.title))
+      .finish();
+
+    const updatedStories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .add(loadedStory)
+      .finish();
+
+    expect(await storiesService.loadStoryAndUpdate(stories, "1")).toEqual(
+      updatedStories,
+    );
+  });
+
+  // Essentially a stub test
+  test("save selected story", async () => {
+    const stories = new StoriesBuilder()
+      .add(buildStory("1", "Title", "New Content"))
+      .finish();
+
+    expect(await storiesService.saveSelectedStory(stories)).toBe(true);
+  });
+
   test("update selected story content and save");
   test("undo selected story and save");
   test("redo selected story and save");
   test("clear history of selected story and save");
-  test("delete selected story and save");
+
+  test("delete selected story and save", async () => {
+    const stories = new StoriesBuilder()
+      .add(buildStory("1", "Title", "New Content"))
+      .add(buildStoryPreview("2", "Preview"))
+      .finish();
+
+    expect(await storiesService.deleteSelectedStoryAndSave(stories)).toEqual(
+      new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+    );
+  });
 });
