@@ -262,6 +262,25 @@ describe("stories service", () => {
   });
 
   test("create story and save", async () => {
+    const newStory = buildStory("1", "New Story", "Content");
+    const stories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .finish();
+    const updatedStories = new StoriesBuilder()
+      .add(buildStoryPreview("2", "Title"))
+      .add(newStory)
+      .finish();
+
+    expect(
+      await storiesService.createStoryAndSave(
+        stories,
+        newStory.title,
+        newStory.content,
+      ),
+    ).toEqual(updatedStories);
+  });
+
+  test("duplicate selected story and save", async () => {
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
 
     const story = buildStory("1", "New Story", "Content");
@@ -279,25 +298,6 @@ describe("stories service", () => {
 
     expect(
       await storiesService.duplicateSelectedStoryAndSave(stories, story),
-    ).toEqual(updatedStories);
-  });
-
-  test("duplicate selected story and save", async () => {
-    const newStory = buildStory("1", "New Story", "Content");
-    const stories = new StoriesBuilder()
-      .add(buildStoryPreview("2", "Title"))
-      .finish();
-    const updatedStories = new StoriesBuilder()
-      .add(buildStoryPreview("2", "Title"))
-      .add(newStory)
-      .finish();
-
-    expect(
-      await storiesService.createStoryAndSave(
-        stories,
-        newStory.title,
-        newStory.content,
-      ),
     ).toEqual(updatedStories);
   });
 
