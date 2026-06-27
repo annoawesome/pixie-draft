@@ -32,9 +32,6 @@ function optimizeDiff(diff: Diff[]): DiffOp[] {
 }
 
 function generateDmpDiff(text1: string, text2: string) {
-  console.log(text1, text2);
-
-  console.log(dmp.diff_main(text1, text2, undefined, 0.25));
   return dmp.diff_main(text1, text2, undefined, 0.25);
 }
 
