@@ -14,6 +14,9 @@ function SidebarActionsBar({
   setHideSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
+  const onClickReturnToMainEditor = () => setCurrentPage("main");
+  const onClickHideSidebar = () => setHideSidebar(!hideSidebar);
+
   return (
     <div className="flex-row width-fill-max">
       <div className="flex-row width-fill-max">
@@ -23,7 +26,7 @@ function SidebarActionsBar({
             className="button-tertiary button-icon"
             title="Return to main editor"
             hidden={hideSidebar}
-            onClick={() => setCurrentPage("main")}
+            onClick={onClickReturnToMainEditor}
           >
             <UndoIcon />
           </button>
@@ -35,7 +38,7 @@ function SidebarActionsBar({
             type="button"
             className="button-tertiary button-icon"
             title="Hide sidebar"
-            onClick={() => setHideSidebar(!hideSidebar)}
+            onClick={onClickHideSidebar}
           >
             <SidebarIcon />
           </button>

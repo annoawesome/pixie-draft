@@ -63,6 +63,9 @@ export default function Library({
     }
   };
 
+  const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setSearch(event.target.value);
+
   const allPreviews = storiesService.toLibraryPreview(stories);
   const filteredPreviews = storiesService.searchLibraryPreview(
     allPreviews,
@@ -85,7 +88,7 @@ export default function Library({
         id=""
         placeholder="Search"
         value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={onChangeSearch}
       />
       {search.length > 0 ? (
         <p className="text-secondary">
