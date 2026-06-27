@@ -34,9 +34,7 @@ function StoryCard({
     >
       <h2>{story.title}</h2>
       <p className="text-secondary">
-        {story.time.modified !== -1
-          ? `${millisecondsToString(story.time.modified)}`
-          : "Has not been edited yet"}
+        {`${millisecondsToString(story.time.modified)}`}
       </p>
     </button>
   );

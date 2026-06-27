@@ -183,9 +183,7 @@ export default function AsideSettings({
             Created: {millisecondsToString(selectedStory.time.created)}
           </p>
           <p className="text-secondary">
-            {selectedStory.time.modified !== -1
-              ? `Edited: ${millisecondsToString(selectedStory.time.modified)}`
-              : "Has not been edited yet"}
+            {`Edited: ${millisecondsToString(selectedStory.time.modified)}`}
           </p>
           <div className="separator"></div>
 

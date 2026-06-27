@@ -26,7 +26,7 @@ export default function createStory(
     time: {
       created: Date.now(),
       accessed: Date.now(),
-      modified: -1,
+      modified: Date.now(),
     },
 
     history: history || [
