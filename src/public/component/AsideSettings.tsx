@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 
-import Story, {
-  mutateStoryFromRemovingHistory,
-  removeStoryFromStories,
-} from "../type/storyType";
+import Story, { Stories } from "../type/storyType";
 import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
-import { storiesClient } from "../client/storiesClient";
+import * as storiesService from "../service/storiesService";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -65,17 +62,14 @@ function DialogBox({
 }
 
 export default function AsideSettings({
-  selectedStory,
-  setSelectedStory,
   stories,
   setStories,
 }: {
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  stories: Story[];
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [showDialog, setShowDialog] = useState(false);
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   const onClickDelete = () => {
     if (selectedStory) {
@@ -83,13 +77,16 @@ export default function AsideSettings({
     }
   };
 
-  const onClickReallyDelete = () => {
+  const onClickReallyDelete = async () => {
     setShowDialog(false);
 
-    if (selectedStory) {
-      storiesClient.deleteStory(selectedStory.id);
-      setStories(removeStoryFromStories(stories, selectedStory));
-      setSelectedStory(null);
+    if (!selectedStory) return;
+
+    const updatedStories =
+      await storiesService.deleteSelectedStoryAndSave(stories);
+
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
@@ -97,16 +94,16 @@ export default function AsideSettings({
     setShowDialog(false);
   };
 
-  const onClickDuplicate = () => {
-    if (selectedStory) {
-      storiesClient.duplicateStory(selectedStory).then((newStory) => {
-        if (newStory) {
-          storiesClient.saveStory(newStory);
+  const onClickDuplicate = async () => {
+    if (!selectedStory) return;
 
-          setSelectedStory(newStory);
-          setStories((prev) => [newStory, ...prev]);
-        }
-      });
+    const updatedStories = await storiesService.duplicateSelectedStoryAndSave(
+      stories,
+      selectedStory,
+    );
+
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
@@ -126,16 +123,19 @@ export default function AsideSettings({
     );
   };
 
-  const onClickClearHistory = () => {
+  const onClickClearHistory = async () => {
     if (!selectedStory) return; // Should never happen!
 
-    const updatedStory = mutateStoryFromRemovingHistory(selectedStory);
+    try {
+      const updatedStories =
+        await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
 
-    storiesClient.saveStory(updatedStory).then((success) => {
-      if (success) {
-        setSelectedStory(updatedStory);
+      if (updatedStories) {
+        setStories(updatedStories);
       }
-    });
+    } catch {
+      /* empty */
+    }
   };
 
   return (

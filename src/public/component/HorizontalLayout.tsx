@@ -20,6 +20,13 @@ function Header({
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
   setZenMode: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const onClickLogOut = () => {
+    authClient.logOut().then(() => window.location.reload());
+  };
+
+  const onClickZenToggle = () => setZenMode(!zenMode);
+  const onClickEndpointSettings = () => setCurrentPage("endpoints");
+
   return (
     <header className="flex-row">
       <div className="flex-row width-fill-max" id="header-left">
@@ -32,9 +39,7 @@ function Header({
           <button
             type="button"
             className="button-tertiary button-icon"
-            onClick={() =>
-              authClient.logOut().then(() => window.location.reload())
-            }
+            onClick={onClickLogOut}
           >
             <LockIcon />
           </button>
@@ -47,7 +52,7 @@ function Header({
               (zenMode ? " button-selected" : "")
             }
             title="Zen Mode: Toggle for distraction-free work"
-            onClick={() => setZenMode(!zenMode)}
+            onClick={onClickZenToggle}
           >
             <MeditationIcon />
           </button>
@@ -57,7 +62,7 @@ function Header({
         <SquareButtonContainer>
           <button
             className="button-tertiary button-icon"
-            onClick={() => setCurrentPage("endpoints")}
+            onClick={onClickEndpointSettings}
           >
             <BrainIcon />
           </button>

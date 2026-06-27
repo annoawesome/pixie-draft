@@ -1,6 +1,6 @@
 import * as storiesApi from "../api/storiesApi";
 import { HttpError } from "../type/httpError";
-import Story from "../type/storyType";
+import Story, { StoryPreview } from "../type/storyType";
 import { authClient, AuthClient } from "./authClient";
 
 export class StoriesClient {
@@ -72,7 +72,7 @@ export class StoriesClient {
   /**
    * loadLibrary
    */
-  public async loadLibrary(): Promise<Story[]> {
+  public async loadLibrary(): Promise<StoryPreview[]> {
     const response = await storiesApi.getStories(
       await this.authClient.getUsableApiToken(),
     );

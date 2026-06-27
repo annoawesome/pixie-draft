@@ -14,6 +14,8 @@ function EndpointCard({
   setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
   locked: boolean;
 }) {
+  const onClickEndpointCard = () => setSelectedEndpoint(endpoint);
+
   return (
     <button
       className={
@@ -21,7 +23,7 @@ function EndpointCard({
         (selectedEndpoint?.id === endpoint.id ? "button-selected" : "")
       }
       disabled={locked}
-      onClick={() => setSelectedEndpoint(endpoint)}
+      onClick={onClickEndpointCard}
     >
       <h2>{endpoint.name}</h2>
       <p>{endpoint.uri}</p>

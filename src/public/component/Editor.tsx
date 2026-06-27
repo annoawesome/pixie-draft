@@ -1,43 +1,34 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// import { saveStory } from "../api/storiesApi";
-
-import Story, {
-  getCurrentHistoryNode,
-  mutateStoryFromAppendingHistory,
-  mutateStoryFromHistoryPageFlip,
-  mutateStoryFromTreeBacktrack,
-  mutateStoryTitle,
-  updateStoriesFromUpdatedStory,
-} from "../type/storyType";
+import Story, { Stories } from "../type/storyType";
 import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
+import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
-import { storiesClient } from "../client/storiesClient";
 import SquareButtonContainer from "./SquareButtonContainer";
 
 function ActionBar({
   contendEditableRef,
   endpointProfile,
   selectedStory,
+  stories,
   locked,
-  setSelectedStory,
   setLocked,
   setStories,
 }: {
   contendEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
   selectedStory: Story;
+  stories: Stories;
   locked: boolean;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
-  const generate = (story: Story) => {
+  const generate = async (stories: Stories, story: Story) => {
     if (!story) {
       alert("No story loaded to generate with");
       return;
@@ -50,76 +41,75 @@ function ActionBar({
 
     setLocked(true);
 
-    // call LLM api
-    generateResponse(
-      endpointProfile.uri,
-      story.content,
-      endpointProfile.authorization,
-    )
-      .then((text) => {
-        const mutatedStory = mutateStoryFromAppendingHistory(
-          story,
+    try {
+      // call LLM api
+      const text = await generateResponse(
+        endpointProfile.uri,
+        story.content,
+        endpointProfile.authorization,
+      );
+
+      const updatedStories =
+        await storiesService.updateSelectedStoryContentAndSave(
+          stories,
           story.content + text,
           true,
         );
 
-        setSelectedStory(mutatedStory);
-        storiesClient
-          .saveStory(mutatedStory)
-          .then(() =>
-            setStories((stories) =>
-              updateStoriesFromUpdatedStory(stories, mutatedStory),
-            ),
-          );
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
 
-        // There is probably a better way to do this
-        setTimeout(() => {
-          if (contendEditableRef.current) {
-            contendEditableRef.current.scrollTo(
-              0,
-              contendEditableRef.current.scrollHeight,
-            );
-          }
-        }, 100);
-      })
-      .finally(() => setLocked(false));
+      // There is probably a better way to do this
+      setTimeout(() => {
+        if (contendEditableRef.current) {
+          contendEditableRef.current.scrollTo(
+            0,
+            contendEditableRef.current.scrollHeight,
+          );
+        }
+      }, 100);
+    } catch {
+      /* empty */
+    }
+
+    setLocked(false);
   };
 
   const onGenerate = () => {
-    generate(selectedStory);
+    generate(stories, selectedStory);
   };
 
-  const onClickUndo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, true);
+  const onClickUndo = async () => {
+    const updatedStories =
+      await storiesService.undoSelectedStoryAndSave(stories);
 
-    setSelectedStory(mutatedStory);
-    storiesClient
-      .saveStory(mutatedStory)
-      .then(() =>
-        setStories((stories) =>
-          updateStoriesFromUpdatedStory(stories, mutatedStory),
-        ),
-      );
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
-  const onClickRedo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, false);
+  const onClickRedo = async () => {
+    const updatedStories =
+      await storiesService.redoSelectedStoryAndSave(stories);
 
-    setSelectedStory(mutatedStory);
-    storiesClient
-      .saveStory(mutatedStory)
-      .then(() =>
-        setStories((stories) =>
-          updateStoriesFromUpdatedStory(stories, mutatedStory),
-        ),
-      );
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   const onClickRetry = () => {
-    const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
+    const updatedStories =
+      storiesService.locallyUpdateSelectedStoryFromTreeBacktrack(stories);
 
-    setSelectedStory(mutatedStory);
-    generate(mutatedStory);
+    if (updatedStories) {
+      setStories(updatedStories);
+      const updatedStory = storiesService.getSelectedStory(updatedStories);
+
+      if (updatedStory) {
+        generate(updatedStories, updatedStory);
+      }
+    }
   };
 
   useEffect(() => {
@@ -164,11 +154,7 @@ function ActionBar({
           <button
             className="button-secondary button-icon"
             type="button"
-            disabled={
-              selectedStory.historyIndex === 0 ||
-              !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
-              locked
-            }
+            disabled={!storiesService.regeneratable(selectedStory) || locked}
             onClick={onClickRetry}
           >
             <RefreshIcon />
@@ -200,15 +186,11 @@ function ActionBar({
 }
 
 export default function Editor({
-  selectedStory,
   stories,
-  setSelectedStory,
   setStories,
 }: {
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  stories: Story[];
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [locked, setLocked] = useState(false);
   const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
@@ -218,32 +200,29 @@ export default function Editor({
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
-    setSelectedStory((prev) =>
-      prev ? mutateStoryTitle(prev, e.target.value) : null,
+    const updatedStories = storiesService.locallyUpdateSelectedStoryTitle(
+      stories,
+      e.target.value,
     );
-  };
 
-  const onBlurStoryTitle = () => {
-    if (selectedStory) {
-      storiesClient.saveStory(selectedStory);
-      setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
-  const onBlurStoryContent = (newContent: string) => {
-    if (selectedStory) {
-      const mutatedStory = mutateStoryFromAppendingHistory(
-        selectedStory,
+  const onBlurStoryTitle = () => {
+    storiesService.saveSelectedStory(stories);
+  };
+
+  const onBlurStoryContent = async (newContent: string) => {
+    const updatedStories =
+      await storiesService.updateSelectedStoryContentAndSave(
+        stories,
         newContent,
-        false,
       );
 
-      setSelectedStory(mutatedStory);
-      storiesClient
-        .saveStory(mutatedStory)
-        .then(() =>
-          setStories(updateStoriesFromUpdatedStory(stories, mutatedStory)),
-        );
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
@@ -252,6 +231,8 @@ export default function Editor({
       .fetchEndpointFromEndpointProfiles()
       .then(setEndpointProfile);
   }, []);
+
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   return (
     <div className="flex-column width-fill-max" id="editor">
@@ -277,8 +258,8 @@ export default function Editor({
             contendEditableRef={contendEditableRef}
             endpointProfile={endpointProfile}
             selectedStory={selectedStory}
+            stories={stories}
             locked={locked}
-            setSelectedStory={setSelectedStory}
             setLocked={setLocked}
             setStories={setStories}
           />
