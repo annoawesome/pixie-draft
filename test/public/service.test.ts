@@ -192,7 +192,74 @@ describe("stories service", () => {
     ).toEqual(updatedStories);
   });
 
-  test("locally backtrack story history");
+  test("update story from appending history", () => {
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 1, 0));
+
+    const story = buildStory("1", "Title", "Content");
+    const updatedStory: Story = {
+      ...buildStory("1", "Title", "New content"),
+      time: {
+        created: 1,
+        accessed: 1,
+        modified: 1000,
+      },
+      history: [
+        {
+          content: "",
+          patch: [[1, "C"], [3, "New c"], 6], // Use https://neil.fraser.name/software/diff_match_patch/demos/diff.html to view patches
+          treePrev: -1,
+          attributes: {
+            generatedByLlm: false,
+          },
+        },
+        {
+          content: "New content",
+          treePrev: 0,
+          attributes: {
+            generatedByLlm: true,
+          },
+        },
+      ],
+      historyIndex: 1,
+    };
+
+    expect(
+      storiesService.updateStoryFromAppendingHistory(
+        story,
+        "New content",
+        true,
+      ),
+    ).toEqual(updatedStory);
+  });
+
+  test("locally backtrack story history", () => {
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
+
+    const story = buildStory("1", "Title", "Content");
+    const updatedStory1 = storiesService.updateStoryFromAppendingHistory(
+      story,
+      "New content",
+      true,
+    );
+
+    // Test backtrack by one node
+    const backtrackedStory1 =
+      storiesService.updateStoryFromTreeBacktrack(updatedStory1);
+
+    expect(backtrackedStory1).toEqual({ ...story, history: expect.any(Array) });
+
+    const updatedStory2 = storiesService.updateStoryFromAppendingHistory(
+      backtrackedStory1,
+      "Really new content",
+      true,
+    );
+
+    // Test backtrack by two nodes
+    const backtrackedStory2 =
+      storiesService.updateStoryFromTreeBacktrack(updatedStory2);
+
+    expect(backtrackedStory2).toEqual({ ...story, history: expect.any(Array) });
+  });
 
   test("create story and save", async () => {
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
@@ -261,7 +328,34 @@ describe("stories service", () => {
     expect(await storiesService.saveSelectedStory(stories)).toBe(true);
   });
 
-  test("update selected story content and save");
+  test("update selected story content and save", async () => {
+    vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
+
+    const stories = new StoriesBuilder()
+      .add(buildStoryPreview("1", "Preview"))
+      .add(buildStory("2", "Title", "Content"))
+      .finish();
+
+    const updatedStories =
+      await storiesService.updateSelectedStoryContentAndSave(
+        stories,
+        "New content",
+        false,
+      );
+
+    expect(updatedStories).toEqual(
+      new StoriesBuilder()
+        .add(buildStoryPreview("1", "Preview"))
+        .add({
+          ...buildStory("2", "Title", "New content"),
+          historyIndex: 1,
+          history: expect.any(Array),
+        })
+        .finish(),
+    );
+  });
+
+  // These probably work assuming the above tests regarding history continue to work?
   test("undo selected story and save");
   test("redo selected story and save");
   test("clear history of selected story and save");

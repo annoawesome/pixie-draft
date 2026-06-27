@@ -114,7 +114,7 @@ export function locallyUpdateSelectedStoryTitle(
   );
 }
 
-function updateStoryFromAppendingHistory(
+export function updateStoryFromAppendingHistory(
   story: Story,
   newContent: string,
   generatedByLlm: boolean,
