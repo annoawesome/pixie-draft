@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import sanitize from "sanitize-filename";
 
 import Story, { Stories } from "../type/storyType";
 import Dialog from "./Dialog";
@@ -14,7 +15,7 @@ function downloadText(text: string, mimeType: string, fileName: string) {
   const anchor = document.createElement("a");
   const url = URL.createObjectURL(file);
   anchor.href = url;
-  anchor.download = fileName;
+  anchor.download = sanitize(fileName);
 
   document.body.append(anchor);
   anchor.click();
