@@ -28,7 +28,9 @@ function ActionBar({
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
-  const generate = async (stories: Stories, story: Story) => {
+  const generate = async (stories: Stories) => {
+    const story = storiesService.getSelectedStory(stories);
+
     if (!story) {
       alert("No story loaded to generate with");
       return;
@@ -77,7 +79,7 @@ function ActionBar({
   };
 
   const onGenerate = () => {
-    generate(stories, selectedStory);
+    generate(stories);
   };
 
   const onClickUndo = async () => {
@@ -107,7 +109,7 @@ function ActionBar({
       const updatedStory = storiesService.getSelectedStory(updatedStories);
 
       if (updatedStory) {
-        generate(updatedStories, updatedStory);
+        generate(updatedStories);
       }
     }
   };
@@ -215,6 +217,10 @@ export default function Editor({
   };
 
   const onBlurStoryContent = async (newContent: string) => {
+    // A hack to hopefully prevent what appears to be a rare race condition
+    // where you press "generate" before the app finishes saving
+    setLocked(true);
+
     const updatedStories =
       await storiesService.updateSelectedStoryContentAndSave(
         stories,
@@ -224,6 +230,8 @@ export default function Editor({
     if (updatedStories) {
       setStories(updatedStories);
     }
+
+    setLocked(false);
   };
 
   useEffect(() => {
