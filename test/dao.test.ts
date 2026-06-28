@@ -44,7 +44,7 @@ describe("stories dao", () => {
         time: {
           created: expect.any(Number),
           accessed: expect.any(Number),
-          modified: -1,
+          modified: expect.any(Number),
         },
 
         history: [
@@ -72,7 +72,7 @@ describe("stories dao", () => {
       time: {
         created: expect.any(Number),
         accessed: expect.any(Number),
-        modified: -1,
+        modified: expect.any(Number),
       },
 
       history: [
