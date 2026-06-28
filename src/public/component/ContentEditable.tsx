@@ -3,19 +3,13 @@
  */
 
 import React, { useEffect, useRef } from "react";
-
-function splitIntoParagraphs(text: string) {
-  return text
-    .split("\n")
-    .map((section) => (section ? `<p>${section}</p>` : "")) // removes extra newline, sometimes not desirable and could be a bug
-    .join("\n");
-}
+import { toHtml } from "../service/markdownRenderer";
 
 function setContentEditableContents(
   contentEditable: HTMLDivElement,
   text: string,
 ) {
-  contentEditable.innerHTML = splitIntoParagraphs(text);
+  contentEditable.innerHTML = toHtml(text);
 }
 
 function pruneRedundantNewlines(text: string) {
