@@ -7,7 +7,6 @@ describe("markdown renderer", () => {
   });
 
   test("reduces redundant newlines", () => {
-    // Weird behavior,
     expect(toHtml("Hello\n\nWorld!")).toBe("<p>Hello</p>\n<p>World!</p>");
   });
 
