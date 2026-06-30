@@ -284,7 +284,7 @@ describe("stories service", () => {
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
 
     const story = buildStory("1", "New Story", "Content");
-    const copiedStory = buildStory("3", "New Story (Copy)", "Content");
+    const copiedStory = buildStory("3", "New Story", "Content");
 
     const stories = new StoriesBuilder()
       .add(buildStoryPreview("2", "Title"))
@@ -296,9 +296,9 @@ describe("stories service", () => {
       .add(copiedStory)
       .finish();
 
-    expect(
-      await storiesService.duplicateSelectedStoryAndSave(stories, story),
-    ).toEqual(updatedStories);
+    expect(await storiesService.duplicateStoryAndSave(stories, story)).toEqual(
+      updatedStories,
+    );
   });
 
   test("load story and update", async () => {

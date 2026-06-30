@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 
-import { Stories, StoryPreview } from "../type/storyType";
+import Story, { Stories, StoryPreview } from "../type/storyType";
 import { millisecondsToString } from "../util/time";
 import * as storiesService from "../service/storiesService";
+import Dialog from "./Dialog";
+import MimeTypes from "../type/mimeType";
 
 function StoryCard({
   story,
@@ -48,6 +50,7 @@ export default function Library({
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [search, setSearch] = useState("");
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   const onClickNewStoryButton = async () => {
     const updatedStories = await storiesService.createStoryAndSave(
@@ -64,6 +67,50 @@ export default function Library({
   const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) =>
     setSearch(event.target.value);
 
+  const onClickImport = () => setShowImportDialog(true);
+
+  const onChangeFileImport = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    // Do not lock the user out in case any mishaps occur
+    setShowImportDialog(false);
+
+    const importedFiles = event.target.files;
+
+    if (!importedFiles || importedFiles.length !== 1) return;
+
+    const file = importedFiles[0];
+    const storyContent = await file.text();
+
+    if (!storyContent) return;
+
+    if (file.type === MimeTypes.TEXT) {
+      const updatedStories = await storiesService.createStoryAndSave(
+        stories,
+        file.name.substring(0, file.name.lastIndexOf(".")),
+        storyContent,
+      );
+
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
+    } else if (file.type === MimeTypes.JSON) {
+      // NOTE: story is not validated at all
+      const story: Story = JSON.parse(storyContent);
+
+      const updatedStories = await storiesService.duplicateStoryAndSave(
+        stories,
+        story,
+      );
+
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
+    }
+  };
+
+  const onClickCancelImport = () => setShowImportDialog(false);
+
   const allPreviews = storiesService.toLibraryPreview(stories);
   const filteredPreviews = storiesService.searchLibraryPreview(
     allPreviews,
@@ -78,6 +125,13 @@ export default function Library({
         onClick={onClickNewStoryButton}
       >
         Create Story
+      </button>
+      <button
+        type="button"
+        className="button-secondary"
+        onClick={onClickImport}
+      >
+        Import
       </button>
       <input
         type="search"
@@ -103,6 +157,23 @@ export default function Library({
           setStories={setStories}
         />
       ))}
+      <Dialog showDialog={showImportDialog}>
+        <div className="flex-column gap-medium">
+          <h1>Import story</h1>
+          <input
+            type="file"
+            accept={[MimeTypes.TEXT, MimeTypes.JSON].join()}
+            onChange={onChangeFileImport}
+          />
+          <button
+            type="button"
+            className="button-secondary"
+            onClick={onClickCancelImport}
+          >
+            Cancel
+          </button>
+        </div>
+      </Dialog>
     </div>
   );
 }

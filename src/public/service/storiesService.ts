@@ -291,12 +291,9 @@ export async function createStoryAndSave(
   return updatedStories;
 }
 
-export async function duplicateSelectedStoryAndSave(
-  stories: Stories,
-  story: Story,
-) {
+export async function duplicateStoryAndSave(stories: Stories, story: Story) {
   const dupedStory = await storiesClient.duplicateStory(
-    updateStoryTitle(story, story.title + " (Copy)"),
+    updateStoryTitle(story, story.title),
   );
 
   if (!dupedStory) return;
