@@ -67,6 +67,11 @@ dialog::backdrop {
   backdrop-filter: blur(8px);
 }
 
+/* Hide default text */
+input[type="file"] {
+  color: transparent;
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -107,7 +112,8 @@ dialog::backdrop {
 
 .input-secondary,
 .button-secondary,
-.button-primary {
+.button-primary,
+input::file-selector-button {
   background-color: transparent;
 
   border: 1px solid var(--neutral-color-4);
@@ -234,6 +240,18 @@ dialog::backdrop {
 .path-icon {
   fill: var(--neutral-color-8);
   transform: translateY(2px);
+}
+
+/* Handle the file selection button separately */
+input::file-selector-button {
+  color: var(--neutral-color-8);
+  background-color: var(--neutral-color-2);
+}
+input::file-selector-button:hover {
+  border-color: var(--neutral-color-5);
+}
+input::file-selector-button:active {
+  background-color: var(--neutral-color-3);
 }
 
 .text-secondary {
