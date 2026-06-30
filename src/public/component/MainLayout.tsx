@@ -1,49 +1,52 @@
 import React, { useEffect, useState } from "react";
-import Story from "../type/storyType";
+import Story, { StoryPreview } from "../type/storyType";
+import * as storiesService from "../service/storiesService";
 import AsideSettings from "./AsideSettings";
 import Editor from "./Editor";
 import Library from "./Library";
-import { getStories } from "../api/storiesApi";
+import { storiesClient } from "../client/storiesClient";
 
-export default function MainLayout({ apiToken }: { apiToken: string }) {
-  const [stories, setStories] = useState<Story[]>([]);
-  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+export default function MainLayout({
+  authenticated,
+  zenMode,
+}: {
+  authenticated: boolean;
+  zenMode: boolean;
+}) {
+  const [stories, setStories] = useState<Record<string, Story | StoryPreview>>(
+    {},
+  );
 
   useEffect(() => {
-    getStories(apiToken)
+    storiesClient
+      .loadLibrary()
       .then((stories) => {
         if (stories) {
-          setStories(stories);
+          setStories(storiesService.convertPreviewsToStories(stories));
         }
       })
       .catch((error) => {
         // probably failed because unauthroized
         console.error("Error fetching stories:", error);
       });
-  }, [apiToken]);
+  }, [authenticated]);
 
   return (
     <main className="flex-row" id="main-app-layout">
-      <Library
-        stories={stories}
-        apiToken={apiToken}
-        setSelectedStory={setSelectedStory}
-        setStories={setStories}
-      />
-      <Editor
-        apiToken={apiToken}
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        stories={stories}
-        setStories={setStories}
-      />
-      <AsideSettings
-        apiToken={apiToken}
-        selectedStory={selectedStory}
-        setSelectedStory={setSelectedStory}
-        stories={stories}
-        setStories={setStories}
-      />
+      {zenMode ? (
+        <div className="flex-column side-column scrollable" id="library"></div>
+      ) : (
+        <Library stories={stories} setStories={setStories} />
+      )}
+      <Editor stories={stories} setStories={setStories} />
+      {zenMode ? (
+        <aside
+          className="flex-column side-column scrollable"
+          id="aside-settings"
+        ></aside>
+      ) : (
+        <AsideSettings stories={stories} setStories={setStories} />
+      )}
     </main>
   );
 }

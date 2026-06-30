@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import EndpointProfilesSettings from "./settings/EndpointProfilesSettings";
 import { SidebarIcon, UndoIcon } from "./Icons";
 import { CurrentPage } from "../type/currentPageType";
+import SquareButtonContainer from "./SquareButtonContainer";
 
 function SidebarActionsBar({
   hideSidebar,
@@ -13,28 +14,35 @@ function SidebarActionsBar({
   setHideSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
+  const onClickReturnToMainEditor = () => setCurrentPage("main");
+  const onClickHideSidebar = () => setHideSidebar(!hideSidebar);
+
   return (
     <div className="flex-row width-fill-max">
       <div className="flex-row width-fill-max">
-        <button
-          type="button"
-          className="button-tertiary button-icon"
-          title="Return to main editor"
-          hidden={hideSidebar}
-          onClick={() => setCurrentPage("main")}
-        >
-          <UndoIcon />
-        </button>
+        <SquareButtonContainer>
+          <button
+            type="button"
+            className="button-tertiary button-icon"
+            title="Return to main editor"
+            hidden={hideSidebar}
+            onClick={onClickReturnToMainEditor}
+          >
+            <UndoIcon />
+          </button>
+        </SquareButtonContainer>
       </div>
       <div className="flex-row-right width-fill-max">
-        <button
-          type="button"
-          className="button-tertiary button-icon"
-          title="Hide sidebar"
-          onClick={() => setHideSidebar(!hideSidebar)}
-        >
-          <SidebarIcon />
-        </button>
+        <SquareButtonContainer>
+          <button
+            type="button"
+            className="button-tertiary button-icon"
+            title="Hide sidebar"
+            onClick={onClickHideSidebar}
+          >
+            <SidebarIcon />
+          </button>
+        </SquareButtonContainer>
       </div>
     </div>
   );
@@ -70,10 +78,8 @@ function SettingsSidebar({
 }
 
 export default function Settings({
-  apiToken,
   setCurrentPage,
 }: {
-  apiToken: string;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
   const [hideSidebar, setHideSidebar] = useState(false);
@@ -86,7 +92,7 @@ export default function Settings({
         setCurrentPage={setCurrentPage}
       />
       <main className="width-fill-max" id="settings-column">
-        <EndpointProfilesSettings apiToken={apiToken} />
+        <EndpointProfilesSettings />
       </main>
     </div>
   );

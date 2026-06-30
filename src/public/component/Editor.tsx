@@ -1,39 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { saveStory } from "../api/storiesApi";
-
-import Story, {
-  getCurrentHistoryNode,
-  mutateStoryFromAppendingHistory,
-  mutateStoryFromHistoryPageFlip,
-  mutateStoryFromTreeBacktrack,
-  mutateStoryTitle,
-  updateStoriesFromUpdatedStory,
-} from "../type/storyType";
+import Story, { Stories } from "../type/storyType";
 import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
+import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
+import SquareButtonContainer from "./SquareButtonContainer";
 
 function ActionBar({
-  apiToken,
+  contendEditableRef,
   endpointProfile,
   selectedStory,
+  stories,
   locked,
-  setSelectedStory,
   setLocked,
+  setStories,
 }: {
-  apiToken: string;
+  contendEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
   selectedStory: Story;
+  stories: Stories;
   locked: boolean;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
-  const generate = (story: Story) => {
+  const generate = async (stories: Stories) => {
+    const story = storiesService.getSelectedStory(stories);
+
     if (!story) {
       alert("No story loaded to generate with");
       return;
@@ -46,48 +43,75 @@ function ActionBar({
 
     setLocked(true);
 
-    // call LLM api
-    generateResponse(
-      endpointProfile.uri,
-      story.content,
-      endpointProfile.authorization,
-    )
-      .then((text) => {
-        const mutatedStory = mutateStoryFromAppendingHistory(
-          story,
+    try {
+      // call LLM api
+      const text = await generateResponse(
+        endpointProfile.uri,
+        story.content,
+        endpointProfile.authorization,
+      );
+
+      const updatedStories =
+        await storiesService.updateSelectedStoryContentAndSave(
+          stories,
           story.content + text,
           true,
         );
 
-        setSelectedStory(mutatedStory);
-        saveStory(apiToken, mutatedStory);
-      })
-      .finally(() => setLocked(false));
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
+
+      // There is probably a better way to do this
+      setTimeout(() => {
+        if (contendEditableRef.current) {
+          contendEditableRef.current.scrollTo(
+            0,
+            contendEditableRef.current.scrollHeight,
+          );
+        }
+      }, 100);
+    } catch {
+      /* empty */
+    }
+
+    setLocked(false);
   };
 
   const onGenerate = () => {
-    generate(selectedStory);
+    generate(stories);
   };
 
-  const onClickUndo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, true);
+  const onClickUndo = async () => {
+    const updatedStories =
+      await storiesService.undoSelectedStoryAndSave(stories);
 
-    setSelectedStory(mutatedStory);
-    saveStory(apiToken, mutatedStory);
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
-  const onClickRedo = () => {
-    const mutatedStory = mutateStoryFromHistoryPageFlip(selectedStory, false);
+  const onClickRedo = async () => {
+    const updatedStories =
+      await storiesService.redoSelectedStoryAndSave(stories);
 
-    setSelectedStory(mutatedStory);
-    saveStory(apiToken, mutatedStory);
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   const onClickRetry = () => {
-    const mutatedStory = mutateStoryFromTreeBacktrack(selectedStory);
+    const updatedStories =
+      storiesService.locallyUpdateSelectedStoryFromTreeBacktrack(stories);
 
-    setSelectedStory(mutatedStory);
-    generate(mutatedStory);
+    if (updatedStories) {
+      setStories(updatedStories);
+      const updatedStory = storiesService.getSelectedStory(updatedStories);
+
+      if (updatedStory) {
+        generate(updatedStories);
+      }
+    }
   };
 
   useEffect(() => {
@@ -105,41 +129,43 @@ function ActionBar({
   return (
     <div className="flex-row width-fill-max" id="action-bar">
       <div className="flex-row width-fill-max" id="action-bar-left">
-        <button
-          className="button-secondary button-icon"
-          type="button"
-          disabled={selectedStory.historyIndex === 0 || locked}
-          onClick={onClickUndo}
-        >
-          <UndoIcon />
-        </button>
-        <button
-          className="button-secondary button-icon"
-          type="button"
-          disabled={
-            selectedStory.historyIndex === selectedStory.history.length - 1 ||
-            locked
-          }
-          onClick={onClickRedo}
-        >
-          <RedoIcon />
-        </button>
-        <button
-          className="button-secondary button-icon"
-          type="button"
-          disabled={
-            selectedStory.historyIndex === 0 ||
-            !getCurrentHistoryNode(selectedStory).attributes.generatedByLlm ||
-            locked
-          }
-          onClick={onClickRetry}
-        >
-          <RefreshIcon />
-        </button>
+        <SquareButtonContainer>
+          <button
+            className="button-secondary button-icon"
+            type="button"
+            disabled={selectedStory.historyIndex === 0 || locked}
+            onClick={onClickUndo}
+          >
+            <UndoIcon />
+          </button>
+        </SquareButtonContainer>
+        <SquareButtonContainer>
+          <button
+            className="button-secondary button-icon"
+            type="button"
+            disabled={
+              selectedStory.historyIndex === selectedStory.history.length - 1 ||
+              locked
+            }
+            onClick={onClickRedo}
+          >
+            <RedoIcon />
+          </button>
+        </SquareButtonContainer>
+        <SquareButtonContainer>
+          <button
+            className="button-secondary button-icon"
+            type="button"
+            disabled={!storiesService.regeneratable(selectedStory) || locked}
+            onClick={onClickRetry}
+          >
+            <RefreshIcon />
+          </button>
+        </SquareButtonContainer>
       </div>
       <div className="flex-row-right width-fill-max" id="action-bar-right">
         <button
-          className="button-secondary"
+          className="button-primary"
           type="button"
           disabled={locked}
           onClick={onGenerate}
@@ -147,7 +173,14 @@ function ActionBar({
           Generate
         </button>
         <div className="flex-row" id="endpoint-status-indicator">
-          <Pulse active={modelLoaded.length > 0} />
+          <Pulse
+            active={modelLoaded.length > 0}
+            title={
+              modelLoaded
+                ? `${endpointProfile?.name}\n${modelLoaded}`
+                : "Unable to find model"
+            }
+          />
         </div>
       </div>
     </div>
@@ -155,54 +188,59 @@ function ActionBar({
 }
 
 export default function Editor({
-  apiToken,
-  selectedStory,
   stories,
-  setSelectedStory,
   setStories,
 }: {
-  apiToken: string;
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  stories: Story[];
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [locked, setLocked] = useState(false);
   const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
 
+  const contendEditableRef = useRef<HTMLDivElement | null>(null);
+
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
   ) => {
-    setSelectedStory((prev) =>
-      prev ? mutateStoryTitle(prev, e.target.value) : null,
+    const updatedStories = storiesService.locallyUpdateSelectedStoryTitle(
+      stories,
+      e.target.value,
     );
+
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
   };
 
   const onBlurStoryTitle = () => {
-    if (selectedStory) {
-      saveStory(apiToken, selectedStory);
-      setStories(updateStoriesFromUpdatedStory(stories, selectedStory));
-    }
+    storiesService.saveSelectedStory(stories);
   };
 
-  const onBlurStoryContent = (newContent: string) => {
-    if (selectedStory) {
-      const mutatedStory = mutateStoryFromAppendingHistory(
-        selectedStory,
+  const onBlurStoryContent = async (newContent: string) => {
+    // A hack to hopefully prevent what appears to be a rare race condition
+    // where you press "generate" before the app finishes saving
+    setLocked(true);
+
+    const updatedStories =
+      await storiesService.updateSelectedStoryContentAndSave(
+        stories,
         newContent,
-        false,
       );
 
-      setSelectedStory(mutatedStory);
-      saveStory(apiToken, mutatedStory);
+    if (updatedStories) {
+      setStories(updatedStories);
     }
+
+    setLocked(false);
   };
 
   useEffect(() => {
     endpointProfilesService
-      .fetchEndpointFromEndpointProfiles(apiToken)
+      .fetchEndpointFromEndpointProfiles()
       .then(setEndpointProfile);
   }, []);
+
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   return (
     <div className="flex-column width-fill-max" id="editor">
@@ -222,14 +260,16 @@ export default function Editor({
             value={selectedStory.content}
             onUpdate={onBlurStoryContent}
             locked={locked}
+            ref={contendEditableRef}
           />
           <ActionBar
-            apiToken={apiToken}
+            contendEditableRef={contendEditableRef}
             endpointProfile={endpointProfile}
             selectedStory={selectedStory}
+            stories={stories}
             locked={locked}
-            setSelectedStory={setSelectedStory}
             setLocked={setLocked}
+            setStories={setStories}
           />
         </>
       ) : (

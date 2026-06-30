@@ -1,10 +1,10 @@
 import React from "react";
-import { login } from "../api/authApi";
+import { authClient } from "../client/authClient";
 
 export default function AuthenticatePrompt({
-  setApiToken,
+  setAuthenticated,
 }: {
-  setApiToken: React.Dispatch<React.SetStateAction<string>>;
+  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const onSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -12,11 +12,10 @@ export default function AuthenticatePrompt({
     const { password } = Object.fromEntries(new FormData(e.target));
 
     if (typeof password === "string") {
-      login(password).then((apiToken) => {
+      authClient.login(password).then(async () => {
+        const apiToken = authClient.getApiToken();
         console.log(apiToken ? "Logged in" : "Wrong password");
-
-        // window.location.reload();
-        setApiToken(apiToken);
+        setAuthenticated(!!apiToken);
       });
     }
   };
@@ -28,14 +27,18 @@ export default function AuthenticatePrompt({
       onSubmit={onSubmit}
     >
       <h1>You need to login</h1>
-      <label htmlFor="password">Password</label>
-      <input
-        type="password"
-        name="password"
-        className="input-secondary"
-        id="login-password"
-      />
-      <button type="submit" className="input-secondary">
+      <div className="flex-column">
+        <label htmlFor="password" className="text-secondary">
+          Password
+        </label>
+        <input
+          type="password"
+          name="password"
+          className="input-secondary"
+          id="login-password"
+        />
+      </div>
+      <button type="submit" className="button-primary">
         Login
       </button>
     </form>

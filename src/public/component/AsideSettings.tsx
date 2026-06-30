@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import sanitize from "sanitize-filename";
 
-import { createStory, deleteStory, saveStory } from "../api/storiesApi";
-import Story, {
-  mutateStoryFromRemovingHistory,
-  removeStoryFromStories,
-} from "../type/storyType";
+import Story, { Stories } from "../type/storyType";
 import Dialog from "./Dialog";
+import { humanFileSize } from "../util/numberFormatting";
+import { millisecondsToString } from "../util/time";
+import * as storiesService from "../service/storiesService";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -15,7 +15,7 @@ function downloadText(text: string, mimeType: string, fileName: string) {
   const anchor = document.createElement("a");
   const url = URL.createObjectURL(file);
   anchor.href = url;
-  anchor.download = fileName;
+  anchor.download = sanitize(fileName);
 
   document.body.append(anchor);
   anchor.click();
@@ -37,12 +37,12 @@ function DialogBox({
 }) {
   return (
     <div className="flex-column gap-medium">
-      <h2>Delete "{selectedStory.title}"?</h2>
+      <h1>Delete "{selectedStory.title}"?</h1>
       <p>
         This is an irreversible process. You will lose this story if you choose
         to delete it.
       </p>
-      <div className="flex-row gap-small">
+      <div className="flex-row gap-medium">
         <button
           type="button"
           className="button-secondary width-fill-max"
@@ -52,7 +52,7 @@ function DialogBox({
         </button>
         <button
           type="button"
-          className="button-secondary button-destructive width-fill-max"
+          className="button-primary button-destructive width-fill-max"
           onClick={onClickReallyDelete}
         >
           Yes, Delete
@@ -62,34 +62,15 @@ function DialogBox({
   );
 }
 
-function millisecondsToString(milliseconds: number) {
-  return new Date(milliseconds).toLocaleString("en-US", {
-    weekday: "short",
-
-    second: "2-digit",
-    minute: "2-digit",
-    hour: "numeric",
-
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  });
-}
-
 export default function AsideSettings({
-  apiToken,
-  selectedStory,
-  setSelectedStory,
   stories,
   setStories,
 }: {
-  apiToken: string;
-  selectedStory: Story | null;
-  setSelectedStory: React.Dispatch<React.SetStateAction<Story | null>>;
-  stories: Story[];
-  setStories: React.Dispatch<React.SetStateAction<Story[]>>;
+  stories: Stories;
+  setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [showDialog, setShowDialog] = useState(false);
+  const selectedStory = storiesService.getSelectedStory(stories);
 
   const onClickDelete = () => {
     if (selectedStory) {
@@ -97,13 +78,16 @@ export default function AsideSettings({
     }
   };
 
-  const onClickReallyDelete = () => {
+  const onClickReallyDelete = async () => {
     setShowDialog(false);
 
-    if (selectedStory) {
-      deleteStory(apiToken, selectedStory.id);
-      setStories(removeStoryFromStories(stories, selectedStory));
-      setSelectedStory(null);
+    if (!selectedStory) return;
+
+    const updatedStories =
+      await storiesService.deleteSelectedStoryAndSave(stories);
+
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
@@ -111,24 +95,16 @@ export default function AsideSettings({
     setShowDialog(false);
   };
 
-  const onClickDuplicate = () => {
-    if (selectedStory) {
-      const { title, content, history, historyIndex } = selectedStory;
+  const onClickDuplicate = async () => {
+    if (!selectedStory) return;
 
-      createStory(
-        apiToken,
-        title + " (Copy)",
-        content,
-        history,
-        historyIndex,
-      ).then((newStory) => {
-        if (newStory) {
-          saveStory(apiToken, newStory);
+    const updatedStories = await storiesService.duplicateStoryAndSave(stories, {
+      ...selectedStory,
+      title: selectedStory.title + " (Copy)",
+    });
 
-          setSelectedStory(newStory);
-          setStories((prev) => [...prev, newStory]);
-        }
-      });
+    if (updatedStories) {
+      setStories(updatedStories);
     }
   };
 
@@ -148,35 +124,25 @@ export default function AsideSettings({
     );
   };
 
-  const onClickClearHistory = () => {
+  const onClickClearHistory = async () => {
     if (!selectedStory) return; // Should never happen!
 
-    const updatedStory = mutateStoryFromRemovingHistory(selectedStory);
+    try {
+      const updatedStories =
+        await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
 
-    saveStory(apiToken, updatedStory).then((success) => {
-      if (success) {
-        setSelectedStory(updatedStory);
+      if (updatedStories) {
+        setStories(updatedStories);
       }
-    });
+    } catch {
+      /* empty */
+    }
   };
 
   return (
     <aside className="flex-column side-column scrollable" id="aside-settings">
       {selectedStory ? (
         <>
-          <p className="text-secondary">
-            Created at {millisecondsToString(selectedStory.time.created)}
-          </p>
-          <p className="text-secondary">
-            Viewed at {millisecondsToString(selectedStory.time.accessed)}
-          </p>
-          <p className="text-secondary">
-            {selectedStory.time.modified !== -1
-              ? `Edited at ${millisecondsToString(selectedStory.time.modified)}`
-              : "Has not been edited yet"}
-          </p>
-          <div className="separator"></div>
-
           <button className="button-secondary" onClick={onClickDuplicate}>
             Duplicate Story
           </button>
@@ -201,7 +167,34 @@ export default function AsideSettings({
           >
             Delete
           </button>
-          <Dialog showDialog={showDialog}>
+          <div className="separator"></div>
+
+          <p className="text-secondary">
+            Word count: {selectedStory.content.split(/[\s]+/).length}
+          </p>
+          <p className="text-secondary">
+            Sentence count:{" "}
+            {
+              selectedStory.content
+                .split(/[!?.]+/)
+                .filter((sentence) => sentence.length > 0).length
+            }
+          </p>
+          <p className="text-secondary">
+            Created: {millisecondsToString(selectedStory.time.created)}
+          </p>
+          <p className="text-secondary">
+            {`Edited: ${millisecondsToString(selectedStory.time.modified)}`}
+          </p>
+          <div className="separator"></div>
+
+          <p className="text-secondary">
+            Story size:
+            {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
+          </p>
+          <p className="text-secondary">Id: {selectedStory.id}</p>
+
+          <Dialog showDialog={showDialog} setShowDialog={setShowDialog}>
             <DialogBox
               selectedStory={selectedStory}
               onClickCancelDelete={onClickCancelDelete}

@@ -3,19 +3,13 @@
  */
 
 import React, { useEffect, useRef } from "react";
-
-function splitIntoParagraphs(text: string) {
-  return text
-    .split("\n")
-    .map((section) => (section ? `<p>${section}</p>` : "")) // removes extra newline, sometimes not desirable and could be a bug
-    .join("\n");
-}
+import { toHtml } from "../service/markdownRenderer";
 
 function setContentEditableContents(
   contentEditable: HTMLDivElement,
   text: string,
 ) {
-  contentEditable.innerHTML = splitIntoParagraphs(text);
+  contentEditable.innerHTML = toHtml(text);
 }
 
 function pruneRedundantNewlines(text: string) {
@@ -26,12 +20,14 @@ export default function ContentEditable({
   value,
   locked,
   onUpdate,
+  ref,
 }: {
   value: string;
   locked: boolean;
   onUpdate: (newContent: string) => void;
+  ref?: React.RefObject<HTMLDivElement | null>;
 }) {
-  const contentEditableRef = useRef<HTMLDivElement | null>(null);
+  const contentEditableRef = ref || useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (contentEditableRef.current) {
@@ -39,19 +35,21 @@ export default function ContentEditable({
     }
   }, [value]);
 
+  const onBlurContentEditable = () => {
+    const contentEditorDiv = contentEditableRef.current;
+
+    if (contentEditorDiv) {
+      onUpdate(pruneRedundantNewlines(contentEditorDiv.innerText));
+    }
+  };
+
   return (
     <div
       ref={contentEditableRef}
       id="story-content"
       className="input-secondary scrollable"
       contentEditable={!locked}
-      onBlur={() => {
-        const contentEditorDiv = contentEditableRef.current;
-
-        if (contentEditorDiv) {
-          onUpdate(pruneRedundantNewlines(contentEditorDiv.innerText));
-        }
-      }}
+      onBlur={onBlurContentEditable}
     ></div>
   );
 }

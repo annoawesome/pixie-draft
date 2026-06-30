@@ -45,7 +45,7 @@ export async function generateResponse(
       max_length: 150,
       temperature: 1.25,
       min_p: 0.05,
-      dynatemp_range: 0.75,
+      dynatemp_range: 0.25,
       rep_pen: 1.05,
       rep_pen_range: 360,
       rep_pen_slope: 0.7,

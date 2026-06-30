@@ -8,11 +8,32 @@
   --neutral-color-7: hsl(0, 0%, 76%);
   --neutral-color-8: hsl(0, 0%, 88%);
   --neutral-color-9: hsl(0, 0%, 94%);
+
+  --accent-color-1: hsl(277, 40%, 10%);
+  --accent-color-2: hsl(277, 43%, 21%);
+  --accent-color-3: hsl(280, 50%, 34%);
+  --accent-color-4: hsl(282, 58%, 44%);
+  --accent-color-5: hsl(285, 67%, 47%);
+  --accent-color-6: hsl(287, 50%, 51%);
+  --accent-color-7: hsl(290, 34%, 63%);
+  --accent-color-8: hsl(290, 22%, 78%);
+  --accent-color-9: hsl(300, 12%, 92%);
+
+  --destructive-color-1: hsl(0, 87%, 9%);
+  --destructive-color-2: hsl(0, 72%, 17%);
+  --destructive-color-3: hsl(0, 54%, 25%);
+  --destructive-color-4: hsl(0, 64%, 38%);
+  --destructive-color-5: hsl(6, 83%, 47%);
+  --destructive-color-6: hsl(10, 100%, 60%);
+  --destructive-color-7: hsl(10, 96%, 70%);
+  --destructive-color-8: hsl(10, 100%, 83%);
+  --destructive-color-9: hsl(14, 100%, 91%);
 }
 
 * {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
+  line-height: 1.5;
   color: var(--neutral-color-8);
 
   margin: 0;
@@ -24,7 +45,7 @@ body {
 }
 
 header {
-  background-color: var(--neutral-color-2);
+  border-bottom: 1px solid var(--neutral-color-2);
 }
 
 h1 {
@@ -39,11 +60,16 @@ dialog {
   border-radius: 8px;
 
   margin: auto;
-  padding: 16px;
+  padding: 32px;
 }
 
 dialog::backdrop {
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
+}
+
+/* Hide default text */
+input[type="file"] {
+  color: transparent;
 }
 
 .flex-column {
@@ -85,7 +111,9 @@ dialog::backdrop {
 }
 
 .input-secondary,
-.button-secondary {
+.button-secondary,
+.button-primary,
+input::file-selector-button {
   background-color: transparent;
 
   border: 1px solid var(--neutral-color-4);
@@ -104,6 +132,29 @@ dialog::backdrop {
   background-color: var(--neutral-color-1);
 }
 
+.button-primary {
+  border: 0;
+  border-top: 1px solid var(--accent-color-7);
+  background-color: var(--accent-color-4);
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+
+  transition: background-color 0.15s ease-out;
+}
+
+.button-primary:hover {
+  background-color: var(--accent-color-6);
+}
+
+.button-primary:active {
+  background-color: var(--accent-color-3);
+}
+
+.button-primary:disabled {
+  background-color: var(--accent-color-2);
+  border: 0;
+}
+
 .button-secondary {
   background-color: var(--neutral-color-2);
 }
@@ -118,36 +169,71 @@ dialog::backdrop {
 }
 
 .button-tertiary {
-  background-color: var(--neutral-color-2);
+  background-color: transparent;
   border: 0;
   border-radius: 8px;
   padding: 4px;
+
+  transition: background-color 0.15s ease-out;
 }
 
 .button-tertiary:hover {
   background-color: var(--neutral-color-3);
 }
 
+.button-selected.button-tertiary:hover {
+  background-color: var(--accent-color-4);
+}
+
 .button-tertiary:active {
   background-color: var(--neutral-color-1);
 }
 
-.button-destructive {
-  background-color: rgb(100, 30, 30);
-  font-weight: bold;
+.button-selected {
   border: 0;
+  background-color: var(--accent-color-3);
 }
 
-.button-destructive:hover {
-  background-color: rgb(160, 35, 35);
+.button-destructive {
+  border: 0;
+  transition: background-color 0.15s ease-out;
 }
 
-.button-destructive:active {
-  background-color: var(--neutral-color-3);
+.button-destructive.button-primary {
+  background-color: var(--destructive-color-3);
+}
+
+.button-destructive.button-primary:hover {
+  background-color: var(--destructive-color-4);
+}
+
+.button-destructive.button-primary:active {
+  background-color: var(--destructive-color-2);
+}
+
+.button-destructive.button-secondary {
+  background-color: var(--destructive-color-2);
+}
+
+.button-destructive.button-secondary:hover {
+  background-color: var(--destructive-color-3);
+}
+
+.button-destructive.button-secondary:active {
+  background-color: var(--destructive-color-1);
+}
+
+/* Makes the buttons obey aspect ratio on Firefox. I have no idea why this works */
+.div-square-button {
+  aspect-ratio: 1;
+}
+
+.div-square-button > * {
+  width: 100%;
+  height: fit-content;
 }
 
 .button-icon {
-  aspect-ratio: 1;
   padding: 4px;
 }
 
@@ -156,8 +242,25 @@ dialog::backdrop {
   transform: translateY(2px);
 }
 
+/* Handle the file selection button separately */
+input::file-selector-button {
+  color: var(--neutral-color-8);
+  background-color: var(--neutral-color-2);
+}
+input::file-selector-button:hover {
+  border-color: var(--neutral-color-5);
+}
+input::file-selector-button:active {
+  background-color: var(--neutral-color-3);
+}
+
 .text-secondary {
   color: var(--neutral-color-5);
+  font-size: 12px;
+}
+
+.button-selected .text-secondary {
+  color: var(--accent-color-7);
   font-size: 12px;
 }
 
@@ -171,7 +274,7 @@ dialog::backdrop {
 
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   height: 100vh;
 }
 
@@ -196,7 +299,7 @@ dialog::backdrop {
 }
 
 .circle-inactive {
-  background-color: rgb(220, 40, 20);
+  background-color: var(--destructive-color-5);
 }
 
 .pulse {
@@ -247,6 +350,16 @@ dialog::backdrop {
   width: 400px;
 }
 
+.story-card {
+  padding: 8px;
+  gap: 8px;
+}
+
+/* Hack to hide the lack of a border when the button is selected */
+.story-card.button-selected {
+  border: 1px solid transparent;
+}
+
 #story-content {
   height: 0px;
   flex-grow: 1;
@@ -269,6 +382,7 @@ button:disabled .path-icon {
 
 #endpoint-status-indicator {
   align-items: center;
+  gap: 4px;
 }
 
 /* Headers and footers */
@@ -344,11 +458,6 @@ button:disabled .path-icon {
 
 #settings-endpoints-editor > input {
   margin-bottom: 16px;
-}
-
-#settings-selected-endpoint-card {
-  border-color: rgb(0, 200, 255);
-  background-color: rgb(0, 50, 100);
 }
 
 #settings-endpoints-editor-actions {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { getSettings, patchSettings } from "../../api/settingsApi";
 import Endpoint from "../../type/endpointType";
+import { settingsClient } from "../../client/settingsClient";
 
 function EndpointCard({
   endpoint,
@@ -14,16 +14,16 @@ function EndpointCard({
   setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
   locked: boolean;
 }) {
+  const onClickEndpointCard = () => setSelectedEndpoint(endpoint);
+
   return (
     <button
-      className="button-secondary"
-      disabled={locked}
-      id={
-        endpoint.id === selectedEndpoint?.id
-          ? "settings-selected-endpoint-card"
-          : undefined
+      className={
+        "button-secondary " +
+        (selectedEndpoint?.id === endpoint.id ? "button-selected" : "")
       }
-      onClick={() => setSelectedEndpoint(endpoint)}
+      disabled={locked}
+      onClick={onClickEndpointCard}
     >
       <h2>{endpoint.name}</h2>
       <p>{endpoint.uri}</p>
@@ -32,13 +32,11 @@ function EndpointCard({
 }
 
 function EndpointsList({
-  apiToken,
   endpoints,
   selectedEndpoint,
   setEndpoints,
   setSelectedEndpoint,
 }: {
-  apiToken: string;
   endpoints: Endpoint[];
   selectedEndpoint: Endpoint | null;
   setEndpoints: React.Dispatch<React.SetStateAction<Endpoint[] | null>>;
@@ -51,13 +49,14 @@ function EndpointsList({
       {
         id: crypto.randomUUID(),
         name: "My Endpoint",
+        type: "KoboldCpp",
         uri: "http://example.com",
         authorization: "",
       },
     ];
 
     setEndpoints(updatedEndpoints);
-    patchSettings(apiToken, "endpoints", updatedEndpoints);
+    settingsClient.updateSetting("endpoints", updatedEndpoints);
   };
 
   return (
@@ -73,6 +72,7 @@ function EndpointsList({
         endpoint={{
           id: "automatic",
           name: "Automatic",
+          type: "KoboldCpp",
           uri: "auto-generated",
           authorization: "",
         }}
@@ -94,13 +94,11 @@ function EndpointsList({
 }
 
 function EndpointEditor({
-  apiToken,
   selectedEndpoint,
   endpoints,
   setSelectedEndpoint,
   setEndpoints,
 }: {
-  apiToken: string;
   selectedEndpoint: Endpoint;
   endpoints: Endpoint[];
   setSelectedEndpoint: React.Dispatch<React.SetStateAction<Endpoint | null>>;
@@ -131,7 +129,7 @@ function EndpointEditor({
 
       setEndpoints(updatedEndpoints);
 
-      patchSettings(apiToken, "endpoints", updatedEndpoints);
+      settingsClient.updateSetting("endpoints", updatedEndpoints);
     } else {
       alert("Somehow, what you put in wasn't a string. Try again.");
     }
@@ -145,7 +143,7 @@ function EndpointEditor({
     setEndpoints(updatedEndpoints);
     setSelectedEndpoint(null);
 
-    patchSettings(apiToken, "endpoints", updatedEndpoints);
+    settingsClient.updateSetting("endpoints", updatedEndpoints);
   };
 
   const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,7 +214,7 @@ function EndpointEditor({
         onChange={onChangeAuthorization}
       />
       <div className="flex-row" id="settings-endpoints-editor-actions">
-        <button type="submit" className="button-secondary">
+        <button type="submit" className="button-primary">
           Save
         </button>
         <button
@@ -231,19 +229,14 @@ function EndpointEditor({
   );
 }
 
-export default function EndpointProfilesSettings({
-  apiToken,
-}: {
-  apiToken: string;
-}) {
+export default function EndpointProfilesSettings() {
   const [endpoints, setEndpoints] = useState<Endpoint[] | null>(null);
   const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint | null>(
     null,
   );
 
   useEffect(() => {
-    getSettings(apiToken).then((settings) => {
-      // WARNING: not type checked or validated at all!
+    settingsClient.getSettings().then((settings) => {
       setEndpoints(settings.endpoints);
     });
   }, []);
@@ -254,7 +247,6 @@ export default function EndpointProfilesSettings({
         <h1>Endpoints</h1>
         {endpoints ? (
           <EndpointsList
-            apiToken={apiToken}
             endpoints={endpoints}
             setEndpoints={setEndpoints}
             selectedEndpoint={selectedEndpoint}
@@ -267,7 +259,6 @@ export default function EndpointProfilesSettings({
       <div className="flex-column width-fill-max">
         {selectedEndpoint && endpoints ? (
           <EndpointEditor
-            apiToken={apiToken}
             selectedEndpoint={selectedEndpoint}
             endpoints={endpoints}
             setSelectedEndpoint={setSelectedEndpoint}
