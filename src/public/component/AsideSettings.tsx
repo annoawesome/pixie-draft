@@ -194,7 +194,7 @@ export default function AsideSettings({
           </p>
           <p className="text-secondary">Id: {selectedStory.id}</p>
 
-          <Dialog showDialog={showDialog}>
+          <Dialog showDialog={showDialog} setShowDialog={setShowDialog}>
             <DialogBox
               selectedStory={selectedStory}
               onClickCancelDelete={onClickCancelDelete}

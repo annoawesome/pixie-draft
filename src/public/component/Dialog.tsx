@@ -2,12 +2,16 @@ import React, { useEffect, useRef } from "react";
 
 export default function Dialog({
   showDialog,
+  setShowDialog,
   children,
 }: {
   showDialog: boolean;
+  setShowDialog: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
 }) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
+
+  const onCloseDialog = () => setShowDialog(false);
 
   useEffect(() => {
     const dialogElement = dialogRef.current;
@@ -22,5 +26,9 @@ export default function Dialog({
       dialogElement.close();
     }
   }, [showDialog]);
-  return <dialog ref={dialogRef}>{children}</dialog>;
+  return (
+    <dialog ref={dialogRef} onClose={onCloseDialog}>
+      {children}
+    </dialog>
+  );
 }

@@ -157,7 +157,7 @@ export default function Library({
           setStories={setStories}
         />
       ))}
-      <Dialog showDialog={showImportDialog}>
+      <Dialog showDialog={showImportDialog} setShowDialog={setShowImportDialog}>
         <div className="flex-column gap-medium">
           <h1>Import story</h1>
           <input
