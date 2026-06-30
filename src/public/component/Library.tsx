@@ -87,7 +87,7 @@ export default function Library({
     if (file.type === MimeTypes.TEXT) {
       const updatedStories = await storiesService.createStoryAndSave(
         stories,
-        file.name,
+        file.name.substring(0, file.name.lastIndexOf(".")),
         storyContent,
       );
 
