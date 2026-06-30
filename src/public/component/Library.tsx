@@ -144,6 +144,7 @@ export default function Library({
       ))}
       <Dialog showDialog={showImportDialog}>
         <div className="flex-column gap-medium">
+          <h1>Import story</h1>
           <input type="file" accept=".txt" onChange={onChangeFileImport} />
           <button
             type="button"
