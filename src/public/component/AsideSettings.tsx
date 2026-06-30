@@ -98,10 +98,10 @@ export default function AsideSettings({
   const onClickDuplicate = async () => {
     if (!selectedStory) return;
 
-    const updatedStories = await storiesService.duplicateSelectedStoryAndSave(
-      stories,
-      selectedStory,
-    );
+    const updatedStories = await storiesService.duplicateStoryAndSave(stories, {
+      ...selectedStory,
+      title: selectedStory.title + " (Copy)",
+    });
 
     if (updatedStories) {
       setStories(updatedStories);

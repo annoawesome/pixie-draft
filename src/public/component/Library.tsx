@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 
-import { Stories, StoryPreview } from "../type/storyType";
+import Story, { Stories, StoryPreview } from "../type/storyType";
 import { millisecondsToString } from "../util/time";
 import * as storiesService from "../service/storiesService";
 import Dialog from "./Dialog";
+import MimeTypes from "../type/mimeType";
 
 function StoryCard({
   story,
@@ -83,14 +84,28 @@ export default function Library({
 
     if (!storyContent) return;
 
-    const updatedStories = await storiesService.createStoryAndSave(
-      stories,
-      file.name,
-      storyContent,
-    );
+    if (file.type === MimeTypes.TEXT) {
+      const updatedStories = await storiesService.createStoryAndSave(
+        stories,
+        file.name,
+        storyContent,
+      );
 
-    if (updatedStories) {
-      setStories(updatedStories);
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
+    } else if (file.type === MimeTypes.JSON) {
+      // NOTE: story is not validated at all
+      const story: Story = JSON.parse(storyContent);
+
+      const updatedStories = await storiesService.duplicateStoryAndSave(
+        stories,
+        story,
+      );
+
+      if (updatedStories) {
+        setStories(updatedStories);
+      }
     }
   };
 
@@ -145,7 +160,11 @@ export default function Library({
       <Dialog showDialog={showImportDialog}>
         <div className="flex-column gap-medium">
           <h1>Import story</h1>
-          <input type="file" accept=".txt" onChange={onChangeFileImport} />
+          <input
+            type="file"
+            accept={[MimeTypes.TEXT, MimeTypes.JSON].join()}
+            onChange={onChangeFileImport}
+          />
           <button
             type="button"
             className="button-secondary"
