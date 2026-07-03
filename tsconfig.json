@@ -6,7 +6,10 @@
     "outDir": "./dist/",
     "rootDir": "./src/",
 
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo/tsbuildinfo"
   },
   "exclude": ["src/public/", "test/"]
 }

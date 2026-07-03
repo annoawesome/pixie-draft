@@ -1,0 +1,17 @@
+node_modules
+dist
+test
+.tsbuildinfo
+
+.git
+.gitignore
+README.md
+
+.vscode
+.devcontainer
+
+.env
+*.env
+
+examples
+test_environment
