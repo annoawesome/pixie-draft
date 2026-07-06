@@ -4,6 +4,7 @@ import EndpointProfilesSettings from "./settings/EndpointProfilesSettings";
 import { SidebarIcon, UndoIcon } from "./Icons";
 import { CurrentPage } from "../type/currentPageType";
 import SquareButtonContainer from "./SquareButtonContainer";
+import { UserSettings } from "./settings/UserSettings";
 
 function SidebarActionsBar({
   hideSidebar,
@@ -52,11 +53,17 @@ function SettingsSidebar({
   hideSidebar,
   setHideSidebar,
   setCurrentPage,
+  setSection,
 }: {
   hideSidebar: boolean;
   setHideSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
+  setSection: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const buildSectionSetter = (section: string) => {
+    return () => setSection(section);
+  };
+
   return (
     <aside
       className={"flex-column sidebar" + (hideSidebar ? " sidebar-small" : "")}
@@ -70,11 +77,32 @@ function SettingsSidebar({
       <button
         className="button-tertiary button-settings-sidebar"
         hidden={hideSidebar}
+        onClick={buildSectionSetter("user")}
+      >
+        User
+      </button>
+      <button
+        className="button-tertiary button-settings-sidebar"
+        hidden={hideSidebar}
+        onClick={buildSectionSetter("endpoint-profiles")}
       >
         Endpoint Profiles
       </button>
     </aside>
   );
+}
+
+function setSettings(section: string) {
+  switch (section) {
+    case "user":
+      return <UserSettings />;
+
+    case "endpoint-profiles":
+      return <EndpointProfilesSettings />;
+
+    default:
+      break;
+  }
 }
 
 export default function Settings({
@@ -83,6 +111,7 @@ export default function Settings({
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
 }) {
   const [hideSidebar, setHideSidebar] = useState(false);
+  const [section, setSection] = useState("endpoint-profiles");
 
   return (
     <div className="flex-row" id="settings-layout">
@@ -90,9 +119,10 @@ export default function Settings({
         hideSidebar={hideSidebar}
         setHideSidebar={setHideSidebar}
         setCurrentPage={setCurrentPage}
+        setSection={setSection}
       />
       <main className="width-fill-max" id="settings-column">
-        <EndpointProfilesSettings />
+        {setSettings(section)}
       </main>
     </div>
   );
