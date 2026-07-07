@@ -91,6 +91,11 @@ vi.mock(import("../../src/public/client/storiesClient"), () => {
     public async getStoriesDownload() {
       return "/download/39514162-3b5d-4b08-8493-5eabf7527f80";
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public async importStories(file: File) {
+      return true;
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any;
 
@@ -374,6 +379,15 @@ describe("stories service", () => {
     expect(await storiesService.deleteSelectedStoryAndSave(stories)).toEqual(
       new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
     );
+  });
+
+  // Basically a stub test
+  test("delete wipe & import", async () => {
+    expect(
+      await storiesService.wipeExistingAndImportNewStories(
+        new File(["[]"], "stories.json"),
+      ),
+    ).toBe(true);
   });
 });
 
