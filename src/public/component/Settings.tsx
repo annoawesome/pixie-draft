@@ -92,7 +92,7 @@ function SettingsSidebar({
   );
 }
 
-function setSettings(section: string) {
+function renderSettings(section: string) {
   switch (section) {
     case "user":
       return <UserSettings />;
@@ -101,7 +101,7 @@ function setSettings(section: string) {
       return <EndpointProfilesSettings />;
 
     default:
-      break;
+      return null;
   }
 }
 
@@ -122,7 +122,7 @@ export default function Settings({
         setSection={setSection}
       />
       <main className="width-fill-max" id="settings-column">
-        {setSettings(section)}
+        {renderSettings(section)}
       </main>
     </div>
   );
