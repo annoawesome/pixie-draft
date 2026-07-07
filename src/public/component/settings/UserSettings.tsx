@@ -41,6 +41,14 @@ function ImportStoriesDialog({
         <p>
           This will erase <i>all</i> of your currently saved stories!
         </p>
+        <p>
+          This is <i>not</i> intended for normal workflows, and should
+          <i> only</i> be used when migrating data to a new backend. It is
+          possible to corrupt your user data if one does not handle this process
+          with care, and should only be done under guidance or supervision. If
+          you wish to simply import an existing story without clearing existing
+          data, this can be done in the main editor.
+        </p>
         <input
           type="file"
           name=""
@@ -49,15 +57,12 @@ function ImportStoriesDialog({
           onChange={onChangeFileInput}
         />
         <div className="flex-row gap-small">
-          <button type="button" className="button-secondary">
-            Yes
-          </button>
           <button
             type="button"
-            className="button-secondary"
+            className="button-secondary width-fill-max"
             onClick={onClickCancelImportStories}
           >
-            No
+            Cancel
           </button>
         </div>
       </form>
