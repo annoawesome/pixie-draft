@@ -13,9 +13,7 @@ function ImportStoriesDialog({
 }) {
   const onClickCancelImportStories = () => setShowImportStoriesDialog(false);
 
-  const onChangeFileInput = (
-    event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const onChangeFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
 
     const files = event.target.files;
