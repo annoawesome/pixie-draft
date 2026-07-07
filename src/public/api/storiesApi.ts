@@ -62,3 +62,11 @@ export async function deleteStory(apiToken: string, id: string) {
 
   return response;
 }
+
+export async function getStoriesDownload(apiToken: string) {
+  return await fetch(`/api/v0/stories/download`, {
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+    },
+  });
+}
