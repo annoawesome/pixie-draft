@@ -79,6 +79,8 @@ export function UserSettings() {
     if (url) {
       downloadFromUrl(url);
     } else {
+      /* empty */
+      // Maybe do something if download URL cannot be generated?
     }
   };
 
