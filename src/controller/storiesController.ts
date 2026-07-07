@@ -31,10 +31,10 @@ export function postStoriesUpload(req: Request, res: Response) {
   req.pipe(writeStream);
 
   writeStream.on("finish", () => {
-    res.send(HttpStatusCodes.CREATED);
+    res.sendStatus(HttpStatusCodes.CREATED);
   });
 
   writeStream.on("error", () => {
-    res.send(HttpStatusCodes.INTERNAL_SERVER_ERROR);
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   });
 }
