@@ -5,6 +5,7 @@ import Story, { Stories, StoryPreview } from "../../src/public/type/storyType";
 
 import baseStory from "./baseStory.json";
 import { AuthClient } from "../../src/public/client/authClient";
+import { getDownloadUrl } from "../../src/public/service/userDataService";
 
 class StoriesBuilder {
   #stories: Stories = {};
@@ -84,6 +85,15 @@ vi.mock(import("../../src/public/client/storiesClient"), () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public async deleteStory(id: string) {
+      return true;
+    }
+
+    public async getStoriesDownload() {
+      return "/download/39514162-3b5d-4b08-8493-5eabf7527f80";
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public async importStories(file: File) {
       return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -368,6 +378,24 @@ describe("stories service", () => {
 
     expect(await storiesService.deleteSelectedStoryAndSave(stories)).toEqual(
       new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+    );
+  });
+
+  // Basically a stub test
+  test("delete wipe & import", async () => {
+    expect(
+      await storiesService.wipeExistingAndImportNewStories(
+        new File(["[]"], "stories.json"),
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("user data service", () => {
+  // Basically a stub test
+  test("generates download url", async () => {
+    expect(await getDownloadUrl()).toBe(
+      "/download/39514162-3b5d-4b08-8493-5eabf7527f80",
     );
   });
 });

@@ -5,6 +5,7 @@ import "dotenv/config";
 import storiesRouter from "./router/storiesRouter.js";
 import authRouter from "./router/authRouter.js";
 import settingsRouter from "./router/settingsRouter.js";
+import downloadRouter from "./router/downloadRouter.js";
 import initializeDatabase from "./init/initializeDatabase.js";
 import { initializeSecret } from "./init/initializeSecrets.js";
 
@@ -22,6 +23,7 @@ app.use(cookieParser(process.env.PIXIE_COOKIE_SECRET || crypto.randomUUID()));
 app.use("/api/v0/stories", storiesRouter);
 app.use("/api/v0/auth", authRouter);
 app.use("/api/v0/settings", settingsRouter);
+app.use("/download", downloadRouter);
 
 app.use(express.static("public"));
 

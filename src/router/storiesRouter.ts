@@ -10,6 +10,10 @@ import Story, {
   StoryCreateDtoSchema,
   StorySchema,
 } from "../type/storyType.js";
+import {
+  getStoriesDownload,
+  postStoriesUpload,
+} from "../controller/storiesController.js";
 
 const router = express.Router();
 
@@ -24,6 +28,10 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+router.get("/download", getStoriesDownload);
+
+router.post("/upload", postStoriesUpload);
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
