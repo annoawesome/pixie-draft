@@ -1,10 +1,10 @@
 import React from "react";
 import { downloadFromUrl } from "../../service/downloadClientService";
-import { userDataService } from "../../service/userDataService";
+import { getDownloadUrl } from "../../service/userDataService";
 
 export function UserSettings() {
   const onClickExportAllStories = async () => {
-    const url = await userDataService.getDownloadUrl();
+    const url = await getDownloadUrl();
 
     if (url) {
       downloadFromUrl(url);
