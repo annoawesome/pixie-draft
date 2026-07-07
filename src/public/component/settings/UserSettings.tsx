@@ -13,7 +13,9 @@ function ImportStoriesDialog({
 }) {
   const onClickCancelImportStories = () => setShowImportStoriesDialog(false);
 
-  const onChangeFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeFileInput = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     event.preventDefault();
 
     const files = event.target.files;
@@ -24,7 +26,11 @@ function ImportStoriesDialog({
     const file = files[0];
 
     // upload file
-    storiesService.wipeExistingAndImportNewStories(file);
+    const success = await storiesService.wipeExistingAndImportNewStories(file);
+
+    if (!success) {
+      alert("Oops, that file is invalid. Try again.");
+    }
 
     setShowImportStoriesDialog(false);
   };
