@@ -70,3 +70,14 @@ export async function getStoriesDownload(apiToken: string) {
     },
   });
 }
+
+export async function postStoriesUpload(apiToken: string, file: File) {
+  return await fetch(`/api/v0/stories/upload`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/octet-stream",
+      Authorization: `Bearer ${apiToken}`,
+    },
+    body: file,
+  });
+}

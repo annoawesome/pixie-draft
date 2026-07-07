@@ -426,3 +426,12 @@ export async function deleteSelectedStoryAndSave(stories: Stories) {
     return updatedStories;
   }
 }
+
+/**
+ * Not intended for use in the main editor, but in the settings page.
+ * As such, this function does not return anything beyond whether the request succeeded or not
+ * @param file The stories.json file
+ */
+export async function wipeExistingAndImportNewStories(file: File) {
+  return await storiesClient.importStories(file);
+}

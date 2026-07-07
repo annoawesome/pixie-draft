@@ -160,6 +160,21 @@ export class StoriesClient {
       );
     }
   }
+
+  public async importStories(file: File) {
+    const response = await storiesApi.postStoriesUpload(
+      await this.authClient.getUsableApiToken(),
+      file,
+    );
+
+    if (!response.ok) {
+      console.error(
+        `Error getting stories download: HTTP status code ${response.status}`,
+      );
+    }
+
+    return response.ok;
+  }
 }
 
 export const storiesClient = new StoriesClient(authClient);

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { downloadFromUrl } from "../../service/downloadClientService";
 import { getDownloadUrl } from "../../service/userDataService";
+import * as storiesService from "../../service/storiesService";
 import Dialog from "../Dialog";
 
 function ImportStoriesDialog({
@@ -12,6 +13,24 @@ function ImportStoriesDialog({
 }) {
   const onClickCancelImportStories = () => setShowImportStoriesDialog(false);
 
+  const onChangeFileInput = (
+    event: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
+  ) => {
+    event.preventDefault();
+
+    const files = event.target.files;
+
+    if (!files) return;
+    if (files.length !== 1) return;
+
+    const file = files[0];
+
+    // upload file
+    storiesService.wipeExistingAndImportNewStories(file);
+
+    setShowImportStoriesDialog(false);
+  };
+
   return (
     <Dialog
       showDialog={showImportStoriesDialog}
@@ -22,7 +41,13 @@ function ImportStoriesDialog({
         <p>
           This will erase <i>all</i> of your currently saved stories!
         </p>
-        <input type="file" name="" id="" accept="application/json" />
+        <input
+          type="file"
+          name=""
+          id=""
+          accept="application/json"
+          onChange={onChangeFileInput}
+        />
         <div className="flex-row gap-small">
           <button type="button" className="button-secondary">
             Yes
