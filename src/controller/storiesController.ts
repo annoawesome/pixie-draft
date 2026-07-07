@@ -25,14 +25,13 @@ export function getStoriesDownload(req: Request, res: Response) {
 
 export function postStoriesUpload(req: Request, res: Response) {
   const fileName = "stories.json";
-  const writeStream = fs.createWriteStream(
-    path.resolve(getDatabaseFile(fileName)),
-  );
+  const filePath = path.resolve(getDatabaseFile(fileName));
+  const writeStream = fs.createWriteStream(filePath);
 
   req.pipe(writeStream);
 
   writeStream.on("finish", () => {
-    fs.readFile(path.resolve(getDatabaseFile(fileName)), (err, data) => {
+    fs.readFile(filePath, (err, data) => {
       const storiesString = data.toString("utf-8");
 
       try {
@@ -41,7 +40,9 @@ export function postStoriesUpload(req: Request, res: Response) {
 
         res.sendStatus(HttpStatusCodes.CREATED);
       } catch {
-        res.sendStatus(HttpStatusCodes.BAD_REQUEST);
+        fs.writeFile(filePath, "[]\n", () =>
+          res.sendStatus(HttpStatusCodes.BAD_REQUEST),
+        );
       }
     });
   });
