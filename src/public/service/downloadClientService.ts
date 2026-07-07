@@ -3,6 +3,5 @@ export function downloadFromUrl(url: string) {
   anchor.href = url;
   anchor.download = "";
 
-  document.body.append(anchor);
   anchor.click();
 }
