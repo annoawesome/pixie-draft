@@ -4,7 +4,7 @@ WORKDIR /app/
 COPY package*.json tsconfig.json /app/
 RUN npm ci --save-dev
 COPY ./ /app/
-RUN --mount=type=cache,target=/app/.tsbuildinfo npx tsc
+RUN npx tsc
 
 FROM node:24-alpine AS frontend-builder
 
