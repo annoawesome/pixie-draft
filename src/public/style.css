@@ -369,6 +369,9 @@ input::file-selector-button:active {
 }
 
 #main-app-layout {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+
   flex-grow: 1;
   min-height: 0;
   gap: 32px;
@@ -382,18 +385,9 @@ input::file-selector-button:active {
   gap: 8px;
 }
 
-/* Select container above library */
-div:has(#library) {
-  flex: 1;
-}
-
 .story-card {
   padding: 8px;
   gap: 8px;
-}
-
-#editor {
-  flex: 4;
 }
 
 #story-content {
@@ -422,10 +416,6 @@ button:disabled .path-icon {
 #endpoint-status-indicator {
   align-items: center;
   gap: 4px;
-}
-
-#aside-settings {
-  flex: 1;
 }
 
 /* Headers and footers */
