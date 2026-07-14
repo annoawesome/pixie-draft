@@ -338,6 +338,21 @@ export async function saveSelectedStory(stories: Stories) {
   }
 }
 
+export async function updateSelectedStoryWithUpdaterAndSave(
+  stories: Stories,
+  updaterCallback: (selectedStory: Story) => Story,
+) {
+  const updatedStories = updateSelectedStory(stories, updaterCallback);
+
+  if (!updatedStories) return;
+
+  const updatedStory = getSelectedStory(updatedStories);
+
+  if (updatedStory) {
+    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
+  }
+}
+
 export async function updateSelectedStoryContentAndSave(
   stories: Stories,
   newContent: string,

@@ -418,6 +418,14 @@ button:disabled .path-icon {
   gap: 4px;
 }
 
+#story-desc {
+  height: 256px;
+  overflow-y: auto;
+
+  border-radius: 8px;
+  padding: 8px;
+}
+
 /* Headers and footers */
 #header-left,
 #header-right {
