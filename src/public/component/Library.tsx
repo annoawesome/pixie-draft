@@ -159,6 +159,7 @@ export default function Library({
             setStories={setStories}
           />
         ))}
+        <div className="separator"></div>
         <Dialog
           showDialog={showImportDialog}
           setShowDialog={setShowImportDialog}

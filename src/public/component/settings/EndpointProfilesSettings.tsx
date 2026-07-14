@@ -91,6 +91,7 @@ function EndpointsList({
             locked={false}
           />
         ))}
+        <div className="separator"></div>
       </div>
     </GradientScrollable>
   );
