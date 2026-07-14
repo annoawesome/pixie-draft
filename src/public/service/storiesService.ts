@@ -298,10 +298,15 @@ export async function duplicateStoryAndSave(stories: Stories, story: Story) {
 
   if (!dupedStory) return;
 
-  const updatedStories: Stories = {
-    ...stories,
-    [dupedStory.id]: dupedStory,
-  };
+  const updatedStories = { ...stories };
+  const currentSelectedStory = getSelectedStory(updatedStories);
+
+  if (currentSelectedStory) {
+    updatedStories[currentSelectedStory.id] =
+      toStoryPreview(currentSelectedStory);
+  }
+
+  updatedStories[dupedStory.id] = dupedStory;
 
   return updatedStories;
 }
