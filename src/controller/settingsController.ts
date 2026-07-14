@@ -3,6 +3,7 @@ import fetchUserSettings from "../dao/settings/fetchUserSettingsDao.js";
 import updateUserSettings from "../dao/settings/updateUserSettingsDao.js";
 import patchUserSettings from "../dao/settings/patchUserSettingsDao.js";
 import { UpdateUserSettingDto } from "../type/settingType.js";
+import HttpStatusCodes from "../util/httpStatusCodes.js";
 
 export function getSettings(req: Request, res: Response) {
   try {
@@ -10,7 +11,7 @@ export function getSettings(req: Request, res: Response) {
     res.json(settings);
   } catch (error) {
     console.error(error);
-    res.sendStatus(500);
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -18,10 +19,10 @@ export function updateSettings(req: Request, res: Response) {
   try {
     const settings = req.body;
     updateUserSettings(settings);
-    res.sendStatus(200);
+    res.sendStatus(HttpStatusCodes.OK);
   } catch (error) {
     console.error(error);
-    res.sendStatus(500);
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -35,12 +36,12 @@ export function patchSettings(req: Request, res: Response) {
 
     if (setting === "endpoints") {
       patchUserSettings(setting, content);
-      res.sendStatus(200);
+      res.sendStatus(HttpStatusCodes.OK);
     } else {
-      res.sendStatus(400);
+      res.sendStatus(HttpStatusCodes.BAD_REQUEST);
     }
   } catch (error) {
     console.error(error);
-    res.sendStatus(500);
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
