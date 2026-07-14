@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Endpoint from "../../type/endpointType";
 import { settingsClient } from "../../client/settingsClient";
+import GradientScrollable from "../GradientScrollable";
 
 function EndpointCard({
   endpoint,
@@ -60,36 +61,38 @@ function EndpointsList({
   };
 
   return (
-    <div className="flex-column scrollable" id="settings-endpoints-list">
-      <button
-        type="button"
-        className="button-secondary"
-        onClick={onClickCreateNewProfile}
-      >
-        Create new profile
-      </button>
-      <EndpointCard
-        endpoint={{
-          id: "automatic",
-          name: "Automatic",
-          type: "KoboldCpp",
-          uri: "auto-generated",
-          authorization: "",
-        }}
-        selectedEndpoint={selectedEndpoint}
-        setSelectedEndpoint={setSelectedEndpoint}
-        locked={true}
-      />
-      {endpoints.map((endpoint, index) => (
+    <GradientScrollable>
+      <div className="flex-column scrollable" id="settings-endpoints-list">
+        <button
+          type="button"
+          className="button-secondary"
+          onClick={onClickCreateNewProfile}
+        >
+          Create new profile
+        </button>
         <EndpointCard
-          key={index}
-          endpoint={endpoint}
+          endpoint={{
+            id: "automatic",
+            name: "Automatic",
+            type: "KoboldCpp",
+            uri: "auto-generated",
+            authorization: "",
+          }}
           selectedEndpoint={selectedEndpoint}
           setSelectedEndpoint={setSelectedEndpoint}
-          locked={false}
+          locked={true}
         />
-      ))}
-    </div>
+        {endpoints.map((endpoint, index) => (
+          <EndpointCard
+            key={index}
+            endpoint={endpoint}
+            selectedEndpoint={selectedEndpoint}
+            setSelectedEndpoint={setSelectedEndpoint}
+            locked={false}
+          />
+        ))}
+      </div>
+    </GradientScrollable>
   );
 }
 
