@@ -6,6 +6,7 @@ import Dialog from "./Dialog";
 import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
 import * as storiesService from "../service/storiesService";
+import GradientScrollable from "./GradientScrollable";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -140,71 +141,73 @@ export default function AsideSettings({
   };
 
   return (
-    <aside className="flex-column side-column scrollable" id="aside-settings">
-      {selectedStory ? (
-        <>
-          <button className="button-secondary" onClick={onClickDuplicate}>
-            Duplicate Story
-          </button>
-          <div className="separator"></div>
-          <button className="button-secondary" onClick={onClickExportAsText}>
-            Download as text
-          </button>
-          <button className="button-secondary" onClick={onClickExportAsJson}>
-            Download as JSON
-          </button>
-          <div className="separator"></div>
-          <button
-            type="button"
-            className="button-secondary"
-            onClick={onClickClearHistory}
-          >
-            Clear History
-          </button>
-          <button
-            className="button-secondary button-destructive"
-            onClick={onClickDelete}
-          >
-            Delete
-          </button>
-          <div className="separator"></div>
+    <GradientScrollable>
+      <aside className="flex-column side-column" id="aside-settings">
+        {selectedStory ? (
+          <>
+            <button className="button-secondary" onClick={onClickDuplicate}>
+              Duplicate Story
+            </button>
+            <div className="separator"></div>
+            <button className="button-secondary" onClick={onClickExportAsText}>
+              Download as text
+            </button>
+            <button className="button-secondary" onClick={onClickExportAsJson}>
+              Download as JSON
+            </button>
+            <div className="separator"></div>
+            <button
+              type="button"
+              className="button-secondary"
+              onClick={onClickClearHistory}
+            >
+              Clear History
+            </button>
+            <button
+              className="button-secondary button-destructive"
+              onClick={onClickDelete}
+            >
+              Delete
+            </button>
+            <div className="separator"></div>
 
-          <p className="text-secondary">
-            Word count: {selectedStory.content.split(/[\s]+/).length}
-          </p>
-          <p className="text-secondary">
-            Sentence count:{" "}
-            {
-              selectedStory.content
-                .split(/[!?.]+/)
-                .filter((sentence) => sentence.length > 0).length
-            }
-          </p>
-          <p className="text-secondary">
-            Created: {millisecondsToString(selectedStory.time.created)}
-          </p>
-          <p className="text-secondary">
-            {`Edited: ${millisecondsToString(selectedStory.time.modified)}`}
-          </p>
-          <div className="separator"></div>
+            <p className="text-secondary">
+              Word count: {selectedStory.content.split(/[\s]+/).length}
+            </p>
+            <p className="text-secondary">
+              Sentence count:{" "}
+              {
+                selectedStory.content
+                  .split(/[!?.]+/)
+                  .filter((sentence) => sentence.length > 0).length
+              }
+            </p>
+            <p className="text-secondary">
+              Created: {millisecondsToString(selectedStory.time.created)}
+            </p>
+            <p className="text-secondary">
+              {`Edited: ${millisecondsToString(selectedStory.time.modified)}`}
+            </p>
+            <div className="separator"></div>
 
-          <p className="text-secondary">
-            Story size:
-            {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
-          </p>
-          <p className="text-secondary">Id: {selectedStory.id}</p>
+            <p className="text-secondary">
+              Story size:
+              {" " + humanFileSize(JSON.stringify(selectedStory).length, true)}
+            </p>
+            <p className="text-secondary">Id: {selectedStory.id}</p>
 
-          <Dialog showDialog={showDialog} setShowDialog={setShowDialog}>
-            <DialogBox
-              selectedStory={selectedStory}
-              onClickCancelDelete={onClickCancelDelete}
-              onClickReallyDelete={onClickReallyDelete}
-            />
-          </Dialog>
-        </>
-      ) : (
-        <></>
-      )}
-    </aside>
+            <Dialog showDialog={showDialog} setShowDialog={setShowDialog}>
+              <DialogBox
+                selectedStory={selectedStory}
+                onClickCancelDelete={onClickCancelDelete}
+                onClickReallyDelete={onClickReallyDelete}
+              />
+            </Dialog>
+          </>
+        ) : (
+          <></>
+        )}
+      </aside>
+    </GradientScrollable>
   );
 }

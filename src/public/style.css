@@ -275,6 +275,34 @@ input::file-selector-button:active {
   scrollbar-width: thin;
 }
 
+.gradient-scrollable {
+  overflow-y: auto;
+
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 32px,
+    black calc(100% - 32px),
+    transparent
+  );
+
+  transition: mask 1s ease-out;
+}
+.gradient-scrollable.gradient-top {
+  mask-image: linear-gradient(
+    to bottom,
+    black,
+    black calc(100% - 32px),
+    transparent
+  );
+}
+.gradient-scrollable.gradient-bottom {
+  mask-image: linear-gradient(to bottom, transparent, black 32px, black);
+}
+.gradient-scrollable.gradient-top.gradient-bottom {
+  mask-image: none;
+}
+
 .popup-form {
   margin: auto;
 
@@ -341,6 +369,9 @@ input::file-selector-button:active {
 }
 
 #main-app-layout {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+
   flex-grow: 1;
   min-height: 0;
   gap: 32px;
@@ -351,9 +382,7 @@ input::file-selector-button:active {
 
 .side-column {
   min-height: 0;
-  overflow-y: auto;
   gap: 8px;
-  width: 400px;
 }
 
 .story-card {
