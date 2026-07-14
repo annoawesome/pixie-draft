@@ -5,6 +5,7 @@ import { millisecondsToString } from "../util/time";
 import * as storiesService from "../service/storiesService";
 import Dialog from "./Dialog";
 import MimeTypes from "../type/mimeType";
+import GradientScrollable from "./GradientScrollable";
 
 function StoryCard({
   story,
@@ -118,62 +119,67 @@ export default function Library({
   );
 
   return (
-    <div className="flex-column side-column scrollable" id="library">
-      <button
-        className="button-primary"
-        id="new-story-button"
-        onClick={onClickNewStoryButton}
-      >
-        Create Story
-      </button>
-      <button
-        type="button"
-        className="button-secondary"
-        onClick={onClickImport}
-      >
-        Import
-      </button>
-      <input
-        type="search"
-        name=""
-        className="input-secondary"
-        id=""
-        placeholder="Search"
-        value={search}
-        onChange={onChangeSearch}
-      />
-      {search.length > 0 ? (
-        <p className="text-secondary">
-          {filteredPreviews.length} out of {allPreviews.length} stories found
-        </p>
-      ) : (
-        ""
-      )}
-      {filteredPreviews.map((story) => (
-        <StoryCard
-          key={story.id}
-          story={story}
-          stories={stories}
-          setStories={setStories}
+    <GradientScrollable>
+      <div className="flex-column side-column" id="library">
+        <button
+          className="button-primary"
+          id="new-story-button"
+          onClick={onClickNewStoryButton}
+        >
+          Create Story
+        </button>
+        <button
+          type="button"
+          className="button-secondary"
+          onClick={onClickImport}
+        >
+          Import
+        </button>
+        <input
+          type="search"
+          name=""
+          className="input-secondary"
+          id=""
+          placeholder="Search"
+          value={search}
+          onChange={onChangeSearch}
         />
-      ))}
-      <Dialog showDialog={showImportDialog} setShowDialog={setShowImportDialog}>
-        <div className="flex-column gap-medium">
-          <h1>Import story</h1>
-          <input
-            type="file"
-            accept={[MimeTypes.TEXT, MimeTypes.JSON].join()}
-            onChange={onChangeFileImport}
+        {search.length > 0 ? (
+          <p className="text-secondary">
+            {filteredPreviews.length} out of {allPreviews.length} stories found
+          </p>
+        ) : (
+          ""
+        )}
+        {filteredPreviews.map((story) => (
+          <StoryCard
+            key={story.id}
+            story={story}
+            stories={stories}
+            setStories={setStories}
           />
-          <button
-            type="button"
-            className="button-secondary"
-            onClick={onClickCancelImport}
-          >
-            Cancel
-          </button>
-        </div>
-      </Dialog>
-    </div>
+        ))}
+        <Dialog
+          showDialog={showImportDialog}
+          setShowDialog={setShowImportDialog}
+        >
+          <div className="flex-column gap-medium">
+            <h1>Import story</h1>
+            <input
+              type="file"
+              accept={[MimeTypes.TEXT, MimeTypes.JSON].join()}
+              onChange={onChangeFileImport}
+            />
+            <button
+              type="button"
+              className="button-secondary"
+              onClick={onClickCancelImport}
+            >
+              Cancel
+            </button>
+          </div>
+        </Dialog>
+      </div>
+    </GradientScrollable>
   );
 }
