@@ -26,9 +26,7 @@ router.get("/", async (req, res) => {
     res.json(stories);
   } catch (error) {
     console.error("Error fetching stories preview:", error);
-    res
-      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -49,9 +47,7 @@ router.get("/:id", async (req, res) => {
     }
   } catch (error) {
     console.error("Error fetching story:", error);
-    res
-      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -64,9 +60,7 @@ router.post("/", (req, res) => {
     res.status(HttpStatusCodes.CREATED).json(story);
   } catch (error) {
     console.error("Error creating story:", error);
-    res
-      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -81,9 +75,7 @@ router.put("/:id", (req, res) => {
     res.status(HttpStatusCodes.NO_CONTENT).send();
   } catch (error) {
     console.error("Error updating story:", error);
-    res
-      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -95,9 +87,7 @@ router.delete("/:id", (req, res) => {
     res.status(HttpStatusCodes.NO_CONTENT).send();
   } catch (error) {
     console.error("Error deleting story:", error);
-    res
-      .status(HttpStatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
