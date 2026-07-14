@@ -14,6 +14,7 @@ import {
   getStoriesDownload,
   postStoriesUpload,
 } from "../controller/storiesController.js";
+import HttpStatusCodes from "../util/httpStatusCodes.js";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.get("/", async (req, res) => {
     res.json(stories);
   } catch (error) {
     console.error("Error fetching stories preview:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -42,11 +43,11 @@ router.get("/:id", async (req, res) => {
     if (story) {
       res.json(story);
     } else {
-      res.status(404).json({ error: "Story not found" });
+      res.status(HttpStatusCodes.NOT_FOUND).json({ error: "Story not found" });
     }
   } catch (error) {
     console.error("Error fetching story:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -56,10 +57,10 @@ router.post("/", (req, res) => {
 
   try {
     const story = createStory(title, content, history, historyIndex);
-    res.status(201).json(story);
+    res.status(HttpStatusCodes.CREATED).json(story);
   } catch (error) {
     console.error("Error creating story:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -71,10 +72,10 @@ router.put("/:id", (req, res) => {
     story.time.modified = Date.now();
 
     updateStory(story);
-    res.status(204).send();
+    res.status(HttpStatusCodes.NO_CONTENT).send();
   } catch (error) {
     console.error("Error updating story:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -83,10 +84,10 @@ router.delete("/:id", (req, res) => {
 
   try {
     deleteStory(id);
-    res.status(204).send();
+    res.status(HttpStatusCodes.NO_CONTENT).send();
   } catch (error) {
     console.error("Error deleting story:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
   }
 });
 
