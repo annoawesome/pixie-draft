@@ -56,9 +56,17 @@ export function searchLibraryPreview(
   libraryPreviews: StoryPreview[],
   search: string,
 ) {
-  return libraryPreviews.filter((story) =>
-    story.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
-  );
+  const lowerCaseSearch = search.toLocaleLowerCase();
+
+  return libraryPreviews.filter((story) => {
+    const titleLowerCase = story.title.toLocaleLowerCase();
+    const descLowerCase = story.desc.toLocaleLowerCase();
+
+    return (
+      titleLowerCase.includes(lowerCaseSearch) ||
+      descLowerCase.includes(lowerCaseSearch)
+    );
+  });
 }
 
 export function convertPreviewsToStories(storyPreviews: StoryPreview[]) {
