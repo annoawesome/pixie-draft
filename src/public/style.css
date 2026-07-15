@@ -394,6 +394,10 @@ input::file-selector-button:active {
   overflow: hidden;
   max-height: 48px;
 
+  /* Makes it look a little better for whatever reason */
+  padding: 0 8px;
+  text-align: left;
+
   mask-image: linear-gradient(to bottom, black, black 16px, transparent);
 }
 
