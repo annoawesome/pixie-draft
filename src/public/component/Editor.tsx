@@ -217,6 +217,8 @@ export default function Editor({
   };
 
   const onBlurStoryContent = async (newContent: string) => {
+    if (selectedStory?.content === newContent) return;
+
     // A hack to hopefully prevent what appears to be a rare race condition
     // where you press "generate" before the app finishes saving
     setLocked(true);
