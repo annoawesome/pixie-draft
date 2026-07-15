@@ -29,6 +29,7 @@ function buildStoryPreview(id: string, title: string): StoryPreview {
   return {
     id,
     title,
+    desc: "",
     time: { created: 1, accessed: 1, modified: 1 },
   };
 }
@@ -294,7 +295,6 @@ describe("stories service", () => {
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
 
     const story = buildStory("1", "New Story", "Content");
-    const copiedStory = buildStory("3", "New Story", "Content");
 
     const stories = new StoriesBuilder()
       .add(buildStoryPreview("2", "Title"))
@@ -302,8 +302,8 @@ describe("stories service", () => {
       .finish();
     const updatedStories = new StoriesBuilder()
       .add(buildStoryPreview("2", "Title"))
-      .add(story)
-      .add(copiedStory)
+      .add(buildStoryPreview(story.id, story.title))
+      .add(buildStory("3", "New Story", "Content"))
       .finish();
 
     expect(await storiesService.duplicateStoryAndSave(stories, story)).toEqual(
