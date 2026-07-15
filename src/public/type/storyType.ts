@@ -35,6 +35,7 @@ export default Story;
 export interface StoryPreview {
   id: string;
   title: string;
+  desc: string;
   time: {
     created: number;
     accessed: number;

@@ -29,6 +29,7 @@ function toStoryPreview(story: Story): StoryPreview {
   return {
     id: story.id,
     title: story.title,
+    desc: story.desc,
     time: story.time,
   };
 }
