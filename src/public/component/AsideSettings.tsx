@@ -151,6 +151,10 @@ export default function AsideSettings({
           return {
             ...story,
             desc: newContent,
+            time: {
+              ...story.time,
+              modified: Date.now(),
+            },
           };
         },
       );
