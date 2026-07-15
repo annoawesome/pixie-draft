@@ -143,6 +143,7 @@ export default function AsideSettings({
 
   const onUpdateContentEditable = async (newContent: string) => {
     if (!selectedStory) return;
+    if (selectedStory.desc === newContent) return;
 
     const updatedStories =
       await storiesService.updateSelectedStoryWithUpdaterAndSave(
