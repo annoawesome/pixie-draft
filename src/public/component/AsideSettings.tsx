@@ -7,6 +7,7 @@ import { humanFileSize } from "../util/numberFormatting";
 import { millisecondsToString } from "../util/time";
 import * as storiesService from "../service/storiesService";
 import GradientScrollable from "./GradientScrollable";
+import ContentEditable from "./ContentEditable";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -140,11 +141,47 @@ export default function AsideSettings({
     }
   };
 
+  const onUpdateContentEditable = async (newContent: string) => {
+    if (!selectedStory) return;
+    if (selectedStory.desc === newContent) return;
+
+    const updatedStories =
+      await storiesService.updateSelectedStoryWithUpdaterAndSave(
+        stories,
+        (story) => {
+          return {
+            ...story,
+            desc: newContent,
+            time: {
+              ...story.time,
+              modified: Date.now(),
+            },
+          };
+        },
+      );
+
+    if (updatedStories) {
+      setStories(updatedStories);
+    }
+  };
+
   return (
     <GradientScrollable>
       <aside className="flex-column side-column" id="aside-settings">
         {selectedStory ? (
           <>
+            <div>
+              <label htmlFor="story-desc" className="text-secondary">
+                Description
+              </label>
+              <ContentEditable
+                id="story-desc"
+                value={selectedStory.desc}
+                locked={false}
+                onUpdate={onUpdateContentEditable}
+              />
+            </div>
+            <div className="separator"></div>
             <button className="button-secondary" onClick={onClickDuplicate}>
               Duplicate Story
             </button>

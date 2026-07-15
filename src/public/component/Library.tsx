@@ -36,6 +36,7 @@ function StoryCard({
       onClick={onClickStoryCard}
     >
       <h2>{story.title}</h2>
+      <i className="story-card-desc">{story.desc}</i>
       <p className="text-secondary">
         {`${millisecondsToString(story.time.modified)}`}
       </p>

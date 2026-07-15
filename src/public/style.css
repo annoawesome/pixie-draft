@@ -390,6 +390,17 @@ input::file-selector-button:active {
   gap: 8px;
 }
 
+.story-card-desc {
+  overflow: hidden;
+  max-height: 48px;
+
+  /* Makes it look a little better for whatever reason */
+  padding: 0 8px;
+  text-align: left;
+
+  mask-image: linear-gradient(to bottom, black, black 16px, transparent);
+}
+
 #story-content {
   height: 0px;
   flex-grow: 1;
@@ -416,6 +427,14 @@ button:disabled .path-icon {
 #endpoint-status-indicator {
   align-items: center;
   gap: 4px;
+}
+
+#story-desc {
+  height: 256px;
+  overflow-y: auto;
+
+  border-radius: 8px;
+  padding: 8px;
 }
 
 /* Headers and footers */

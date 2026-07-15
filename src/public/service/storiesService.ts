@@ -29,6 +29,7 @@ function toStoryPreview(story: Story): StoryPreview {
   return {
     id: story.id,
     title: story.title,
+    desc: story.desc,
     time: story.time,
   };
 }
@@ -55,9 +56,17 @@ export function searchLibraryPreview(
   libraryPreviews: StoryPreview[],
   search: string,
 ) {
-  return libraryPreviews.filter((story) =>
-    story.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
-  );
+  const lowerCaseSearch = search.toLocaleLowerCase();
+
+  return libraryPreviews.filter((story) => {
+    const titleLowerCase = story.title.toLocaleLowerCase();
+    const descLowerCase = story.desc.toLocaleLowerCase();
+
+    return (
+      titleLowerCase.includes(lowerCaseSearch) ||
+      descLowerCase.includes(lowerCaseSearch)
+    );
+  });
 }
 
 export function convertPreviewsToStories(storyPreviews: StoryPreview[]) {
@@ -335,6 +344,21 @@ export async function saveSelectedStory(stories: Stories) {
 
   if (selectedStory) {
     return storiesClient.saveStory(selectedStory);
+  }
+}
+
+export async function updateSelectedStoryWithUpdaterAndSave(
+  stories: Stories,
+  updaterCallback: (selectedStory: Story) => Story,
+) {
+  const updatedStories = updateSelectedStory(stories, updaterCallback);
+
+  if (!updatedStories) return;
+
+  const updatedStory = getSelectedStory(updatedStories);
+
+  if (updatedStory) {
+    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
   }
 }
 

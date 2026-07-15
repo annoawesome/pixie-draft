@@ -20,11 +20,13 @@ export default function ContentEditable({
   value,
   locked,
   onUpdate,
+  id,
   ref,
 }: {
   value: string;
   locked: boolean;
   onUpdate: (newContent: string) => void;
+  id?: string;
   ref?: React.RefObject<HTMLDivElement | null>;
 }) {
   const contentEditableRef = ref || useRef<HTMLDivElement | null>(null);
@@ -46,7 +48,7 @@ export default function ContentEditable({
   return (
     <div
       ref={contentEditableRef}
-      id="story-content"
+      id={id}
       className="input-secondary scrollable"
       contentEditable={!locked}
       onBlur={onBlurContentEditable}

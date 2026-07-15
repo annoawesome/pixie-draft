@@ -257,6 +257,7 @@ export default function Editor({
             onBlur={onBlurStoryTitle}
           />
           <ContentEditable
+            id="story-content"
             value={selectedStory.content}
             onUpdate={onBlurStoryContent}
             locked={locked}
