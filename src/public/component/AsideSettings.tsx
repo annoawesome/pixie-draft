@@ -165,12 +165,18 @@ export default function AsideSettings({
       <aside className="flex-column side-column" id="aside-settings">
         {selectedStory ? (
           <>
-            <ContentEditable
-              id="story-desc"
-              value={selectedStory.desc}
-              locked={false}
-              onUpdate={onUpdateContentEditable}
-            />
+            <div>
+              <label htmlFor="story-desc" className="text-secondary">
+                Description
+              </label>
+              <ContentEditable
+                id="story-desc"
+                value={selectedStory.desc}
+                locked={false}
+                onUpdate={onUpdateContentEditable}
+              />
+            </div>
+            <div className="separator"></div>
             <button className="button-secondary" onClick={onClickDuplicate}>
               Duplicate Story
             </button>
