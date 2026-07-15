@@ -32,7 +32,7 @@ export default function MainLayout({
   }, [authenticated]);
 
   return (
-    <main className="flex-row" id="main-app-layout">
+    <main className="" id="main-app-layout">
       {zenMode ? (
         <div className="flex-column side-column scrollable" id="library"></div>
       ) : (

@@ -1,6 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { getSecret } from "../init/initializeSecrets.js";
+import HttpStatusCodes from "../util/httpStatusCodes.js";
 
 const router = express.Router();
 
@@ -24,16 +25,16 @@ function generateNewTokens(res: express.Response, password: string) {
           sameSite: "lax",
         });
 
-        res.status(200).send(refreshToken);
+        res.status(HttpStatusCodes.OK).send(refreshToken);
       } else {
-        res.sendStatus(500);
+        res.sendStatus(HttpStatusCodes.INTERNAL_SERVER_ERROR);
       }
     });
 
     return;
   }
 
-  res.sendStatus(401);
+  res.sendStatus(HttpStatusCodes.UNAUTHORIZED);
 }
 
 router.post("/", (req, res) => {
@@ -46,7 +47,7 @@ router.post("/refresh", (req, res) => {
   const authCookie = req.signedCookies.authentication;
 
   if (typeof authCookie !== "string") {
-    res.sendStatus(401);
+    res.sendStatus(HttpStatusCodes.UNAUTHORIZED);
     return;
   }
 
@@ -59,7 +60,7 @@ router.post("/refresh", (req, res) => {
       // This also refreshes the "session" token (authCookie). However, it doesn't invalidate the old authCookie
       generateNewTokens(res, decoded.password);
     } else {
-      res.sendStatus(401);
+      res.sendStatus(HttpStatusCodes.UNAUTHORIZED);
     }
   });
 });
@@ -71,7 +72,7 @@ router.delete("/", (req, res) => {
     sameSite: "lax",
   });
 
-  res.sendStatus(204);
+  res.sendStatus(HttpStatusCodes.NO_CONTENT);
 });
 
 export default router;

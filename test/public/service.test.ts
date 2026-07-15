@@ -5,6 +5,7 @@ import Story, { Stories, StoryPreview } from "../../src/public/type/storyType";
 
 import baseStory from "./baseStory.json";
 import { AuthClient } from "../../src/public/client/authClient";
+import { getDownloadUrl } from "../../src/public/service/userDataService";
 
 class StoriesBuilder {
   #stories: Stories = {};
@@ -28,6 +29,7 @@ function buildStoryPreview(id: string, title: string): StoryPreview {
   return {
     id,
     title,
+    desc: "",
     time: { created: 1, accessed: 1, modified: 1 },
   };
 }
@@ -84,6 +86,15 @@ vi.mock(import("../../src/public/client/storiesClient"), () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public async deleteStory(id: string) {
+      return true;
+    }
+
+    public async getStoriesDownload() {
+      return "/download/39514162-3b5d-4b08-8493-5eabf7527f80";
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public async importStories(file: File) {
       return true;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -284,7 +295,6 @@ describe("stories service", () => {
     vi.setSystemTime(new Date(1970, 0, 1, 0, 0, 0, 1));
 
     const story = buildStory("1", "New Story", "Content");
-    const copiedStory = buildStory("3", "New Story", "Content");
 
     const stories = new StoriesBuilder()
       .add(buildStoryPreview("2", "Title"))
@@ -292,8 +302,8 @@ describe("stories service", () => {
       .finish();
     const updatedStories = new StoriesBuilder()
       .add(buildStoryPreview("2", "Title"))
-      .add(story)
-      .add(copiedStory)
+      .add(buildStoryPreview(story.id, story.title))
+      .add(buildStory("3", "New Story", "Content"))
       .finish();
 
     expect(await storiesService.duplicateStoryAndSave(stories, story)).toEqual(
@@ -368,6 +378,24 @@ describe("stories service", () => {
 
     expect(await storiesService.deleteSelectedStoryAndSave(stories)).toEqual(
       new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+    );
+  });
+
+  // Basically a stub test
+  test("delete wipe & import", async () => {
+    expect(
+      await storiesService.wipeExistingAndImportNewStories(
+        new File(["[]"], "stories.json"),
+      ),
+    ).toBe(true);
+  });
+});
+
+describe("user data service", () => {
+  // Basically a stub test
+  test("generates download url", async () => {
+    expect(await getDownloadUrl()).toBe(
+      "/download/39514162-3b5d-4b08-8493-5eabf7527f80",
     );
   });
 });

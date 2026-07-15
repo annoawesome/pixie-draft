@@ -29,6 +29,7 @@ function toStoryPreview(story: Story): StoryPreview {
   return {
     id: story.id,
     title: story.title,
+    desc: story.desc,
     time: story.time,
   };
 }
@@ -55,9 +56,17 @@ export function searchLibraryPreview(
   libraryPreviews: StoryPreview[],
   search: string,
 ) {
-  return libraryPreviews.filter((story) =>
-    story.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
-  );
+  const lowerCaseSearch = search.toLocaleLowerCase();
+
+  return libraryPreviews.filter((story) => {
+    const titleLowerCase = story.title.toLocaleLowerCase();
+    const descLowerCase = story.desc.toLocaleLowerCase();
+
+    return (
+      titleLowerCase.includes(lowerCaseSearch) ||
+      descLowerCase.includes(lowerCaseSearch)
+    );
+  });
 }
 
 export function convertPreviewsToStories(storyPreviews: StoryPreview[]) {
@@ -298,10 +307,15 @@ export async function duplicateStoryAndSave(stories: Stories, story: Story) {
 
   if (!dupedStory) return;
 
-  const updatedStories: Stories = {
-    ...stories,
-    [dupedStory.id]: dupedStory,
-  };
+  const updatedStories = { ...stories };
+  const currentSelectedStory = getSelectedStory(updatedStories);
+
+  if (currentSelectedStory) {
+    updatedStories[currentSelectedStory.id] =
+      toStoryPreview(currentSelectedStory);
+  }
+
+  updatedStories[dupedStory.id] = dupedStory;
 
   return updatedStories;
 }
@@ -330,6 +344,21 @@ export async function saveSelectedStory(stories: Stories) {
 
   if (selectedStory) {
     return storiesClient.saveStory(selectedStory);
+  }
+}
+
+export async function updateSelectedStoryWithUpdaterAndSave(
+  stories: Stories,
+  updaterCallback: (selectedStory: Story) => Story,
+) {
+  const updatedStories = updateSelectedStory(stories, updaterCallback);
+
+  if (!updatedStories) return;
+
+  const updatedStory = getSelectedStory(updatedStories);
+
+  if (updatedStory) {
+    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
   }
 }
 
@@ -425,4 +454,13 @@ export async function deleteSelectedStoryAndSave(stories: Stories) {
 
     return updatedStories;
   }
+}
+
+/**
+ * Not intended for use in the main editor, but in the settings page.
+ * As such, this function does not return anything beyond whether the request succeeded or not
+ * @param file The stories.json file
+ */
+export async function wipeExistingAndImportNewStories(file: File) {
+  return await storiesClient.importStories(file);
 }

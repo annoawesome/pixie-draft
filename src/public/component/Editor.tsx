@@ -217,6 +217,8 @@ export default function Editor({
   };
 
   const onBlurStoryContent = async (newContent: string) => {
+    if (selectedStory?.content === newContent) return;
+
     // A hack to hopefully prevent what appears to be a rare race condition
     // where you press "generate" before the app finishes saving
     setLocked(true);
@@ -243,7 +245,7 @@ export default function Editor({
   const selectedStory = storiesService.getSelectedStory(stories);
 
   return (
-    <div className="flex-column width-fill-max" id="editor">
+    <div className="flex-column gap-medium" id="editor">
       {selectedStory ? (
         <>
           <input
@@ -257,6 +259,7 @@ export default function Editor({
             onBlur={onBlurStoryTitle}
           />
           <ContentEditable
+            id="story-content"
             value={selectedStory.content}
             onUpdate={onBlurStoryContent}
             locked={locked}

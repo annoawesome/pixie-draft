@@ -1,6 +1,6 @@
 :root {
   --neutral-color-1: hsl(0, 0%, 6%);
-  --neutral-color-2: hsl(0, 0%, 12%);
+  --neutral-color-2: hsl(0, 0%, 15%);
   --neutral-color-3: hsl(0, 0%, 24%);
   --neutral-color-4: hsl(0, 0%, 30%);
   --neutral-color-5: hsl(0, 0%, 50%);
@@ -55,8 +55,8 @@ h1 {
 dialog {
   max-width: 400px;
 
-  background-color: var(--neutral-color-2);
-  border: 1px solid var(--neutral-color-4);
+  background-color: var(--neutral-color-1);
+  border: 1px solid var(--neutral-color-3);
   border-radius: 8px;
 
   margin: auto;
@@ -65,11 +65,25 @@ dialog {
 
 dialog::backdrop {
   backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
 /* Hide default text */
 input[type="file"] {
   color: transparent;
+}
+
+button,
+input,
+input::file-selector-button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* File selector button cannot be targeted by the above rules so this is necessary */
+input::file-selector-button {
+  color: var(--neutral-color-8);
 }
 
 .flex-column {
@@ -111,20 +125,15 @@ input[type="file"] {
 }
 
 .input-secondary,
-.button-secondary,
-.button-primary,
-input::file-selector-button {
+.button-primary {
   background-color: transparent;
 
   border: 1px solid var(--neutral-color-4);
-  border-radius: 8px;
-  padding: 8px;
 
   transition: border-color 0.15s ease-out;
 }
 
-.input-secondary:hover,
-.button-secondary:hover {
+.input-secondary:hover {
   border-color: var(--neutral-color-5);
 }
 
@@ -155,17 +164,26 @@ input::file-selector-button {
   border: 0;
 }
 
-.button-secondary {
+.button-secondary,
+input::file-selector-button {
   background-color: var(--neutral-color-2);
+
+  transition: background-color 0.15s ease-out;
 }
 
-.button-secondary:active {
+.button-secondary:hover,
+input::file-selector-button:hover {
+  background-color: var(--neutral-color-3);
+}
+
+.button-secondary:active,
+input::file-selector-button:active {
   background-color: var(--neutral-color-3);
 }
 
 .button-secondary:disabled {
   background-color: var(--neutral-color-1);
-  border-color: var(--neutral-color-3);
+  box-shadow: 0 0 0 1px var(--neutral-color-3);
 }
 
 .button-tertiary {
@@ -191,7 +209,7 @@ input::file-selector-button {
 
 .button-selected {
   border: 0;
-  background-color: var(--accent-color-3);
+  background-color: var(--accent-color-3) !important;
 }
 
 .button-destructive {
@@ -242,18 +260,6 @@ input::file-selector-button {
   transform: translateY(2px);
 }
 
-/* Handle the file selection button separately */
-input::file-selector-button {
-  color: var(--neutral-color-8);
-  background-color: var(--neutral-color-2);
-}
-input::file-selector-button:hover {
-  border-color: var(--neutral-color-5);
-}
-input::file-selector-button:active {
-  background-color: var(--neutral-color-3);
-}
-
 .text-secondary {
   color: var(--neutral-color-5);
   font-size: 12px;
@@ -267,6 +273,34 @@ input::file-selector-button:active {
 .scrollable {
   scrollbar-color: var(--neutral-color-4) transparent;
   scrollbar-width: thin;
+}
+
+.gradient-scrollable {
+  overflow-y: auto;
+
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 32px,
+    black calc(100% - 32px),
+    transparent
+  );
+
+  transition: mask 1s ease-out;
+}
+.gradient-scrollable.gradient-top {
+  mask-image: linear-gradient(
+    to bottom,
+    black,
+    black calc(100% - 32px),
+    transparent
+  );
+}
+.gradient-scrollable.gradient-bottom {
+  mask-image: linear-gradient(to bottom, transparent, black 32px, black);
+}
+.gradient-scrollable.gradient-top.gradient-bottom {
+  mask-image: none;
 }
 
 .popup-form {
@@ -335,6 +369,9 @@ input::file-selector-button:active {
 }
 
 #main-app-layout {
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+
   flex-grow: 1;
   min-height: 0;
   gap: 32px;
@@ -345,9 +382,7 @@ input::file-selector-button:active {
 
 .side-column {
   min-height: 0;
-  overflow-y: auto;
   gap: 8px;
-  width: 400px;
 }
 
 .story-card {
@@ -355,15 +390,24 @@ input::file-selector-button:active {
   gap: 8px;
 }
 
-/* Hack to hide the lack of a border when the button is selected */
-.story-card.button-selected {
-  border: 1px solid transparent;
+.story-card-desc {
+  overflow: hidden;
+  max-height: 48px;
+
+  /* Makes it look a little better for whatever reason */
+  padding: 0 8px;
+  text-align: left;
+
+  mask-image: linear-gradient(to bottom, black, black 16px, transparent);
 }
 
 #story-content {
   height: 0px;
   flex-grow: 1;
   overflow-y: auto;
+
+  border-radius: 8px;
+  padding: 8px;
 }
 
 #story-content > * {
@@ -383,6 +427,14 @@ button:disabled .path-icon {
 #endpoint-status-indicator {
   align-items: center;
   gap: 4px;
+}
+
+#story-desc {
+  height: 256px;
+  overflow-y: auto;
+
+  border-radius: 8px;
+  padding: 8px;
 }
 
 /* Headers and footers */

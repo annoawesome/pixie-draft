@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 import { NextFunction, Request, Response } from "express";
 import { getSecret } from "../init/initializeSecrets.js";
+import HttpStatusCodes from "../util/httpStatusCodes.js";
 
 export async function validateAuthentication(
   req: Request,
@@ -11,7 +12,7 @@ export async function validateAuthentication(
   const authorization = req.headers.authorization;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    res.sendStatus(401);
+    res.sendStatus(HttpStatusCodes.UNAUTHORIZED);
     return;
   }
 
@@ -21,7 +22,7 @@ export async function validateAuthentication(
     if (!error) {
       next();
     } else {
-      res.sendStatus(401);
+      res.sendStatus(HttpStatusCodes.UNAUTHORIZED);
     }
   });
 }
