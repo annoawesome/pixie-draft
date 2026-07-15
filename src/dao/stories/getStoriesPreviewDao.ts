@@ -3,8 +3,8 @@ import Story from "../../type/storyType.js";
 import { getDatabaseFile } from "../../init/initializeDatabase.js";
 
 function shortenDescription(desc: string) {
-  if (desc.length > 128) {
-    return desc.substring(0, 128);
+  if (desc.length > 256) {
+    return desc.substring(0, 256);
   }
 
   return desc;
