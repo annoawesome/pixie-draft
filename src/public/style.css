@@ -370,12 +370,26 @@ input::file-selector-button:active {
 
 #main-app-layout {
   display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-columns: 1fr 3fr 1fr;
 
   flex-grow: 1;
   min-height: 0;
   gap: 32px;
   margin: 32px;
+}
+
+@media screen and (width <= 768px) {
+  #main-app-layout {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  #main-app-layout > * {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
 }
 
 /* Side columns */
