@@ -365,7 +365,7 @@ input::file-selector-button:active {
 /* Components */
 
 #header-body-layout {
-  height: 100vh;
+  height: 100dvh;
 }
 
 #main-app-layout {
