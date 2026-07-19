@@ -5,6 +5,7 @@ import AsideSettings from "./AsideSettings";
 import Editor from "./Editor";
 import Library from "./Library";
 import { storiesClient } from "../client/storiesClient";
+import CenterPanel from "./CenterPanel";
 
 export default function MainLayout({
   authenticated,
@@ -34,7 +35,11 @@ export default function MainLayout({
   return (
     <main className="" id="main-app-layout">
       {zenMode ? (
-        <div className="flex-column side-column scrollable" id="library"></div>
+        <div className="flex-column side-column scrollable" id="library">
+          <CenterPanel className="display-on-mobile div-elevated width-fill-max height-fill-max">
+            <p>Zen mode enabled.</p>
+          </CenterPanel>
+        </div>
       ) : (
         <Library stories={stories} setStories={setStories} />
       )}
@@ -43,7 +48,11 @@ export default function MainLayout({
         <aside
           className="flex-column side-column scrollable"
           id="aside-settings"
-        ></aside>
+        >
+          <CenterPanel className="display-on-mobile div-elevated width-fill-max height-fill-max">
+            <p>Zen mode enabled.</p>
+          </CenterPanel>
+        </aside>
       ) : (
         <AsideSettings stories={stories} setStories={setStories} />
       )}

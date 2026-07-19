@@ -109,6 +109,13 @@ input::file-selector-button {
   justify-content: center;
 }
 
+/* Hide some content when on large screens */
+@media screen and (width > 768px) {
+  .display-on-mobile {
+    display: none;
+  }
+}
+
 .width-fill-max {
   gap: 8px;
   width: 100%;
