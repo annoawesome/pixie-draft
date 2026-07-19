@@ -101,9 +101,21 @@ input::file-selector-button {
   flex-direction: row-reverse;
 }
 
+.center-panel {
+  margin: auto;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
 .width-fill-max {
   gap: 8px;
   width: 100%;
+}
+
+.height-fill-max {
+  height: 100%;
 }
 
 .sidebar {
@@ -122,6 +134,11 @@ input::file-selector-button {
 
 .gap-small {
   gap: 8px;
+}
+
+.div-elevated {
+  background-color: var(--neutral-color-2);
+  border-radius: 8px;
 }
 
 .input-secondary,
