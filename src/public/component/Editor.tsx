@@ -9,6 +9,7 @@ import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
 import SquareButtonContainer from "./SquareButtonContainer";
+import CenterPanel from "./CenterPanel";
 
 function ActionBar({
   contendEditableRef,
@@ -276,7 +277,12 @@ export default function Editor({
           />
         </>
       ) : (
-        <p>No story selected</p>
+        <CenterPanel>
+          <p>
+            No story selected. Select a story from the library or create a new
+            one.
+          </p>
+        </CenterPanel>
       )}
     </div>
   );
