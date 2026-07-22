@@ -36,8 +36,8 @@ class KoboldCppTokenStream implements TokenStream {
       fetchEventSource(this.#url, {
         ...getDefaultFetch(this.#authorization, { prompt: this.#prompt }),
 
-        onmessage(ev) {
-          const data = JSON.parse(ev.data);
+        onmessage(message) {
+          const data = JSON.parse(message.data);
           const koboldCppStreamedToken = KoboldCppTokenSseSchema.parse(data);
           const token: string = koboldCppStreamedToken.token;
 
