@@ -1,9 +1,3 @@
-/**
- * Sends a request to generate text through the "KoboldAI Unified" API
- * @param baseUrl - The URL of the KoboldCpp instance. This should not include a path, nor end with a trailing slash
- * @param prompt - The prompt sent to the LLM
- * @returns The continuation to be appended to the prompt
- */
 export async function postGenerate(
   baseUrl: string,
   prompt: string,
