@@ -1,4 +1,4 @@
-import { fetchModel } from "../api/koboldCppApi";
+import { getModel } from "../api/koboldCppApi";
 import { settingsClient } from "../client/settingsClient";
 import Endpoint from "../type/endpointType";
 
@@ -9,7 +9,7 @@ export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
   for (const endpointProfile of endpointProfiles) {
     const uri = endpointProfile.uri;
     try {
-      const model = await fetchModel(uri);
+      const model = await getModel(uri);
 
       if (model) {
         console.log(`Model found using endpoint "${uri}":`, model);
