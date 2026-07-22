@@ -47,6 +47,6 @@ export class KoboldCppClient implements LlmEndpointClient {
       return body.result;
     }
 
-    return "";
+    throw new Error("No model is listed");
   }
 }
