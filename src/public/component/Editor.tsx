@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Story, { Stories } from "../type/storyType";
-import { fetchModel, generateResponse } from "../api/koboldCppApi";
 import ContentEditable from "./ContentEditable";
 import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
@@ -10,6 +9,9 @@ import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
 import SquareButtonContainer from "./SquareButtonContainer";
 import CenterPanel from "./CenterPanel";
+import { KoboldCppClient } from "../client/koboldCppClient";
+import { LlmEndpointClient } from "../type/llmEndpointClient";
+import { NoLlmClient } from "../client/noLlmClient";
 
 function ActionBar({
   contendEditableRef,
@@ -29,6 +31,16 @@ function ActionBar({
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
   const [modelLoaded, setModelLoaded] = useState("");
+
+  let llmEndpointClient: LlmEndpointClient = new NoLlmClient();
+
+  if (endpointProfile) {
+    llmEndpointClient = new KoboldCppClient(
+      endpointProfile.uri,
+      endpointProfile.authorization,
+    );
+  }
+
   const generate = async (stories: Stories) => {
     const story = storiesService.getSelectedStory(stories);
 
@@ -46,11 +58,7 @@ function ActionBar({
 
     try {
       // call LLM api
-      const text = await generateResponse(
-        endpointProfile.uri,
-        story.content,
-        endpointProfile.authorization,
-      );
+      const text = await llmEndpointClient.generateResponse(story.content);
 
       const updatedStories =
         await storiesService.updateSelectedStoryContentAndSave(
@@ -119,7 +127,8 @@ function ActionBar({
     const intervalId = setInterval(() => {
       if (!endpointProfile) return;
 
-      fetchModel(endpointProfile.uri)
+      llmEndpointClient
+        .fetchModel()
         .then(setModelLoaded)
         .catch(() => setModelLoaded(""));
     }, 5e3);
