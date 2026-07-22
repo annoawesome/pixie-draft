@@ -13,6 +13,11 @@ const GenerationOutputSchema = z.object({
   ),
 });
 
+const KoboldCppTokenSseSchema = z.object({
+  token: z.string(),
+  finish_reason: z.union([z.string(), z.null()]),
+});
+
 class KoboldCppTokenStream implements TokenStream {
   #url: string;
   #authorization: string;
@@ -33,14 +38,15 @@ class KoboldCppTokenStream implements TokenStream {
 
         onmessage(ev) {
           const data = JSON.parse(ev.data);
-          const token: string = data.token;
+          const koboldCppStreamedToken = KoboldCppTokenSseSchema.parse(data);
+          const token: string = koboldCppStreamedToken.token;
 
-          if (data.finish_reason != null) {
+          if (koboldCppStreamedToken.finish_reason != null) {
             return resolve(finalAppendedText);
           }
 
           finalAppendedText += token;
-          onTokenStreamed(data.token);
+          onTokenStreamed(koboldCppStreamedToken.token);
         },
       });
     });
