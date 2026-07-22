@@ -36,6 +36,10 @@ class KoboldCppTokenStream implements TokenStream {
       fetchEventSource(this.#url, {
         ...getDefaultFetch(this.#authorization, { prompt: this.#prompt }),
 
+        async onopen(response) {
+          if (!response.ok) throw new Error("Bad response");
+        },
+
         onmessage(message) {
           const data = JSON.parse(message.data);
           const koboldCppStreamedToken = KoboldCppTokenSseSchema.parse(data);
@@ -47,6 +51,15 @@ class KoboldCppTokenStream implements TokenStream {
 
           finalAppendedText += token;
           onTokenStreamed(koboldCppStreamedToken.token);
+        },
+
+        onclose() {
+          resolve(finalAppendedText);
+        },
+
+        onerror() {
+          resolve(finalAppendedText);
+          throw new Error("KoboldCpp streaming error");
         },
       });
     });
