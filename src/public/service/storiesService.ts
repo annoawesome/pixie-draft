@@ -114,12 +114,31 @@ export function updateStoryTitle(story: Story, newTitle: string) {
   };
 }
 
+export function updateStoryContentByAppendingToken(
+  story: Story,
+  token: string,
+) {
+  return {
+    ...story,
+    content: (story.content += token),
+  };
+}
+
 export function locallyUpdateSelectedStoryTitle(
   stories: Stories,
   newTitle: string,
 ) {
   return updateSelectedStory(stories, (selectedStory) =>
     updateStoryTitle(selectedStory, newTitle),
+  );
+}
+
+export function locallyUpdateSelectedStoryContentByAppendingToken(
+  stories: Stories,
+  token: string,
+) {
+  return updateSelectedStory(stories, (selectedStory) =>
+    updateStoryContentByAppendingToken(selectedStory, token),
   );
 }
 

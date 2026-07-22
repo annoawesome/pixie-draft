@@ -57,13 +57,39 @@ function ActionBar({
     setLocked(true);
 
     try {
-      // call LLM api
-      const text = await llmEndpointClient.generateResponse(story.content);
+      const content = story.content;
+
+      let text = "";
+
+      // If there is streaminng support, please use the streaming
+      // To add new APIs, just add them to this condition
+      if (llmEndpointClient instanceof KoboldCppClient) {
+        const responseStream =
+          llmEndpointClient.generateResponseStream(content);
+
+        text = await responseStream.open((token) => {
+          setStories((oldStories) => {
+            const updatedStories =
+              storiesService.locallyUpdateSelectedStoryContentByAppendingToken(
+                oldStories,
+                token,
+              );
+
+            if (updatedStories) {
+              return updatedStories;
+            } else {
+              return oldStories;
+            }
+          });
+        });
+      } else {
+        text = await llmEndpointClient.generateResponse(content);
+      }
 
       const updatedStories =
         await storiesService.updateSelectedStoryContentAndSave(
           stories,
-          story.content + text,
+          content + text,
           true,
         );
 
