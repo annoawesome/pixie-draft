@@ -5,5 +5,10 @@ export interface LlmEndpointClient {
    * @returns The continuation to be appended to the prompt
    */
   generateResponse(prompt: string): Promise<string>;
+
+  /**
+   * Gets the name of the model being served by the endpoint
+   * @returns The name of the model
+   */
   fetchModel(): Promise<string>;
 }
