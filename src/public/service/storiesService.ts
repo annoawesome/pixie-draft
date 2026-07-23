@@ -114,10 +114,7 @@ export function updateStoryTitle(story: Story, newTitle: string) {
   };
 }
 
-export function updateStoryContentByAppendingToken(
-  story: Story,
-  token: string,
-) {
+function updateStoryContentByAppendingToken(story: Story, token: string) {
   return {
     ...story,
     content: (story.content += token),
