@@ -12,6 +12,7 @@ import CenterPanel from "./CenterPanel";
 import { KoboldCppClient } from "../client/koboldCppClient";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
 import { NoLlmClient } from "../client/noLlmClient";
+import { isStreamableEndpoint } from "../type/streamableEndpoint";
 
 function ActionBar({
   contendEditableRef,
@@ -61,9 +62,8 @@ function ActionBar({
 
       let text = "";
 
-      // If there is streaminng support, please use the streaming
-      // To add new APIs, just add them to this condition
-      if (llmEndpointClient instanceof KoboldCppClient) {
+      // If there is streaming support, please use the streaming
+      if (isStreamableEndpoint(llmEndpointClient)) {
         const responseStream =
           llmEndpointClient.generateResponseStream(content);
 
