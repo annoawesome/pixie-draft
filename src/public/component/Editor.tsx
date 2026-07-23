@@ -12,6 +12,7 @@ import CenterPanel from "./CenterPanel";
 import { KoboldCppClient } from "../client/koboldCppClient";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
 import { NoLlmClient } from "../client/noLlmClient";
+import { isStreamableEndpoint } from "../type/streamableEndpoint";
 
 function ActionBar({
   contendEditableRef,
@@ -57,13 +58,38 @@ function ActionBar({
     setLocked(true);
 
     try {
-      // call LLM api
-      const text = await llmEndpointClient.generateResponse(story.content);
+      const content = story.content;
+
+      let text = "";
+
+      // If there is streaming support, please use the streaming
+      if (isStreamableEndpoint(llmEndpointClient)) {
+        const responseStream =
+          llmEndpointClient.generateResponseStream(content);
+
+        text = await responseStream.open((token) => {
+          setStories((oldStories) => {
+            const updatedStories =
+              storiesService.locallyUpdateSelectedStoryContentByAppendingToken(
+                oldStories,
+                token,
+              );
+
+            if (updatedStories) {
+              return updatedStories;
+            } else {
+              return oldStories;
+            }
+          });
+        });
+      } else {
+        text = await llmEndpointClient.generateResponse(content);
+      }
 
       const updatedStories =
         await storiesService.updateSelectedStoryContentAndSave(
           stories,
-          story.content + text,
+          content + text,
           true,
         );
 

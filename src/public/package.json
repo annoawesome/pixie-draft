@@ -19,6 +19,7 @@
     "vite": "8.0.16"
   },
   "dependencies": {
+    "@microsoft/fetch-event-source": "2.0.1",
     "diff-match-patch": "1.0.5",
     "react": "19.2.7",
     "react-dom": "19.2.7",
