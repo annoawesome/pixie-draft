@@ -103,7 +103,7 @@ export class KoboldCppClient implements LlmEndpointClient, StreamableEndpoint {
   }
 
   async fetchModel(): Promise<string> {
-    const response = await getModel(this.#baseUrl);
+    const response = await getModel(this.#baseUrl, this.#authorization);
     const body = await response.json();
 
     if (typeof body.result === "string") {

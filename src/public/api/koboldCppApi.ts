@@ -49,8 +49,15 @@ export function getDefaultFetch(authorization: string, body: object) {
   };
 }
 
-export async function getModel(baseUri: string): Promise<Response> {
-  const request = new Request(baseUri + "/api/v1/model");
+export async function getModel(
+  baseUri: string,
+  authorization: string,
+): Promise<Response> {
+  const request = new Request(baseUri + "/api/v1/model", {
+    headers: {
+      Authorization: "Bearer " + authorization,
+    },
+  });
 
   return fetch(request);
 }
