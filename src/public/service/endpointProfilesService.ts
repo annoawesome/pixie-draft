@@ -9,7 +9,7 @@ export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
   for (const endpointProfile of endpointProfiles) {
     const uri = endpointProfile.uri;
     try {
-      const model = await getModel(uri);
+      const model = await getModel(uri, endpointProfile.authorization);
 
       if (model) {
         console.log(`Model found using endpoint "${uri}":`, model);
