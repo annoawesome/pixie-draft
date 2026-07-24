@@ -1,17 +1,15 @@
 export async function getSettings(apiToken: string) {
-  const request = new Request("/api/v0/settings/", {
+  const response = await fetch("/api/v0/settings/", {
     headers: new Headers({
       Authorization: "Bearer " + apiToken,
     }),
   });
 
-  const response = await fetch(request);
-
   return response;
 }
 
 export async function updateSettings(apiToken: string, settings: unknown) {
-  const request = new Request("/api/v0/settings/", {
+  const response = await fetch("/api/v0/settings/", {
     method: "PUT",
     headers: new Headers({
       Authorization: "Bearer " + apiToken,
@@ -19,8 +17,6 @@ export async function updateSettings(apiToken: string, settings: unknown) {
     }),
     body: JSON.stringify(settings),
   });
-
-  const response = await fetch(request);
 
   return response;
 }
@@ -30,7 +26,7 @@ export async function patchSettings(
   settingName: string,
   setting: unknown,
 ) {
-  const request = new Request("/api/v0/settings/" + settingName, {
+  const response = await fetch("/api/v0/settings/" + settingName, {
     method: "PATCH",
     headers: new Headers({
       Authorization: "Bearer " + apiToken,
@@ -38,8 +34,6 @@ export async function patchSettings(
     }),
     body: JSON.stringify(setting),
   });
-
-  const response = await fetch(request);
 
   return response;
 }

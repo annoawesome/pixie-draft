@@ -1,5 +1,5 @@
 export async function login(password: string) {
-  const request = new Request("/api/v0/auth/", {
+  const response = await fetch("/api/v0/auth/", {
     method: "POST",
     headers: new Headers({
       "Content-Type": "application/json",
@@ -9,27 +9,21 @@ export async function login(password: string) {
     }),
   });
 
-  const response = await fetch(request);
-
   return response;
 }
 
 export async function refreshTokens() {
-  const request = new Request("/api/v0/auth/refresh", {
+  const response = await fetch("/api/v0/auth/refresh", {
     method: "POST",
   });
-
-  const response = await fetch(request);
 
   return response;
 }
 
 export async function deleteTokens() {
-  const request = new Request("/api/v0/auth", {
+  const response = await fetch("/api/v0/auth", {
     method: "DELETE",
   });
-
-  const response = await fetch(request);
 
   return response;
 }
