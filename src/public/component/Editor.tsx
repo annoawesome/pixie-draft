@@ -15,7 +15,7 @@ import { NoLlmClient } from "../client/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
 
 function ActionBar({
-  contendEditableRef,
+  contentEditableRef,
   endpointProfile,
   selectedStory,
   stories,
@@ -23,7 +23,7 @@ function ActionBar({
   setLocked,
   setStories,
 }: {
-  contendEditableRef: React.RefObject<HTMLDivElement | null>;
+  contentEditableRef: React.RefObject<HTMLDivElement | null>;
   endpointProfile: Endpoint | null;
   selectedStory: Story;
   stories: Stories;
@@ -99,10 +99,10 @@ function ActionBar({
 
       // There is probably a better way to do this
       setTimeout(() => {
-        if (contendEditableRef.current) {
-          contendEditableRef.current.scrollTo(
+        if (contentEditableRef.current) {
+          contentEditableRef.current.scrollTo(
             0,
-            contendEditableRef.current.scrollHeight,
+            contentEditableRef.current.scrollHeight,
           );
         }
       }, 100);
@@ -233,7 +233,7 @@ export default function Editor({
   const [locked, setLocked] = useState(false);
   const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
 
-  const contendEditableRef = useRef<HTMLDivElement | null>(null);
+  const contentEditableRef = useRef<HTMLDivElement | null>(null);
 
   const onChangeStoryTitle = (
     e: React.ChangeEvent<HTMLInputElement, HTMLInputElement>,
@@ -299,10 +299,10 @@ export default function Editor({
             value={selectedStory.content}
             onUpdate={onBlurStoryContent}
             locked={locked}
-            ref={contendEditableRef}
+            ref={contentEditableRef}
           />
           <ActionBar
-            contendEditableRef={contendEditableRef}
+            contentEditableRef={contentEditableRef}
             endpointProfile={endpointProfile}
             selectedStory={selectedStory}
             stories={stories}
