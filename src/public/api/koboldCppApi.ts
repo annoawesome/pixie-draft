@@ -20,7 +20,7 @@ export async function postGenerate(
   prompt: string,
   authorization: string,
 ) {
-  const request = new Request(baseUrl + "/api/v1/generate", {
+  const response = await fetch(baseUrl + "/api/v1/generate", {
     method: "POST",
     headers: new Headers({
       "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export async function postGenerate(
     }),
   });
 
-  return fetch(request);
+  return response;
 }
 
 export function getDefaultFetch(authorization: string, body: object) {
@@ -53,11 +53,11 @@ export async function getModel(
   baseUri: string,
   authorization: string,
 ): Promise<Response> {
-  const request = new Request(baseUri + "/api/v1/model", {
+  const response = await fetch(baseUri + "/api/v1/model", {
     headers: {
       Authorization: "Bearer " + authorization,
     },
   });
 
-  return fetch(request);
+  return response;
 }
