@@ -280,6 +280,13 @@ export default function Editor({
 
   const selectedStory = storiesService.getSelectedStory(stories);
 
+  useEffect(() => {
+    if (!contentEditableRef.current) return;
+
+    contentEditableRef.current.scrollTop =
+      contentEditableRef.current.scrollHeight;
+  }, [selectedStory?.id]);
+
   return (
     <div className="flex-column gap-medium" id="editor">
       {selectedStory ? (
