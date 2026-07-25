@@ -192,7 +192,11 @@ function ActionBar({
           <button
             className="button-secondary button-icon"
             type="button"
-            disabled={!storiesService.regeneratable(selectedStory) || locked}
+            disabled={
+              !modelLoaded ||
+              !storiesService.regeneratable(selectedStory) ||
+              locked
+            }
             onClick={onClickRetry}
           >
             <RefreshIcon />
