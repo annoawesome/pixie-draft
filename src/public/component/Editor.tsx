@@ -203,7 +203,7 @@ function ActionBar({
         <button
           className="button-primary"
           type="button"
-          disabled={locked}
+          disabled={!modelLoaded || locked}
           onClick={onGenerate}
         >
           Generate
