@@ -75,7 +75,8 @@ input[type="file"] {
 
 button,
 input,
-input::file-selector-button {
+input::file-selector-button,
+select {
   border: 0;
   border-radius: 8px;
   padding: 8px;
@@ -546,7 +547,8 @@ button:disabled .path-icon {
   border-radius: 8px;
 }
 
-#settings-endpoints-editor > input {
+#settings-endpoints-editor > input,
+#settings-endpoints-editor > select {
   margin-bottom: 16px;
 }
 

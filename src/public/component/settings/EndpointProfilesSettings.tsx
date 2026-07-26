@@ -164,6 +164,13 @@ function EndpointEditor({
     });
   };
 
+  const onChangeType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedEndpoint({
+      ...selectedEndpoint,
+      type: event.target.value,
+    });
+  };
+
   const onChangeAuthorization = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -204,6 +211,17 @@ function EndpointEditor({
         value={selectedEndpoint.uri}
         onChange={onChangeUri}
       />
+      <label htmlFor="endpointType">Endpoint Type</label>
+      <select
+        name="endpointType"
+        className="input-secondary"
+        id=""
+        value={selectedEndpoint.type}
+        onChange={onChangeType}
+      >
+        <option value="KoboldCpp">KoboldCpp</option>
+        <option value="OpenAI Completions">OpenAI Completions</option>
+      </select>
       <label htmlFor="authorization" className="text-secondary">
         Authorization Key
       </label>
