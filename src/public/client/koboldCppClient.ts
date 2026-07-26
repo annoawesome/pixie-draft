@@ -102,12 +102,12 @@ export class KoboldCppClient implements LlmEndpointClient, StreamableEndpoint {
     throw new Error("Did not respond with generation results");
   }
 
-  async fetchModel(): Promise<string> {
+  async fetchModels(): Promise<string[]> {
     const response = await getModel(this.#baseUrl, this.#authorization);
     const body = await response.json();
 
     if (typeof body.result === "string") {
-      return body.result;
+      return [body.result];
     }
 
     throw new Error("No model is listed");

@@ -31,7 +31,8 @@ function ActionBar({
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
-  const [modelLoaded, setModelLoaded] = useState("");
+  const [modelsLoaded, setModelsLoaded] = useState<string[]>([]);
+  const [selectedModel, setSelectedModel] = useState("");
 
   let llmEndpointClient: LlmEndpointClient = new NoLlmClient();
 
@@ -83,7 +84,7 @@ function ActionBar({
           });
         });
       } else {
-        text = await llmEndpointClient.generateResponse(content);
+        text = await llmEndpointClient.generateResponse(content, selectedModel);
       }
 
       const updatedStories =
@@ -150,13 +151,21 @@ function ActionBar({
   };
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       if (!endpointProfile) return;
 
-      llmEndpointClient
-        .fetchModel()
-        .then(setModelLoaded)
-        .catch(() => setModelLoaded(""));
+      try {
+        const models = await llmEndpointClient.fetchModels();
+        setModelsLoaded(models);
+
+        if (models.length > 0 && !selectedModel) {
+          console.log(`Selected model: ${models[0]}`);
+          setSelectedModel(models[0]);
+        }
+      } catch {
+        setModelsLoaded([]);
+        setSelectedModel("");
+      }
     }, 5e3);
 
     return () => clearInterval(intervalId);
@@ -193,7 +202,7 @@ function ActionBar({
             className="button-secondary button-icon"
             type="button"
             disabled={
-              !modelLoaded ||
+              !selectedModel ||
               !storiesService.regeneratable(selectedStory) ||
               locked
             }
@@ -207,17 +216,17 @@ function ActionBar({
         <button
           className="button-primary"
           type="button"
-          disabled={!modelLoaded || locked}
+          disabled={!selectedModel || locked}
           onClick={onGenerate}
         >
           Generate
         </button>
         <div className="flex-row" id="endpoint-status-indicator">
           <Pulse
-            active={modelLoaded.length > 0}
+            active={selectedModel.length > 0}
             title={
-              modelLoaded
-                ? `${endpointProfile?.name}\n${modelLoaded}`
+              selectedModel
+                ? `${endpointProfile?.name}\n${selectedModel}`
                 : "Unable to find model"
             }
           />

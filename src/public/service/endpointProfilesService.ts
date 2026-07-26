@@ -20,10 +20,10 @@ export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
     }
 
     try {
-      const model = await llmEndpointClient.fetchModel();
+      const models = await llmEndpointClient.fetchModels();
 
-      if (model) {
-        console.log(`Model found using endpoint "${uri}":`, model);
+      if (models && models.length > 0) {
+        console.log(`Models found using endpoint "${uri}":`, models);
         console.log("Using endpoint profile", endpointProfile);
         return endpointProfile;
       }

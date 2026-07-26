@@ -5,7 +5,7 @@ export class NoLlmClient implements LlmEndpointClient {
     throw new Error("No LLM endpoint to generate response from");
   }
 
-  fetchModel(): Promise<string> {
+  fetchModels(): Promise<string[]> {
     throw new Error("No model selected");
   }
 }
