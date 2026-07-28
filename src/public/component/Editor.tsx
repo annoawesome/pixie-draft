@@ -12,6 +12,54 @@ import CenterPanel from "./CenterPanel";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
 import { NoLlmClient } from "../client/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
+import Popover from "./Popover";
+
+function MainEditorEndpointMenu({
+  endpoint,
+  models,
+  selectedModel,
+  setSelectedModel,
+}: {
+  endpoint: Endpoint | null;
+  models: string[];
+  selectedModel: string;
+  setSelectedModel: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const endpointName = endpoint?.name || "No endpoint connected";
+
+  const onChangeSelectedModel = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setSelectedModel(event.target.value);
+  };
+
+  return (
+    <Popover id="main-editor-endpoint-menu">
+      <div className="flex-column gap-medium">
+        <h1>{endpointName}</h1>
+
+        <div className="flex-column">
+          <label htmlFor="selected-model" className="text-secondary">
+            Selected model
+          </label>
+          <select
+            name=""
+            className="input-secondary"
+            id=""
+            value={selectedModel}
+            onChange={onChangeSelectedModel}
+          >
+            {models.map((model, index) => (
+              <option value={model} key={index}>
+                {model}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </Popover>
+  );
+}
 
 function ActionBar({
   contentEditableRef,
@@ -162,9 +210,10 @@ function ActionBar({
         const models = await llmEndpointClient.fetchModels();
         setModelsLoaded(models);
 
-        if (models.length > 0 && !selectedModel) {
-          console.log(`Selected model: ${models[0]}`);
-          setSelectedModel(models[0]);
+        if (models.length > 0) {
+          setSelectedModel((model) => {
+            return model || models[0];
+          });
         }
       } catch {
         setModelsLoaded([]);
@@ -228,6 +277,7 @@ function ActionBar({
         <button
           className="flex-row button-secondary"
           id="endpoint-status-indicator"
+          popoverTarget="main-editor-endpoint-menu"
         >
           <Pulse
             active={selectedModel.length > 0}
@@ -239,6 +289,12 @@ function ActionBar({
           />
           <ServerIcon />
         </button>
+        <MainEditorEndpointMenu
+          endpoint={endpointProfile}
+          models={modelsLoaded}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
+        />
       </div>
     </div>
   );
