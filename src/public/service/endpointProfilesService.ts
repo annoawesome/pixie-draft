@@ -2,18 +2,18 @@ import { KoboldCppClient } from "../client/koboldCppClient";
 import { OpenAiCompletionsClient } from "../client/llms/openAiCompletionsClient";
 import { NoLlmClient } from "../client/noLlmClient";
 import { settingsClient } from "../client/settingsClient";
-import Endpoint from "../type/endpointType";
+import Endpoint, { endpointTypes } from "../type/endpointType";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
 
 export function getClientFromEndpointProfile(
   endpointProfile: Endpoint,
 ): LlmEndpointClient {
-  if (endpointProfile.type === "KoboldCpp") {
+  if (endpointProfile.type === endpointTypes.KoboldCpp) {
     return new KoboldCppClient(
       endpointProfile.uri,
       endpointProfile.authorization,
     );
-  } else if (endpointProfile.type === "OpenAI Completions") {
+  } else if (endpointProfile.type === endpointTypes.OpenAiCompletions) {
     return new OpenAiCompletionsClient(
       endpointProfile.uri,
       endpointProfile.authorization,
@@ -49,7 +49,7 @@ export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
   return {
     id: "automatic",
     name: "Automatic",
-    type: "KoboldCpp",
+    type: endpointTypes.KoboldCpp,
     uri: "http://localhost:5001",
     authorization: "",
   };

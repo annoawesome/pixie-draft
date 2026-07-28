@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import Endpoint from "../../type/endpointType";
+import Endpoint, { endpointTypes } from "../../type/endpointType";
 import { settingsClient } from "../../client/settingsClient";
 import GradientScrollable from "../GradientScrollable";
 
@@ -50,7 +50,7 @@ function EndpointsList({
       {
         id: crypto.randomUUID(),
         name: "My Endpoint",
-        type: "KoboldCpp",
+        type: endpointTypes.KoboldCpp,
         uri: "http://example.com",
         authorization: "",
       },
@@ -74,7 +74,7 @@ function EndpointsList({
           endpoint={{
             id: "automatic",
             name: "Automatic",
-            type: "KoboldCpp",
+            type: endpointTypes.KoboldCpp,
             uri: "auto-generated",
             authorization: "",
           }}
@@ -219,8 +219,11 @@ function EndpointEditor({
         value={selectedEndpoint.type}
         onChange={onChangeType}
       >
-        <option value="KoboldCpp">KoboldCpp</option>
-        <option value="OpenAI Completions">OpenAI Completions</option>
+        {Object.values(endpointTypes).map((endpointType, index) => (
+          <option key={index} value={endpointType}>
+            {endpointType}
+          </option>
+        ))}
       </select>
       <label htmlFor="authorization" className="text-secondary">
         Authorization Key
