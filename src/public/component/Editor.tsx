@@ -9,7 +9,6 @@ import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
 import SquareButtonContainer from "./SquareButtonContainer";
 import CenterPanel from "./CenterPanel";
-import { KoboldCppClient } from "../client/koboldCppClient";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
 import { NoLlmClient } from "../client/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
@@ -37,10 +36,8 @@ function ActionBar({
   let llmEndpointClient: LlmEndpointClient = new NoLlmClient();
 
   if (endpointProfile) {
-    llmEndpointClient = new KoboldCppClient(
-      endpointProfile.uri,
-      endpointProfile.authorization,
-    );
+    llmEndpointClient =
+      endpointProfilesService.getClientFromEndpointProfile(endpointProfile);
   }
 
   const generate = async (stories: Stories) => {
@@ -84,7 +81,14 @@ function ActionBar({
           });
         });
       } else {
-        text = await llmEndpointClient.generateResponse(content, selectedModel);
+        try {
+          text = await llmEndpointClient.generateResponse(
+            content,
+            selectedModel,
+          );
+        } catch (err) {
+          console.log(err);
+        }
       }
 
       const updatedStories =
