@@ -5,12 +5,12 @@ export interface LlmEndpointClient {
    * @returns The continuation to be appended to the prompt
    * @throws Throws an error if either a model is not available to serve, if generation fails on the inference server, or if no response is provided.
    */
-  generateResponse(prompt: string): Promise<string>;
+  generateResponse(prompt: string, model: string): Promise<string>;
 
   /**
    * Gets the name of the model being served by the endpoint
    * @returns The name of the model
    * @throws Throws an error if no model is listed.
    */
-  fetchModel(): Promise<string>;
+  fetchModels(): Promise<string[]>;
 }

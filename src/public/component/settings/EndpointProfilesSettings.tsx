@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import Endpoint from "../../type/endpointType";
+import Endpoint, { endpointTypes } from "../../type/endpointType";
 import { settingsClient } from "../../client/settingsClient";
 import GradientScrollable from "../GradientScrollable";
 
@@ -50,7 +50,7 @@ function EndpointsList({
       {
         id: crypto.randomUUID(),
         name: "My Endpoint",
-        type: "KoboldCpp",
+        type: endpointTypes.KoboldCpp,
         uri: "http://example.com",
         authorization: "",
       },
@@ -74,7 +74,7 @@ function EndpointsList({
           endpoint={{
             id: "automatic",
             name: "Automatic",
-            type: "KoboldCpp",
+            type: endpointTypes.KoboldCpp,
             uri: "auto-generated",
             authorization: "",
           }}
@@ -164,6 +164,13 @@ function EndpointEditor({
     });
   };
 
+  const onChangeType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedEndpoint({
+      ...selectedEndpoint,
+      type: event.target.value,
+    });
+  };
+
   const onChangeAuthorization = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -204,6 +211,20 @@ function EndpointEditor({
         value={selectedEndpoint.uri}
         onChange={onChangeUri}
       />
+      <label htmlFor="endpointType">Endpoint Type</label>
+      <select
+        name="endpointType"
+        className="input-secondary"
+        id=""
+        value={selectedEndpoint.type}
+        onChange={onChangeType}
+      >
+        {Object.values(endpointTypes).map((endpointType, index) => (
+          <option key={index} value={endpointType}>
+            {endpointType}
+          </option>
+        ))}
+      </select>
       <label htmlFor="authorization" className="text-secondary">
         Authorization Key
       </label>

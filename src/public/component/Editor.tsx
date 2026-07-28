@@ -2,17 +2,69 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Story, { Stories } from "../type/storyType";
 import ContentEditable from "./ContentEditable";
-import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
+import { RedoIcon, RefreshIcon, ServerIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
 import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
 import Endpoint from "../type/endpointType";
 import SquareButtonContainer from "./SquareButtonContainer";
 import CenterPanel from "./CenterPanel";
-import { KoboldCppClient } from "../client/koboldCppClient";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
 import { NoLlmClient } from "../client/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
+import Popover from "./Popover";
+
+function MainEditorEndpointMenu({
+  endpoint,
+  models,
+  selectedModel,
+  setSelectedModel,
+}: {
+  endpoint: Endpoint | null;
+  models: string[];
+  selectedModel: string;
+  setSelectedModel: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const endpointName = endpoint?.name || "No endpoint connected";
+
+  const onChangeSelectedModel = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setSelectedModel(event.target.value);
+  };
+
+  return (
+    <Popover id="main-editor-endpoint-menu">
+      <div className="flex-column gap-medium">
+        <h1>{endpointName}</h1>
+
+        <div className="flex-column">
+          <label className="text-secondary">Status</label>
+          <p>{models.length > 0 ? "Online" : "Offline"}</p>
+        </div>
+
+        <div className="flex-column">
+          <label htmlFor="selected-model" className="text-secondary">
+            Selected model
+          </label>
+          <select
+            name="selected-model"
+            className="input-secondary"
+            id=""
+            value={selectedModel}
+            onChange={onChangeSelectedModel}
+          >
+            {models.map((model, index) => (
+              <option value={model} key={index}>
+                {model}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </Popover>
+  );
+}
 
 function ActionBar({
   contentEditableRef,
@@ -31,15 +83,14 @@ function ActionBar({
   setLocked: React.Dispatch<React.SetStateAction<boolean>>;
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
-  const [modelLoaded, setModelLoaded] = useState("");
+  const [modelsLoaded, setModelsLoaded] = useState<string[]>([]);
+  const [selectedModel, setSelectedModel] = useState("");
 
   let llmEndpointClient: LlmEndpointClient = new NoLlmClient();
 
   if (endpointProfile) {
-    llmEndpointClient = new KoboldCppClient(
-      endpointProfile.uri,
-      endpointProfile.authorization,
-    );
+    llmEndpointClient =
+      endpointProfilesService.getClientFromEndpointProfile(endpointProfile);
   }
 
   const generate = async (stories: Stories) => {
@@ -83,7 +134,14 @@ function ActionBar({
           });
         });
       } else {
-        text = await llmEndpointClient.generateResponse(content);
+        try {
+          text = await llmEndpointClient.generateResponse(
+            content,
+            selectedModel,
+          );
+        } catch (err) {
+          console.log(err);
+        }
       }
 
       const updatedStories =
@@ -150,13 +208,22 @@ function ActionBar({
   };
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       if (!endpointProfile) return;
 
-      llmEndpointClient
-        .fetchModel()
-        .then(setModelLoaded)
-        .catch(() => setModelLoaded(""));
+      try {
+        const models = await llmEndpointClient.fetchModels();
+        setModelsLoaded(models);
+
+        if (models.length > 0) {
+          setSelectedModel((model) => {
+            return model || models[0];
+          });
+        }
+      } catch {
+        setModelsLoaded([]);
+        setSelectedModel("");
+      }
     }, 5e3);
 
     return () => clearInterval(intervalId);
@@ -193,7 +260,7 @@ function ActionBar({
             className="button-secondary button-icon"
             type="button"
             disabled={
-              !modelLoaded ||
+              !selectedModel ||
               !storiesService.regeneratable(selectedStory) ||
               locked
             }
@@ -207,21 +274,32 @@ function ActionBar({
         <button
           className="button-primary"
           type="button"
-          disabled={!modelLoaded || locked}
+          disabled={!selectedModel || locked}
           onClick={onGenerate}
         >
           Generate
         </button>
-        <div className="flex-row" id="endpoint-status-indicator">
+        <button
+          className="flex-row button-secondary"
+          id="endpoint-status-indicator"
+          popoverTarget="main-editor-endpoint-menu"
+        >
           <Pulse
-            active={modelLoaded.length > 0}
+            active={selectedModel.length > 0}
             title={
-              modelLoaded
-                ? `${endpointProfile?.name}\n${modelLoaded}`
+              selectedModel
+                ? `${endpointProfile?.name}\n${selectedModel}`
                 : "Unable to find model"
             }
           />
-        </div>
+          <ServerIcon />
+        </button>
+        <MainEditorEndpointMenu
+          endpoint={endpointProfile}
+          models={modelsLoaded}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
+        />
       </div>
     </div>
   );

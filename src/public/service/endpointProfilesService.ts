@@ -1,29 +1,43 @@
 import { KoboldCppClient } from "../client/koboldCppClient";
+import { OpenAiCompletionsClient } from "../client/llms/openAiCompletionsClient";
 import { NoLlmClient } from "../client/noLlmClient";
 import { settingsClient } from "../client/settingsClient";
-import Endpoint from "../type/endpointType";
+import Endpoint, { endpointTypes } from "../type/endpointType";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
+
+export function getClientFromEndpointProfile(
+  endpointProfile: Endpoint,
+): LlmEndpointClient {
+  if (endpointProfile.type === endpointTypes.KoboldCpp) {
+    return new KoboldCppClient(
+      endpointProfile.uri,
+      endpointProfile.authorization,
+    );
+  } else if (endpointProfile.type === endpointTypes.OpenAiCompletions) {
+    return new OpenAiCompletionsClient(
+      endpointProfile.uri,
+      endpointProfile.authorization,
+    );
+  } else {
+    return new NoLlmClient();
+  }
+}
 
 export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
   const settings = await settingsClient.getSettings();
   const endpointProfiles: Endpoint[] = settings.endpoints;
 
   for (const endpointProfile of endpointProfiles) {
-    const uri = endpointProfile.uri;
-    let llmEndpointClient: LlmEndpointClient = new NoLlmClient();
-
-    if (endpointProfile.type === "KoboldCpp") {
-      llmEndpointClient = new KoboldCppClient(
-        endpointProfile.uri,
-        endpointProfile.authorization,
-      );
-    }
+    const llmEndpointClient = getClientFromEndpointProfile(endpointProfile);
 
     try {
-      const model = await llmEndpointClient.fetchModel();
+      const models = await llmEndpointClient.fetchModels();
 
-      if (model) {
-        console.log(`Model found using endpoint "${uri}":`, model);
+      if (models && models.length > 0) {
+        console.log(
+          `Models found using endpoint "${endpointProfile.uri}":`,
+          models,
+        );
         console.log("Using endpoint profile", endpointProfile);
         return endpointProfile;
       }
@@ -35,7 +49,7 @@ export async function fetchEndpointFromEndpointProfiles(): Promise<Endpoint> {
   return {
     id: "automatic",
     name: "Automatic",
-    type: "KoboldCpp",
+    type: endpointTypes.KoboldCpp,
     uri: "http://localhost:5001",
     authorization: "",
   };
