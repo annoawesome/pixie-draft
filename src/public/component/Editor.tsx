@@ -39,11 +39,16 @@ function MainEditorEndpointMenu({
         <h1>{endpointName}</h1>
 
         <div className="flex-column">
+          <label className="text-secondary">Status</label>
+          <p>{models.length > 0 ? "Online" : "Offline"}</p>
+        </div>
+
+        <div className="flex-column">
           <label htmlFor="selected-model" className="text-secondary">
             Selected model
           </label>
           <select
-            name=""
+            name="selected-model"
             className="input-secondary"
             id=""
             value={selectedModel}
