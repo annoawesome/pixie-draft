@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import Story, { Stories } from "../type/storyType";
 import ContentEditable from "./ContentEditable";
-import { RedoIcon, RefreshIcon, UndoIcon } from "./Icons";
+import { RedoIcon, RefreshIcon, ServerIcon, UndoIcon } from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
 import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
@@ -225,7 +225,10 @@ function ActionBar({
         >
           Generate
         </button>
-        <div className="flex-row" id="endpoint-status-indicator">
+        <button
+          className="flex-row button-secondary"
+          id="endpoint-status-indicator"
+        >
           <Pulse
             active={selectedModel.length > 0}
             title={
@@ -234,7 +237,8 @@ function ActionBar({
                 : "Unable to find model"
             }
           />
-        </div>
+          <ServerIcon />
+        </button>
       </div>
     </div>
   );
