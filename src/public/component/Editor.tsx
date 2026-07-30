@@ -384,9 +384,20 @@ export default function Editor({
   };
 
   useEffect(() => {
-    endpointProfilesService
-      .fetchEndpointFromEndpointProfiles()
-      .then(setEndpointProfile);
+    const fetchEndpoint = async () => {
+      const result =
+        await endpointProfilesService.fetchEndpointFromEndpointProfiles();
+
+      result.match({
+        Ok: setEndpointProfile,
+        // TODO: Actually handle the error
+        Err: function (error: Error): void {
+          console.error(error);
+        },
+      });
+    };
+
+    fetchEndpoint();
   }, []);
 
   const selectedStory = storiesService.getSelectedStory(stories);
