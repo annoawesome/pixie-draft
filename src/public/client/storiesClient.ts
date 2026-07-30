@@ -151,6 +151,12 @@ export class StoriesClient {
     }
   }
 
+  /**
+   *
+   * @param file The stories.json file
+   * @returns Whether the response succeeded or not
+   * @throws {TimeoutError | HttpError}
+   */
   public async importStories(file: File) {
     const response = await storiesApi.postStoriesUpload(
       await this.authClient.getUsableApiToken(),
@@ -158,8 +164,9 @@ export class StoriesClient {
     );
 
     if (!response.ok) {
-      console.error(
-        `Error getting stories download: HTTP status code ${response.status}`,
+      throw new HttpError(
+        response.status,
+        `HTTP status ${response.status}: Error getting stories download`,
       );
     }
 

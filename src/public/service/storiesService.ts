@@ -481,6 +481,14 @@ export async function deleteSelectedStoryAndSave(
  * As such, this function does not return anything beyond whether the request succeeded or not
  * @param file The stories.json file
  */
-export async function wipeExistingAndImportNewStories(file: File) {
-  return await storiesClient.importStories(file);
+export async function wipeExistingAndImportNewStories(
+  file: File,
+): Promise<Result<true, void>> {
+  try {
+    const success = await storiesClient.importStories(file);
+
+    return Result.of(success);
+  } catch (error) {
+    return Result.error(wrapInError(error));
+  }
 }

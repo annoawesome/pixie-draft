@@ -403,11 +403,11 @@ describe("stories service", () => {
 
   // Basically a stub test
   test("delete wipe & import", async () => {
-    expect(
-      await storiesService.wipeExistingAndImportNewStories(
-        new File(["[]"], "stories.json"),
-      ),
-    ).toBe(true);
+    const result = await storiesService.wipeExistingAndImportNewStories(
+      new File(["[]"], "stories.json"),
+    );
+
+    expectResult(result, (success) => expect(success).toBe(true));
   });
 });
 
