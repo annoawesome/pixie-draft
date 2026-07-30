@@ -13,7 +13,7 @@ export async function login(password: string) {
     body: JSON.stringify({
       password,
     }),
-    signal: AbortSignal.timeout(1e3),
+    signal: AbortSignal.timeout(5e3),
   });
 
   return response;
@@ -27,7 +27,7 @@ export async function login(password: string) {
 export async function refreshTokens() {
   const response = await fetch("/api/v0/auth/refresh", {
     method: "POST",
-    signal: AbortSignal.timeout(1e3),
+    signal: AbortSignal.timeout(5e3),
   });
 
   return response;
@@ -41,7 +41,7 @@ export async function refreshTokens() {
 export async function deleteTokens() {
   const response = await fetch("/api/v0/auth", {
     method: "DELETE",
-    signal: AbortSignal.timeout(1e3),
+    signal: AbortSignal.timeout(5e3),
   });
 
   return response;
