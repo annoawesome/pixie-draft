@@ -1,16 +1,7 @@
 import * as storiesApi from "../api/storiesApi";
-import { HttpError } from "../type/error/httpError";
 import Story, { StoryPreview } from "../type/storyType";
+import { assertResponseOk } from "../util/assertions";
 import { authClient, AuthClient } from "./authClient";
-
-function assertResponseOk(response: Response, message: string = "") {
-  if (!response.ok) {
-    throw new HttpError(
-      response.status,
-      `HTTP status ${response.status}: ${message}`,
-    );
-  }
-}
 
 export class StoriesClient {
   private authClient;
