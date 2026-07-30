@@ -1,4 +1,5 @@
 import { storiesClient } from "../client/storiesClient";
+import DoesNotExistError from "../type/error/doesNotExistError";
 import Result, { wrapInError } from "../type/result";
 import Story, { HistoryNode, Stories, StoryPreview } from "../type/storyType";
 import { clamp } from "../util/math";
@@ -197,6 +198,7 @@ export function updateStoryFromAppendingHistory(
  * @param content The current shown content
  * @param reverse Whether to reverse the patch
  * @returns The patched content
+ * @throws {DoesNotExistError | Error}
  */
 function applyPatchFromHistoryNode(
   historyNode: HistoryNode,
@@ -204,7 +206,9 @@ function applyPatchFromHistoryNode(
   reverse: boolean,
 ) {
   if (!historyNode.patch)
-    throw new Error(`Failed to find patch to ${reverse ? "undo" : "redo"}`);
+    throw new DoesNotExistError(
+      `Failed to find patch to ${reverse ? "undo" : "redo"}`,
+    );
 
   const patchedContent = reverse
     ? applyInvertedDiff(content, historyNode.patch)
@@ -221,6 +225,7 @@ function applyPatchFromHistoryNode(
  * @param story A story object
  * @param revert If true, undo by one node. Otherwise, redo one node
  * @returns A new story object
+ * @throws {DoesNotExistError | Error}
  */
 function updateStoryFromHistoryPageFlip(story: Story, revert: boolean): Story {
   const newIndex = clamp(
@@ -266,6 +271,9 @@ function updateStoryFromHistoryPageFlip(story: Story, revert: boolean): Story {
   }
 }
 
+/**
+ * @throws {DoesNotExistError | Error}
+ */
 export function updateStoryFromTreeBacktrack(story: Story): Story {
   const newIndex = clamp(
     getCurrentHistoryNode(story).treePrev,
@@ -384,7 +392,7 @@ export async function saveSelectedStory(
       return Result.error(wrapInError(error));
     }
   } else {
-    return Result.error(new Error("No selected story"));
+    return Result.error(new DoesNotExistError("No selected story"));
   }
 }
 
@@ -394,7 +402,8 @@ export async function updateSelectedStoryWithUpdaterAndSave(
 ): Promise<Result<Stories, void>> {
   const updatedStories = updateSelectedStory(stories, updaterCallback);
 
-  if (!updatedStories) return Result.error(new Error("No selected story"));
+  if (!updatedStories)
+    return Result.error(new DoesNotExistError("No selected story"));
 
   const updatedStory = getSelectedStory(updatedStories);
 
@@ -407,7 +416,7 @@ export async function updateSelectedStoryWithUpdaterAndSave(
       return Result.error(wrapInError(error));
     }
   } else {
-    return Result.error(new Error("No selected story"));
+    return Result.error(new DoesNotExistError("No selected story"));
   }
 }
 
@@ -463,7 +472,8 @@ export async function deleteSelectedStoryAndSave(
   try {
     const selectedStory = getSelectedStory(stories);
 
-    if (!selectedStory) return Result.error(new Error("No selected story"));
+    if (!selectedStory)
+      return Result.error(new DoesNotExistError("No selected story"));
 
     await storiesClient.deleteStory(selectedStory.id);
 
