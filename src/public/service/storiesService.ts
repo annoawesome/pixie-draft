@@ -391,15 +391,23 @@ export async function saveSelectedStory(
 export async function updateSelectedStoryWithUpdaterAndSave(
   stories: Stories,
   updaterCallback: (selectedStory: Story) => Story,
-) {
+): Promise<Result<Stories, void>> {
   const updatedStories = updateSelectedStory(stories, updaterCallback);
 
-  if (!updatedStories) return;
+  if (!updatedStories) return Result.error(new Error("No selected story"));
 
   const updatedStory = getSelectedStory(updatedStories);
 
   if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
+    try {
+      await storiesClient.saveStory(updatedStory);
+
+      return Result.of(updatedStories);
+    } catch (error) {
+      return Result.error(wrapInError(error));
+    }
+  } else {
+    return Result.error(new Error("No selected story"));
   }
 }
 

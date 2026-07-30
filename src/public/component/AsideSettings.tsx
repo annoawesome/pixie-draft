@@ -152,24 +152,29 @@ export default function AsideSettings({
     if (!selectedStory) return;
     if (selectedStory.desc === newContent) return;
 
-    const updatedStories =
-      await storiesService.updateSelectedStoryWithUpdaterAndSave(
-        stories,
-        (story) => {
-          return {
-            ...story,
-            desc: newContent,
-            time: {
-              ...story.time,
-              modified: Date.now(),
-            },
-          };
-        },
-      );
+    const result = await storiesService.updateSelectedStoryWithUpdaterAndSave(
+      stories,
+      (story) => {
+        return {
+          ...story,
+          desc: newContent,
+          time: {
+            ...story.time,
+            modified: Date.now(),
+          },
+        };
+      },
+    );
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   if (selectedStory) {
