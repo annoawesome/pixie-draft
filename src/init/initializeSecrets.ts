@@ -7,6 +7,7 @@ const secrets = {
 /**
  * Throws an error if secret was not initialized
  * @returns Primary secret
+ * @throws {Error}
  */
 export function getSecret() {
   if (!secrets.primarySecret) {
