@@ -181,21 +181,31 @@ function ActionBar({
   };
 
   const onClickUndo = async () => {
-    const updatedStories =
-      await storiesService.undoSelectedStoryAndSave(stories);
+    const result = await storiesService.undoSelectedStoryAndSave(stories);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onClickRedo = async () => {
-    const updatedStories =
-      await storiesService.redoSelectedStoryAndSave(stories);
+    const result = await storiesService.redoSelectedStoryAndSave(stories);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onClickRetry = () => {

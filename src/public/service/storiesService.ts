@@ -422,29 +422,15 @@ export async function updateSelectedStoryContentAndSave(
 }
 
 export async function undoSelectedStoryAndSave(stories: Stories) {
-  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) =>
     updateStoryFromHistoryPageFlip(selectedStory, true),
   );
-  if (!updatedStories) return;
-
-  const updatedStory = getSelectedStory(updatedStories);
-
-  if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
-  }
 }
 
 export async function redoSelectedStoryAndSave(stories: Stories) {
-  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) =>
     updateStoryFromHistoryPageFlip(selectedStory, false),
   );
-  if (!updatedStories) return;
-
-  const updatedStory = getSelectedStory(updatedStories);
-
-  if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
-  }
 }
 
 export async function clearHistoryOfSelectedStoryAndSave(stories: Stories) {
