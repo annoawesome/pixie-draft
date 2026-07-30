@@ -9,6 +9,7 @@ export class AuthClient {
   constructor() {}
   /**
    * login
+   * @throws {TimeoutError | HttpError | AbortError | TypeError}
    */
   public async login(password: string) {
     const response = await authApi.login(password);
@@ -28,6 +29,7 @@ export class AuthClient {
 
   /**
    * login
+   * @throws {TimeoutError | HttpError | AbortError | TypeError}
    */
   public async refresh() {
     const response = await authApi.refreshTokens();
@@ -51,6 +53,7 @@ export class AuthClient {
 
   /**
    * Get a usable API token, refreshing it automatically if it may have expired
+   * @throws {TimeoutError | HttpError | AbortError | TypeError}
    */
   public async getUsableApiToken() {
     if (
@@ -63,6 +66,9 @@ export class AuthClient {
     return this.apiToken;
   }
 
+  /**
+   * @throws {TimeoutError | HttpError}
+   */
   public async logOut() {
     const response = await authApi.deleteTokens();
 
