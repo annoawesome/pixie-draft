@@ -6,6 +6,7 @@ import Story, { Stories, StoryPreview } from "../../src/public/type/storyType";
 import baseStory from "./baseStory.json";
 import { AuthClient } from "../../src/public/client/authClient";
 import { getDownloadUrl } from "../../src/public/service/userDataService";
+import Result from "../../src/public/type/result";
 
 class StoriesBuilder {
   #stories: Stories = {};
@@ -47,6 +48,18 @@ function buildStory(id: string, title: string, content: string): Story {
     ],
     content,
   };
+}
+
+function expectResult<T, S = T, E = Error>(
+  result: Result<T, S, E>,
+  callback: (value: T) => S,
+) {
+  result.match({
+    Ok: callback,
+    Err: function () {
+      throw new Error();
+    },
+  });
 }
 
 vi.mock(import("../../src/public/client/storiesClient"), () => {
@@ -282,13 +295,13 @@ describe("stories service", () => {
       .add(newStory)
       .finish();
 
-    expect(
-      await storiesService.createStoryAndSave(
-        stories,
-        newStory.title,
-        newStory.content,
-      ),
-    ).toEqual(updatedStories);
+    const result = await storiesService.createStoryAndSave(
+      stories,
+      newStory.title,
+      newStory.content,
+    );
+
+    expectResult(result, (stories) => expect(stories).toEqual(updatedStories));
   });
 
   test("duplicate selected story and save", async () => {
@@ -306,9 +319,9 @@ describe("stories service", () => {
       .add(buildStory("3", "New Story", "Content"))
       .finish();
 
-    expect(await storiesService.duplicateStoryAndSave(stories, story)).toEqual(
-      updatedStories,
-    );
+    const result = await storiesService.duplicateStoryAndSave(stories, story);
+
+    expectResult(result, (stories) => expect(stories).toEqual(updatedStories));
   });
 
   test("load story and update", async () => {
