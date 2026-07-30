@@ -76,28 +76,28 @@ export class StoriesClient {
 
   /**
    * loadStory
+   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
    */
-  public async loadStory(id: string): Promise<Story | null> {
+  public async loadStory(id: string): Promise<Story> {
     const response = await storiesApi.loadStory(
       await this.authClient.getUsableApiToken(),
       id,
     );
 
-    try {
-      const story = await response.json();
+    const story = await response.json();
 
-      console.log("Loaded story:", story);
-
-      return story;
-    } catch (error) {
-      console.error("Error loading story:", error);
+    if (!response.ok) {
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
 
-    return null;
+    console.log("Loaded story:", story);
+
+    return story;
   }
 
   /**
    * saveStory
+   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
    */
   public async saveStory(story: Story) {
     const response = await storiesApi.saveStory(
@@ -105,11 +105,11 @@ export class StoriesClient {
       story,
     );
 
-    if (response.ok) {
-      console.log("Saved story");
-    } else {
-      console.error(`Error saving story: HTTP status code ${response.status}`);
+    if (!response.ok) {
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
+
+    console.log("Saved story");
 
     return response.ok;
   }

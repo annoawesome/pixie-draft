@@ -337,9 +337,9 @@ describe("stories service", () => {
       .add(loadedStory)
       .finish();
 
-    expect(await storiesService.loadStoryAndUpdate(stories, "1")).toEqual(
-      updatedStories,
-    );
+    const result = await storiesService.loadStoryAndUpdate(stories, "1");
+
+    expectResult(result, (stories) => expect(stories).toEqual(updatedStories));
   });
 
   // Essentially a stub test
@@ -348,7 +348,9 @@ describe("stories service", () => {
       .add(buildStory("1", "Title", "New Content"))
       .finish();
 
-    expect(await storiesService.saveSelectedStory(stories)).toBe(true);
+    const result = await storiesService.saveSelectedStory(stories);
+
+    expectResult(result, (success) => expect(success).toBe(true));
   });
 
   test("update selected story content and save", async () => {

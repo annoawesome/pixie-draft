@@ -344,30 +344,47 @@ export async function duplicateStoryAndSave(
   }
 }
 
-export async function loadStoryAndUpdate(stories: Stories, id: string) {
-  const story = await storiesClient.loadStory(id);
+export async function loadStoryAndUpdate(
+  stories: Stories,
+  id: string,
+): Promise<Result<Stories, void>> {
+  try {
+    const story = await storiesClient.loadStory(id);
 
-  if (!story) return;
+    const updatedStories = { ...stories };
+    const currentSelectedStory = getSelectedStory(updatedStories);
 
-  const updatedStories = { ...stories };
-  const currentSelectedStory = getSelectedStory(updatedStories);
+    if (currentSelectedStory) {
+      updatedStories[currentSelectedStory.id] =
+        toStoryPreview(currentSelectedStory);
+    }
 
-  if (currentSelectedStory) {
-    updatedStories[currentSelectedStory.id] =
-      toStoryPreview(currentSelectedStory);
-  }
-
-  if (updatedStories[id]) {
-    updatedStories[id] = story;
-    return updatedStories;
+    if (updatedStories[id]) {
+      updatedStories[id] = story;
+      return Result.of(updatedStories);
+    } else {
+      throw new Error("Never error");
+    }
+  } catch (error) {
+    return Result.error(wrapInError(error));
   }
 }
 
-export async function saveSelectedStory(stories: Stories) {
+export async function saveSelectedStory(
+  stories: Stories,
+): Promise<Result<boolean, void>> {
   const selectedStory = getSelectedStory(stories);
 
   if (selectedStory) {
-    return storiesClient.saveStory(selectedStory);
+    try {
+      const success = await storiesClient.saveStory(selectedStory);
+
+      return Result.of(success);
+    } catch (error) {
+      return Result.error(wrapInError(error));
+    }
+  } else {
+    return Result.error(new Error("No selected story"));
   }
 }
 

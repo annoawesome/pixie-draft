@@ -330,8 +330,17 @@ export default function Editor({
     }
   };
 
-  const onBlurStoryTitle = () => {
-    storiesService.saveSelectedStory(stories);
+  const onBlurStoryTitle = async () => {
+    const result = await storiesService.saveSelectedStory(stories);
+
+    result.match({
+      Ok: function (): void {
+        // TODO: Handle success
+      },
+      Err: function (): void {
+        // TODO: Actually handle the error
+      },
+    });
   };
 
   const onBlurStoryContent = async (newContent: string) => {
