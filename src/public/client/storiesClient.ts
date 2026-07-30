@@ -3,6 +3,15 @@ import { HttpError } from "../type/error/httpError";
 import Story, { StoryPreview } from "../type/storyType";
 import { authClient, AuthClient } from "./authClient";
 
+function assertResponseOk(response: Response, message: string = "") {
+  if (!response.ok) {
+    throw new HttpError(
+      response.status,
+      `HTTP status ${response.status}: ${message}`,
+    );
+  }
+}
+
 export class StoriesClient {
   private authClient;
 
@@ -21,9 +30,7 @@ export class StoriesClient {
       content,
     );
 
-    if (!response.ok) {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
 
     const story = await response.json();
 
@@ -45,9 +52,7 @@ export class StoriesClient {
       story.historyIndex,
     );
 
-    if (!response.ok) {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
 
     const createdStory = await response.json();
 
@@ -65,9 +70,7 @@ export class StoriesClient {
       await this.authClient.getUsableApiToken(),
     );
 
-    if (!response.ok) {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
 
     const stories = await response.json();
     console.log("Fetched stories:", stories);
@@ -87,9 +90,7 @@ export class StoriesClient {
 
     const story = await response.json();
 
-    if (!response.ok) {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
 
     console.log("Loaded story:", story);
 
@@ -106,9 +107,7 @@ export class StoriesClient {
       story,
     );
 
-    if (!response.ok) {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
 
     console.log("Saved story");
 
@@ -125,12 +124,7 @@ export class StoriesClient {
       id,
     );
 
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        `HTTP status ${response.status}: Error deleting story`,
-      );
-    }
+    assertResponseOk(response, "Error deleting story");
 
     console.log("Deleted story");
 
@@ -147,12 +141,7 @@ export class StoriesClient {
       await this.authClient.getUsableApiToken(),
     );
 
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        `HTTP status ${response.status}: Error getting stories download:`,
-      );
-    }
+    assertResponseOk(response, "Error getting stories download");
 
     return await response.text();
   }
@@ -169,12 +158,7 @@ export class StoriesClient {
       file,
     );
 
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        `HTTP status ${response.status}: Error getting stories download`,
-      );
-    }
+    assertResponseOk(response, "Error importing stories");
 
     return response.ok;
   }
