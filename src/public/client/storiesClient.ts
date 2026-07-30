@@ -58,6 +58,7 @@ export class StoriesClient {
 
   /**
    * loadLibrary
+   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
    */
   public async loadLibrary(): Promise<StoryPreview[]> {
     const response = await storiesApi.getStories(
