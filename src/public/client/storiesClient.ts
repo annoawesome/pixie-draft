@@ -137,18 +137,24 @@ export class StoriesClient {
     return response.ok;
   }
 
+  /**
+   *
+   * @returns The relative download URL
+   * @throws {TimeoutError | HttpError}
+   */
   public async getStoriesDownload() {
     const response = await storiesApi.getStoriesDownload(
       await this.authClient.getUsableApiToken(),
     );
 
-    if (response.ok) {
-      return await response.text();
-    } else {
-      console.error(
-        `Error getting stories download: HTTP status code ${response.status}`,
+    if (!response.ok) {
+      throw new HttpError(
+        response.status,
+        `HTTP status ${response.status}: Error getting stories download:`,
       );
     }
+
+    return await response.text();
   }
 
   /**
