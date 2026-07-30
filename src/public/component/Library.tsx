@@ -18,11 +18,18 @@ function StoryCard({
 }) {
   const onClickStoryCard = async () => {
     const id = story.id;
-    const updatedStories = await storiesService.loadStoryAndUpdate(stories, id);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    const result = await storiesService.loadStoryAndUpdate(stories, id);
+
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      // TODO: Actually handle the error
+      Err: function (error: Error): void {
+        console.log(error);
+      },
+    });
   };
 
   const selectedStory = storiesService.getSelectedStory(stories);
