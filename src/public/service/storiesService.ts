@@ -1,4 +1,5 @@
 import { storiesClient } from "../client/storiesClient";
+import Result, { wrapInError } from "../type/result";
 import Story, { HistoryNode, Stories, StoryPreview } from "../type/storyType";
 import { clamp } from "../util/math";
 import { applyDiff, applyInvertedDiff, generateDiff } from "../util/rawDiff";
@@ -303,37 +304,44 @@ export async function createStoryAndSave(
   stories: Stories,
   title: string,
   content: string,
-) {
-  const story = await storiesClient.createStory(title, content);
+): Promise<Result<Stories, void>> {
+  try {
+    const story = await storiesClient.createStory(title, content);
 
-  if (!story) return;
+    const updatedStories: Stories = {
+      ...stories,
+      [story.id]: story,
+    };
 
-  const updatedStories: Stories = {
-    ...stories,
-    [story.id]: story,
-  };
-
-  return updatedStories;
+    return Result.of(updatedStories);
+  } catch (error) {
+    return Result.error(wrapInError(error));
+  }
 }
 
-export async function duplicateStoryAndSave(stories: Stories, story: Story) {
-  const dupedStory = await storiesClient.duplicateStory(
-    updateStoryTitle(story, story.title),
-  );
+export async function duplicateStoryAndSave(
+  stories: Stories,
+  story: Story,
+): Promise<Result<Stories, void>> {
+  try {
+    const dupedStory = await storiesClient.duplicateStory(
+      updateStoryTitle(story, story.title),
+    );
 
-  if (!dupedStory) return;
+    const updatedStories = { ...stories };
+    const currentSelectedStory = getSelectedStory(updatedStories);
 
-  const updatedStories = { ...stories };
-  const currentSelectedStory = getSelectedStory(updatedStories);
+    if (currentSelectedStory) {
+      updatedStories[currentSelectedStory.id] =
+        toStoryPreview(currentSelectedStory);
+    }
 
-  if (currentSelectedStory) {
-    updatedStories[currentSelectedStory.id] =
-      toStoryPreview(currentSelectedStory);
+    updatedStories[dupedStory.id] = dupedStory;
+
+    return Result.of(updatedStories);
+  } catch (error) {
+    return Result.error(wrapInError(error));
   }
-
-  updatedStories[dupedStory.id] = dupedStory;
-
-  return updatedStories;
 }
 
 export async function loadStoryAndUpdate(stories: Stories, id: string) {

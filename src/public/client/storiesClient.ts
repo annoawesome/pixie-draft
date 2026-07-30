@@ -12,61 +12,48 @@ export class StoriesClient {
 
   /**
    * createStory
+   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
    */
-  public async createStory(
-    title: string,
-    content: string,
-  ): Promise<Story | null> {
-    try {
-      const response = await storiesApi.createStory(
-        await this.authClient.getUsableApiToken(),
-        title,
-        content,
-      );
+  public async createStory(title: string, content: string): Promise<Story> {
+    const response = await storiesApi.createStory(
+      await this.authClient.getUsableApiToken(),
+      title,
+      content,
+    );
 
-      if (!response.ok) {
-        throw new HttpError(response.status, `HTTP status ${response.status}`);
-      }
-
-      const story = await response.json();
-
-      console.log("Created story:", story);
-
-      return story;
-    } catch (error) {
-      console.error("Error creating story:", error);
+    if (!response.ok) {
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
 
-    return null;
+    const story = await response.json();
+
+    console.log("Created story:", story);
+
+    return story;
   }
 
   /**
    * duplicateStory
+   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
    */
-  public async duplicateStory(story: Story) {
-    try {
-      const response = await storiesApi.createStory(
-        await this.authClient.getUsableApiToken(),
-        story.title,
-        story.content,
-        story.history,
-        story.historyIndex,
-      );
+  public async duplicateStory(story: Story): Promise<Story> {
+    const response = await storiesApi.createStory(
+      await this.authClient.getUsableApiToken(),
+      story.title,
+      story.content,
+      story.history,
+      story.historyIndex,
+    );
 
-      if (!response.ok) {
-        throw new HttpError(response.status, `HTTP status ${response.status}`);
-      }
-
-      const createdStory = await response.json();
-
-      console.log("Created story:", createdStory);
-
-      return createdStory;
-    } catch (error) {
-      console.error("Error creating story:", error);
+    if (!response.ok) {
+      throw new HttpError(response.status, `HTTP status ${response.status}`);
     }
 
-    return null;
+    const createdStory = await response.json();
+
+    console.log("Created story:", createdStory);
+
+    return createdStory;
   }
 
   /**
