@@ -414,8 +414,10 @@ describe("stories service", () => {
 describe("user data service", () => {
   // Basically a stub test
   test("generates download url", async () => {
-    expect(await getDownloadUrl()).toBe(
-      "/download/39514162-3b5d-4b08-8493-5eabf7527f80",
+    const result = await getDownloadUrl();
+
+    expectResult(result, (url) =>
+      expect(url).toBe("/download/39514162-3b5d-4b08-8493-5eabf7527f80"),
     );
   });
 });

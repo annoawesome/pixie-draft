@@ -86,14 +86,16 @@ export function UserSettings() {
   const [showImportStoriesDialog, setShowImportStoriesDialog] = useState(false);
 
   const onClickExportAllStories = async () => {
-    const url = await getDownloadUrl();
+    const result = await getDownloadUrl();
 
-    if (url) {
-      downloadFromUrl(url);
-    } else {
-      /* empty */
-      // Maybe do something if download URL cannot be generated?
-    }
+    result.match({
+      Ok: downloadFromUrl,
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        // Maybe do something if download URL cannot be generated?
+        console.error(error);
+      },
+    });
   };
 
   const onClickImportStories = () => {
