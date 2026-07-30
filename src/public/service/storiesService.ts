@@ -434,39 +434,27 @@ export async function redoSelectedStoryAndSave(stories: Stories) {
 }
 
 export async function clearHistoryOfSelectedStoryAndSave(stories: Stories) {
-  const selectedStory = getSelectedStory(stories);
-
-  if (!selectedStory) return;
-
-  const updatedStory: Story = {
-    ...selectedStory,
-    // Purely a local change that gets overwritten by the back end
-    time: {
-      ...selectedStory.time,
-      modified: Date.now(),
-    },
-
-    history: [
-      {
-        content: selectedStory.content,
-        treePrev: -1,
-        attributes: {
-          generatedByLlm: false,
-        },
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) => {
+    return {
+      ...selectedStory,
+      // Purely a local change that gets overwritten by the back end
+      time: {
+        ...selectedStory.time,
+        modified: Date.now(),
       },
-    ],
-    historyIndex: 0,
-  };
 
-  const updatedStories = updateSelectedStory(stories, () => updatedStory);
-
-  if (updatedStories) {
-    const success = await storiesClient.saveStory(updatedStory);
-
-    if (success) {
-      return updatedStories;
-    }
-  }
+      history: [
+        {
+          content: selectedStory.content,
+          treePrev: -1,
+          attributes: {
+            generatedByLlm: false,
+          },
+        },
+      ],
+      historyIndex: 0,
+    };
+  });
 }
 
 export async function deleteSelectedStoryAndSave(stories: Stories) {

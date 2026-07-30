@@ -136,16 +136,18 @@ export default function AsideSettings({
   const onClickClearHistory = async () => {
     if (!selectedStory) return; // Should never happen!
 
-    try {
-      const updatedStories =
-        await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
+    const result =
+      await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
 
-      if (updatedStories) {
+    result.match({
+      Ok: function (updatedStories: Stories): void {
         setStories(updatedStories);
-      }
-    } catch {
-      /* empty */
-    }
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onUpdateContentEditable = async (newContent: string) => {
