@@ -392,8 +392,12 @@ describe("stories service", () => {
       .add(buildStoryPreview("2", "Preview"))
       .finish();
 
-    expect(await storiesService.deleteSelectedStoryAndSave(stories)).toEqual(
-      new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+    const result = await storiesService.deleteSelectedStoryAndSave(stories);
+
+    expectResult(result, (updatedStories) =>
+      expect(updatedStories).toEqual(
+        new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+      ),
     );
   });
 

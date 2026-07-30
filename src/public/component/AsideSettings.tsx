@@ -86,12 +86,17 @@ export default function AsideSettings({
 
     if (!selectedStory) return;
 
-    const updatedStories =
-      await storiesService.deleteSelectedStoryAndSave(stories);
+    const result = await storiesService.deleteSelectedStoryAndSave(stories);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onClickCancelDelete = () => {

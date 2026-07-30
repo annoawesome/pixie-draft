@@ -116,6 +116,7 @@ export class StoriesClient {
 
   /**
    * deleteStory
+   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
    */
   public async deleteStory(id: string) {
     const response = await storiesApi.deleteStory(
@@ -123,13 +124,14 @@ export class StoriesClient {
       id,
     );
 
-    if (response.ok) {
-      console.log("Deleted story");
-    } else {
-      console.error(
-        `Error deleting story: HTTP status code ${response.status}`,
+    if (!response.ok) {
+      throw new HttpError(
+        response.status,
+        `HTTP status ${response.status}: Error deleting story`,
       );
     }
+
+    console.log("Deleted story");
 
     return response.ok;
   }

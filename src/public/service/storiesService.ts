@@ -457,18 +457,22 @@ export async function clearHistoryOfSelectedStoryAndSave(stories: Stories) {
   });
 }
 
-export async function deleteSelectedStoryAndSave(stories: Stories) {
-  const selectedStory = getSelectedStory(stories);
+export async function deleteSelectedStoryAndSave(
+  stories: Stories,
+): Promise<Result<Stories, void>> {
+  try {
+    const selectedStory = getSelectedStory(stories);
 
-  if (!selectedStory) return;
+    if (!selectedStory) return Result.error(new Error("No selected story"));
 
-  const success = await storiesClient.deleteStory(selectedStory.id);
+    await storiesClient.deleteStory(selectedStory.id);
 
-  if (success) {
     const updatedStories = { ...stories };
     delete updatedStories[selectedStory.id];
 
-    return updatedStories;
+    return Result.of(updatedStories);
+  } catch (error) {
+    return Result.error(wrapInError(error));
   }
 }
 
