@@ -361,22 +361,23 @@ describe("stories service", () => {
       .add(buildStory("2", "Title", "Content"))
       .finish();
 
-    const updatedStories =
-      await storiesService.updateSelectedStoryContentAndSave(
-        stories,
-        "New content",
-        false,
-      );
+    const result = await storiesService.updateSelectedStoryContentAndSave(
+      stories,
+      "New content",
+      false,
+    );
 
-    expect(updatedStories).toEqual(
-      new StoriesBuilder()
-        .add(buildStoryPreview("1", "Preview"))
-        .add({
-          ...buildStory("2", "Title", "New content"),
-          historyIndex: 1,
-          history: expect.any(Array),
-        })
-        .finish(),
+    expectResult(result, (updatedStories) =>
+      expect(updatedStories).toEqual(
+        new StoriesBuilder()
+          .add(buildStoryPreview("1", "Preview"))
+          .add({
+            ...buildStory("2", "Title", "New content"),
+            historyIndex: 1,
+            history: expect.any(Array),
+          })
+          .finish(),
+      ),
     );
   });
 

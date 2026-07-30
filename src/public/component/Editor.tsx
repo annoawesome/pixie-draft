@@ -144,16 +144,21 @@ function ActionBar({
         }
       }
 
-      const updatedStories =
-        await storiesService.updateSelectedStoryContentAndSave(
-          stories,
-          content + text,
-          true,
-        );
+      const result = await storiesService.updateSelectedStoryContentAndSave(
+        stories,
+        content + text,
+        true,
+      );
 
-      if (updatedStories) {
-        setStories(updatedStories);
-      }
+      result.match({
+        Ok: function (updatedStories: Stories): void {
+          setStories(updatedStories);
+        },
+        Err: function (error: Error): void {
+          // TODO: Actually handle the error
+          console.error(error);
+        },
+      });
 
       // There is probably a better way to do this
       setTimeout(() => {
@@ -350,15 +355,20 @@ export default function Editor({
     // where you press "generate" before the app finishes saving
     setLocked(true);
 
-    const updatedStories =
-      await storiesService.updateSelectedStoryContentAndSave(
-        stories,
-        newContent,
-      );
+    const result = await storiesService.updateSelectedStoryContentAndSave(
+      stories,
+      newContent,
+    );
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
 
     setLocked(false);
   };

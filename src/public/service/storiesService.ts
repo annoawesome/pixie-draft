@@ -416,16 +416,9 @@ export async function updateSelectedStoryContentAndSave(
   newContent: string,
   generatedByLlm: boolean = false,
 ) {
-  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) =>
     updateStoryFromAppendingHistory(selectedStory, newContent, generatedByLlm),
   );
-  if (!updatedStories) return;
-
-  const updatedStory = getSelectedStory(updatedStories);
-
-  if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
-  }
 }
 
 export async function undoSelectedStoryAndSave(stories: Stories) {
