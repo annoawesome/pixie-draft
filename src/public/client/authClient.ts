@@ -1,5 +1,5 @@
 import * as authApi from "../api/authApi";
-import { HttpError } from "../type/httpError";
+import { HttpError } from "../type/error/httpError";
 
 export class AuthClient {
   private apiToken: string = "";

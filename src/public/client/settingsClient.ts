@@ -1,6 +1,6 @@
 import { authClient, AuthClient } from "./authClient";
 import * as settingsApi from "../api/settingsApi";
-import { HttpError } from "../type/httpError";
+import { HttpError } from "../type/error/httpError";
 
 export class SettingsClient {
   private authClient;

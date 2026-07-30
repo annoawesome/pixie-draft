@@ -1,5 +1,5 @@
 import * as storiesApi from "../api/storiesApi";
-import { HttpError } from "../type/httpError";
+import { HttpError } from "../type/error/httpError";
 import Story, { StoryPreview } from "../type/storyType";
 import { authClient, AuthClient } from "./authClient";
 
