@@ -139,8 +139,8 @@ function ActionBar({
             content,
             selectedModel,
           );
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.error(error);
         }
       }
 
