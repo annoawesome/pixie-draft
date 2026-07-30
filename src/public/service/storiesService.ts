@@ -483,7 +483,7 @@ export async function deleteSelectedStoryAndSave(
  */
 export async function wipeExistingAndImportNewStories(
   file: File,
-): Promise<Result<true, void>> {
+): Promise<Result<boolean, void>> {
   try {
     const success = await storiesClient.importStories(file);
 
