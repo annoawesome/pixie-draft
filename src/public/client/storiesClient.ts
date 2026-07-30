@@ -125,7 +125,7 @@ export class StoriesClient {
   /**
    *
    * @returns The relative download URL
-   * @throws {TimeoutError | HttpError}
+   * @throws {TimeoutError | HttpError | AbortError | TypeError}
    */
   public async getStoriesDownload() {
     const response = await storiesApi.getStoriesDownload(
