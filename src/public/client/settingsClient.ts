@@ -12,7 +12,7 @@ export class SettingsClient {
   /**
    *
    * @returns The queried setting
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async getSettings() {
     const response = await settingsApi.getSettings(
@@ -31,7 +31,7 @@ export class SettingsClient {
   /**
    *
    * @param settings The updated setting to apply to the backend
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async updateSettings(settings: unknown) {
     const response = await settingsApi.updateSettings(
@@ -48,7 +48,7 @@ export class SettingsClient {
    *
    * @param settingName The name of the setting to modify
    * @param setting The new value of specified setting
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async updateSetting(settingName: string, setting: unknown) {
     const response = await settingsApi.patchSettings(

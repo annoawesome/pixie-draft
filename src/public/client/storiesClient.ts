@@ -12,7 +12,7 @@ export class StoriesClient {
 
   /**
    * createStory
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async createStory(title: string, content: string): Promise<Story> {
     const response = await storiesApi.createStory(
@@ -32,7 +32,7 @@ export class StoriesClient {
 
   /**
    * duplicateStory
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async duplicateStory(story: Story): Promise<Story> {
     const response = await storiesApi.createStory(
@@ -54,7 +54,7 @@ export class StoriesClient {
 
   /**
    * loadLibrary
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async loadLibrary(): Promise<StoryPreview[]> {
     const response = await storiesApi.getStories(
@@ -71,7 +71,7 @@ export class StoriesClient {
 
   /**
    * loadStory
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async loadStory(id: string): Promise<Story> {
     const response = await storiesApi.loadStory(
@@ -90,7 +90,7 @@ export class StoriesClient {
 
   /**
    * saveStory
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async saveStory(story: Story) {
     const response = await storiesApi.saveStory(
@@ -107,7 +107,7 @@ export class StoriesClient {
 
   /**
    * deleteStory
-   * @throws {TimeoutError | HttpError | TypeError | SyntaxError}
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
    */
   public async deleteStory(id: string) {
     const response = await storiesApi.deleteStory(
@@ -125,7 +125,7 @@ export class StoriesClient {
   /**
    *
    * @returns The relative download URL
-   * @throws {TimeoutError | HttpError | AbortError | TypeError}
+   * @throws {TimeoutError | AbortError | HttpError | AbortError | TypeError}
    */
   public async getStoriesDownload() {
     const response = await storiesApi.getStoriesDownload(
@@ -141,7 +141,7 @@ export class StoriesClient {
    *
    * @param file The stories.json file
    * @returns Whether the response succeeded or not
-   * @throws {TimeoutError | HttpError}
+   * @throws {TimeoutError | AbortError | HttpError}
    */
   public async importStories(file: File) {
     const response = await storiesApi.postStoriesUpload(
