@@ -139,21 +139,26 @@ function ActionBar({
             content,
             selectedModel,
           );
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.error(error);
         }
       }
 
-      const updatedStories =
-        await storiesService.updateSelectedStoryContentAndSave(
-          stories,
-          content + text,
-          true,
-        );
+      const result = await storiesService.updateSelectedStoryContentAndSave(
+        stories,
+        content + text,
+        true,
+      );
 
-      if (updatedStories) {
-        setStories(updatedStories);
-      }
+      result.match({
+        Ok: function (updatedStories: Stories): void {
+          setStories(updatedStories);
+        },
+        Err: function (error: Error): void {
+          // TODO: Actually handle the error
+          console.error(error);
+        },
+      });
 
       // There is probably a better way to do this
       setTimeout(() => {
@@ -176,21 +181,31 @@ function ActionBar({
   };
 
   const onClickUndo = async () => {
-    const updatedStories =
-      await storiesService.undoSelectedStoryAndSave(stories);
+    const result = await storiesService.undoSelectedStoryAndSave(stories);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onClickRedo = async () => {
-    const updatedStories =
-      await storiesService.redoSelectedStoryAndSave(stories);
+    const result = await storiesService.redoSelectedStoryAndSave(stories);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onClickRetry = () => {
@@ -330,8 +345,17 @@ export default function Editor({
     }
   };
 
-  const onBlurStoryTitle = () => {
-    storiesService.saveSelectedStory(stories);
+  const onBlurStoryTitle = async () => {
+    const result = await storiesService.saveSelectedStory(stories);
+
+    result.match({
+      Ok: function (): void {
+        // TODO: Handle success
+      },
+      Err: function (): void {
+        // TODO: Actually handle the error
+      },
+    });
   };
 
   const onBlurStoryContent = async (newContent: string) => {
@@ -341,23 +365,39 @@ export default function Editor({
     // where you press "generate" before the app finishes saving
     setLocked(true);
 
-    const updatedStories =
-      await storiesService.updateSelectedStoryContentAndSave(
-        stories,
-        newContent,
-      );
+    const result = await storiesService.updateSelectedStoryContentAndSave(
+      stories,
+      newContent,
+    );
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
 
     setLocked(false);
   };
 
   useEffect(() => {
-    endpointProfilesService
-      .fetchEndpointFromEndpointProfiles()
-      .then(setEndpointProfile);
+    const fetchEndpoint = async () => {
+      const result =
+        await endpointProfilesService.fetchEndpointFromEndpointProfiles();
+
+      result.match({
+        Ok: setEndpointProfile,
+        // TODO: Actually handle the error
+        Err: function (error: Error): void {
+          console.error(error);
+        },
+      });
+    };
+
+    fetchEndpoint();
   }, []);
 
   const selectedStory = storiesService.getSelectedStory(stories);

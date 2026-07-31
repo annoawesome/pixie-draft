@@ -6,6 +6,7 @@ import Story, { Stories, StoryPreview } from "../../src/public/type/storyType";
 import baseStory from "./baseStory.json";
 import { AuthClient } from "../../src/public/client/authClient";
 import { getDownloadUrl } from "../../src/public/service/userDataService";
+import Result from "../../src/public/type/result";
 
 class StoriesBuilder {
   #stories: Stories = {};
@@ -47,6 +48,18 @@ function buildStory(id: string, title: string, content: string): Story {
     ],
     content,
   };
+}
+
+function expectResult<T, S = T, E = Error>(
+  result: Result<T, S, E>,
+  callback: (value: T) => S,
+) {
+  result.match({
+    Ok: callback,
+    Err: function () {
+      throw new Error();
+    },
+  });
 }
 
 vi.mock(import("../../src/public/client/storiesClient"), () => {
@@ -282,13 +295,13 @@ describe("stories service", () => {
       .add(newStory)
       .finish();
 
-    expect(
-      await storiesService.createStoryAndSave(
-        stories,
-        newStory.title,
-        newStory.content,
-      ),
-    ).toEqual(updatedStories);
+    const result = await storiesService.createStoryAndSave(
+      stories,
+      newStory.title,
+      newStory.content,
+    );
+
+    expectResult(result, (stories) => expect(stories).toEqual(updatedStories));
   });
 
   test("duplicate selected story and save", async () => {
@@ -306,9 +319,9 @@ describe("stories service", () => {
       .add(buildStory("3", "New Story", "Content"))
       .finish();
 
-    expect(await storiesService.duplicateStoryAndSave(stories, story)).toEqual(
-      updatedStories,
-    );
+    const result = await storiesService.duplicateStoryAndSave(stories, story);
+
+    expectResult(result, (stories) => expect(stories).toEqual(updatedStories));
   });
 
   test("load story and update", async () => {
@@ -324,9 +337,9 @@ describe("stories service", () => {
       .add(loadedStory)
       .finish();
 
-    expect(await storiesService.loadStoryAndUpdate(stories, "1")).toEqual(
-      updatedStories,
-    );
+    const result = await storiesService.loadStoryAndUpdate(stories, "1");
+
+    expectResult(result, (stories) => expect(stories).toEqual(updatedStories));
   });
 
   // Essentially a stub test
@@ -335,7 +348,9 @@ describe("stories service", () => {
       .add(buildStory("1", "Title", "New Content"))
       .finish();
 
-    expect(await storiesService.saveSelectedStory(stories)).toBe(true);
+    const result = await storiesService.saveSelectedStory(stories);
+
+    expectResult(result, (success) => expect(success).toBe(true));
   });
 
   test("update selected story content and save", async () => {
@@ -346,22 +361,23 @@ describe("stories service", () => {
       .add(buildStory("2", "Title", "Content"))
       .finish();
 
-    const updatedStories =
-      await storiesService.updateSelectedStoryContentAndSave(
-        stories,
-        "New content",
-        false,
-      );
+    const result = await storiesService.updateSelectedStoryContentAndSave(
+      stories,
+      "New content",
+      false,
+    );
 
-    expect(updatedStories).toEqual(
-      new StoriesBuilder()
-        .add(buildStoryPreview("1", "Preview"))
-        .add({
-          ...buildStory("2", "Title", "New content"),
-          historyIndex: 1,
-          history: expect.any(Array),
-        })
-        .finish(),
+    expectResult(result, (updatedStories) =>
+      expect(updatedStories).toEqual(
+        new StoriesBuilder()
+          .add(buildStoryPreview("1", "Preview"))
+          .add({
+            ...buildStory("2", "Title", "New content"),
+            historyIndex: 1,
+            history: expect.any(Array),
+          })
+          .finish(),
+      ),
     );
   });
 
@@ -376,26 +392,32 @@ describe("stories service", () => {
       .add(buildStoryPreview("2", "Preview"))
       .finish();
 
-    expect(await storiesService.deleteSelectedStoryAndSave(stories)).toEqual(
-      new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+    const result = await storiesService.deleteSelectedStoryAndSave(stories);
+
+    expectResult(result, (updatedStories) =>
+      expect(updatedStories).toEqual(
+        new StoriesBuilder().add(buildStoryPreview("2", "Preview")).finish(),
+      ),
     );
   });
 
   // Basically a stub test
   test("delete wipe & import", async () => {
-    expect(
-      await storiesService.wipeExistingAndImportNewStories(
-        new File(["[]"], "stories.json"),
-      ),
-    ).toBe(true);
+    const result = await storiesService.wipeExistingAndImportNewStories(
+      new File(["[]"], "stories.json"),
+    );
+
+    expectResult(result, (success) => expect(success).toBe(true));
   });
 });
 
 describe("user data service", () => {
   // Basically a stub test
   test("generates download url", async () => {
-    expect(await getDownloadUrl()).toBe(
-      "/download/39514162-3b5d-4b08-8493-5eabf7527f80",
+    const result = await getDownloadUrl();
+
+    expectResult(result, (url) =>
+      expect(url).toBe("/download/39514162-3b5d-4b08-8493-5eabf7527f80"),
     );
   });
 });

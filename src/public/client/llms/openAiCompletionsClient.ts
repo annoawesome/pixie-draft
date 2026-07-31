@@ -1,6 +1,6 @@
 import z from "zod";
 import { getModels, postGenerate } from "../../api/openAiCompletionsApi";
-import { HttpError } from "../../type/httpError";
+import { HttpError } from "../../type/error/httpError";
 import { LlmEndpointClient } from "../../type/llmEndpointClient";
 
 const OpenAiCompletionChoiceSchema = z.object({

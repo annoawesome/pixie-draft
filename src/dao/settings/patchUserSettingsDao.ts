@@ -2,6 +2,9 @@ import fs from "fs";
 
 import { getDatabaseFile } from "../../init/initializeDatabase.js";
 
+/**
+ * @throws {Error}
+ */
 export default function patchUserSettings(
   settingName: string,
   setting: unknown,

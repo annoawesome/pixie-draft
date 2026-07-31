@@ -18,11 +18,18 @@ function StoryCard({
 }) {
   const onClickStoryCard = async () => {
     const id = story.id;
-    const updatedStories = await storiesService.loadStoryAndUpdate(stories, id);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    const result = await storiesService.loadStoryAndUpdate(stories, id);
+
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      // TODO: Actually handle the error
+      Err: function (error: Error): void {
+        console.log(error);
+      },
+    });
   };
 
   const selectedStory = storiesService.getSelectedStory(stories);
@@ -55,15 +62,21 @@ export default function Library({
   const [showImportDialog, setShowImportDialog] = useState(false);
 
   const onClickNewStoryButton = async () => {
-    const updatedStories = await storiesService.createStoryAndSave(
+    const result = await storiesService.createStoryAndSave(
       stories,
       "New Story",
       "Once upon a time...",
     );
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories) {
+        setStories(updatedStories);
+      },
+      // TODO: Actually handle the error
+      Err: function (error: Error) {
+        console.error(error);
+      },
+    });
   };
 
   const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -87,27 +100,36 @@ export default function Library({
     if (!storyContent) return;
 
     if (file.type === MimeTypes.TEXT) {
-      const updatedStories = await storiesService.createStoryAndSave(
+      const result = await storiesService.createStoryAndSave(
         stories,
         file.name.substring(0, file.name.lastIndexOf(".")),
         storyContent,
       );
 
-      if (updatedStories) {
-        setStories(updatedStories);
-      }
+      result.match({
+        Ok: function (updatedStories: Stories) {
+          setStories(updatedStories);
+        },
+        // TODO: Actually handle the error
+        Err: function (error: Error) {
+          console.error(error);
+        },
+      });
     } else if (file.type === MimeTypes.JSON) {
       // NOTE: story is not validated at all
       const story: Story = JSON.parse(storyContent);
 
-      const updatedStories = await storiesService.duplicateStoryAndSave(
-        stories,
-        story,
-      );
+      const result = await storiesService.duplicateStoryAndSave(stories, story);
 
-      if (updatedStories) {
-        setStories(updatedStories);
-      }
+      result.match({
+        Ok: function (updatedStories: Stories): void {
+          setStories(updatedStories);
+        },
+        // TODO: Actually handle the error
+        Err: function (error: Error): void {
+          console.error(error);
+        },
+      });
     }
   };
 

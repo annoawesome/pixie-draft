@@ -1,4 +1,6 @@
 import { storiesClient } from "../client/storiesClient";
+import DoesNotExistError from "../type/error/doesNotExistError";
+import Result, { wrapInError } from "../type/result";
 import Story, { HistoryNode, Stories, StoryPreview } from "../type/storyType";
 import { clamp } from "../util/math";
 import { applyDiff, applyInvertedDiff, generateDiff } from "../util/rawDiff";
@@ -196,6 +198,7 @@ export function updateStoryFromAppendingHistory(
  * @param content The current shown content
  * @param reverse Whether to reverse the patch
  * @returns The patched content
+ * @throws {DoesNotExistError | Error}
  */
 function applyPatchFromHistoryNode(
   historyNode: HistoryNode,
@@ -203,7 +206,9 @@ function applyPatchFromHistoryNode(
   reverse: boolean,
 ) {
   if (!historyNode.patch)
-    throw new Error(`Failed to find patch to ${reverse ? "undo" : "redo"}`);
+    throw new DoesNotExistError(
+      `Failed to find patch to ${reverse ? "undo" : "redo"}`,
+    );
 
   const patchedContent = reverse
     ? applyInvertedDiff(content, historyNode.patch)
@@ -220,6 +225,7 @@ function applyPatchFromHistoryNode(
  * @param story A story object
  * @param revert If true, undo by one node. Otherwise, redo one node
  * @returns A new story object
+ * @throws {DoesNotExistError | Error}
  */
 function updateStoryFromHistoryPageFlip(story: Story, revert: boolean): Story {
   const newIndex = clamp(
@@ -265,6 +271,9 @@ function updateStoryFromHistoryPageFlip(story: Story, revert: boolean): Story {
   }
 }
 
+/**
+ * @throws {DoesNotExistError | Error}
+ */
 export function updateStoryFromTreeBacktrack(story: Story): Story {
   const newIndex = clamp(
     getCurrentHistoryNode(story).treePrev,
@@ -303,78 +312,111 @@ export async function createStoryAndSave(
   stories: Stories,
   title: string,
   content: string,
-) {
-  const story = await storiesClient.createStory(title, content);
+): Promise<Result<Stories, void>> {
+  try {
+    const story = await storiesClient.createStory(title, content);
 
-  if (!story) return;
+    const updatedStories: Stories = {
+      ...stories,
+      [story.id]: story,
+    };
 
-  const updatedStories: Stories = {
-    ...stories,
-    [story.id]: story,
-  };
-
-  return updatedStories;
-}
-
-export async function duplicateStoryAndSave(stories: Stories, story: Story) {
-  const dupedStory = await storiesClient.duplicateStory(
-    updateStoryTitle(story, story.title),
-  );
-
-  if (!dupedStory) return;
-
-  const updatedStories = { ...stories };
-  const currentSelectedStory = getSelectedStory(updatedStories);
-
-  if (currentSelectedStory) {
-    updatedStories[currentSelectedStory.id] =
-      toStoryPreview(currentSelectedStory);
-  }
-
-  updatedStories[dupedStory.id] = dupedStory;
-
-  return updatedStories;
-}
-
-export async function loadStoryAndUpdate(stories: Stories, id: string) {
-  const story = await storiesClient.loadStory(id);
-
-  if (!story) return;
-
-  const updatedStories = { ...stories };
-  const currentSelectedStory = getSelectedStory(updatedStories);
-
-  if (currentSelectedStory) {
-    updatedStories[currentSelectedStory.id] =
-      toStoryPreview(currentSelectedStory);
-  }
-
-  if (updatedStories[id]) {
-    updatedStories[id] = story;
-    return updatedStories;
+    return Result.of(updatedStories);
+  } catch (error) {
+    return Result.error(wrapInError(error));
   }
 }
 
-export async function saveSelectedStory(stories: Stories) {
+export async function duplicateStoryAndSave(
+  stories: Stories,
+  story: Story,
+): Promise<Result<Stories, void>> {
+  try {
+    const dupedStory = await storiesClient.duplicateStory(
+      updateStoryTitle(story, story.title),
+    );
+
+    const updatedStories = { ...stories };
+    const currentSelectedStory = getSelectedStory(updatedStories);
+
+    if (currentSelectedStory) {
+      updatedStories[currentSelectedStory.id] =
+        toStoryPreview(currentSelectedStory);
+    }
+
+    updatedStories[dupedStory.id] = dupedStory;
+
+    return Result.of(updatedStories);
+  } catch (error) {
+    return Result.error(wrapInError(error));
+  }
+}
+
+export async function loadStoryAndUpdate(
+  stories: Stories,
+  id: string,
+): Promise<Result<Stories, void>> {
+  try {
+    const story = await storiesClient.loadStory(id);
+
+    const updatedStories = { ...stories };
+    const currentSelectedStory = getSelectedStory(updatedStories);
+
+    if (currentSelectedStory) {
+      updatedStories[currentSelectedStory.id] =
+        toStoryPreview(currentSelectedStory);
+    }
+
+    if (updatedStories[id]) {
+      updatedStories[id] = story;
+      return Result.of(updatedStories);
+    } else {
+      throw new Error("Never error");
+    }
+  } catch (error) {
+    return Result.error(wrapInError(error));
+  }
+}
+
+export async function saveSelectedStory(
+  stories: Stories,
+): Promise<Result<boolean, void>> {
   const selectedStory = getSelectedStory(stories);
 
   if (selectedStory) {
-    return storiesClient.saveStory(selectedStory);
+    try {
+      const success = await storiesClient.saveStory(selectedStory);
+
+      return Result.of(success);
+    } catch (error) {
+      return Result.error(wrapInError(error));
+    }
+  } else {
+    return Result.error(new DoesNotExistError("No selected story"));
   }
 }
 
 export async function updateSelectedStoryWithUpdaterAndSave(
   stories: Stories,
   updaterCallback: (selectedStory: Story) => Story,
-) {
+): Promise<Result<Stories, void>> {
   const updatedStories = updateSelectedStory(stories, updaterCallback);
 
-  if (!updatedStories) return;
+  if (!updatedStories)
+    return Result.error(new DoesNotExistError("No selected story"));
 
   const updatedStory = getSelectedStory(updatedStories);
 
   if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
+    try {
+      await storiesClient.saveStory(updatedStory);
+
+      return Result.of(updatedStories);
+    } catch (error) {
+      return Result.error(wrapInError(error));
+    }
+  } else {
+    return Result.error(new DoesNotExistError("No selected story"));
   }
 }
 
@@ -383,92 +425,64 @@ export async function updateSelectedStoryContentAndSave(
   newContent: string,
   generatedByLlm: boolean = false,
 ) {
-  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) =>
     updateStoryFromAppendingHistory(selectedStory, newContent, generatedByLlm),
   );
-  if (!updatedStories) return;
-
-  const updatedStory = getSelectedStory(updatedStories);
-
-  if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
-  }
 }
 
 export async function undoSelectedStoryAndSave(stories: Stories) {
-  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) =>
     updateStoryFromHistoryPageFlip(selectedStory, true),
   );
-  if (!updatedStories) return;
-
-  const updatedStory = getSelectedStory(updatedStories);
-
-  if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
-  }
 }
 
 export async function redoSelectedStoryAndSave(stories: Stories) {
-  const updatedStories = updateSelectedStory(stories, (selectedStory) =>
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) =>
     updateStoryFromHistoryPageFlip(selectedStory, false),
   );
-  if (!updatedStories) return;
-
-  const updatedStory = getSelectedStory(updatedStories);
-
-  if (updatedStory) {
-    return storiesClient.saveStory(updatedStory).then(() => updatedStories);
-  }
 }
 
 export async function clearHistoryOfSelectedStoryAndSave(stories: Stories) {
-  const selectedStory = getSelectedStory(stories);
-
-  if (!selectedStory) return;
-
-  const updatedStory: Story = {
-    ...selectedStory,
-    // Purely a local change that gets overwritten by the back end
-    time: {
-      ...selectedStory.time,
-      modified: Date.now(),
-    },
-
-    history: [
-      {
-        content: selectedStory.content,
-        treePrev: -1,
-        attributes: {
-          generatedByLlm: false,
-        },
+  return updateSelectedStoryWithUpdaterAndSave(stories, (selectedStory) => {
+    return {
+      ...selectedStory,
+      // Purely a local change that gets overwritten by the back end
+      time: {
+        ...selectedStory.time,
+        modified: Date.now(),
       },
-    ],
-    historyIndex: 0,
-  };
 
-  const updatedStories = updateSelectedStory(stories, () => updatedStory);
-
-  if (updatedStories) {
-    const success = await storiesClient.saveStory(updatedStory);
-
-    if (success) {
-      return updatedStories;
-    }
-  }
+      history: [
+        {
+          content: selectedStory.content,
+          treePrev: -1,
+          attributes: {
+            generatedByLlm: false,
+          },
+        },
+      ],
+      historyIndex: 0,
+    };
+  });
 }
 
-export async function deleteSelectedStoryAndSave(stories: Stories) {
-  const selectedStory = getSelectedStory(stories);
+export async function deleteSelectedStoryAndSave(
+  stories: Stories,
+): Promise<Result<Stories, void>> {
+  try {
+    const selectedStory = getSelectedStory(stories);
 
-  if (!selectedStory) return;
+    if (!selectedStory)
+      return Result.error(new DoesNotExistError("No selected story"));
 
-  const success = await storiesClient.deleteStory(selectedStory.id);
+    await storiesClient.deleteStory(selectedStory.id);
 
-  if (success) {
     const updatedStories = { ...stories };
     delete updatedStories[selectedStory.id];
 
-    return updatedStories;
+    return Result.of(updatedStories);
+  } catch (error) {
+    return Result.error(wrapInError(error));
   }
 }
 
@@ -477,6 +491,14 @@ export async function deleteSelectedStoryAndSave(stories: Stories) {
  * As such, this function does not return anything beyond whether the request succeeded or not
  * @param file The stories.json file
  */
-export async function wipeExistingAndImportNewStories(file: File) {
-  return await storiesClient.importStories(file);
+export async function wipeExistingAndImportNewStories(
+  file: File,
+): Promise<Result<boolean, void>> {
+  try {
+    const success = await storiesClient.importStories(file);
+
+    return Result.of(success);
+  } catch (error) {
+    return Result.error(wrapInError(error));
+  }
 }

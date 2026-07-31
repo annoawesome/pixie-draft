@@ -86,12 +86,17 @@ export default function AsideSettings({
 
     if (!selectedStory) return;
 
-    const updatedStories =
-      await storiesService.deleteSelectedStoryAndSave(stories);
+    const result = await storiesService.deleteSelectedStoryAndSave(stories);
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onClickCancelDelete = () => {
@@ -101,14 +106,20 @@ export default function AsideSettings({
   const onClickDuplicate = async () => {
     if (!selectedStory) return;
 
-    const updatedStories = await storiesService.duplicateStoryAndSave(stories, {
+    const result = await storiesService.duplicateStoryAndSave(stories, {
       ...selectedStory,
       title: selectedStory.title + " (Copy)",
     });
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      // TODO: Actually handle the error
+      Err: function (error: Error): void {
+        console.error(error);
+      },
+    });
   };
 
   const onClickExportAsText = () => {
@@ -130,40 +141,47 @@ export default function AsideSettings({
   const onClickClearHistory = async () => {
     if (!selectedStory) return; // Should never happen!
 
-    try {
-      const updatedStories =
-        await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
+    const result =
+      await storiesService.clearHistoryOfSelectedStoryAndSave(stories);
 
-      if (updatedStories) {
+    result.match({
+      Ok: function (updatedStories: Stories): void {
         setStories(updatedStories);
-      }
-    } catch {
-      /* empty */
-    }
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   const onUpdateContentEditable = async (newContent: string) => {
     if (!selectedStory) return;
     if (selectedStory.desc === newContent) return;
 
-    const updatedStories =
-      await storiesService.updateSelectedStoryWithUpdaterAndSave(
-        stories,
-        (story) => {
-          return {
-            ...story,
-            desc: newContent,
-            time: {
-              ...story.time,
-              modified: Date.now(),
-            },
-          };
-        },
-      );
+    const result = await storiesService.updateSelectedStoryWithUpdaterAndSave(
+      stories,
+      (story) => {
+        return {
+          ...story,
+          desc: newContent,
+          time: {
+            ...story.time,
+            modified: Date.now(),
+          },
+        };
+      },
+    );
 
-    if (updatedStories) {
-      setStories(updatedStories);
-    }
+    result.match({
+      Ok: function (updatedStories: Stories): void {
+        setStories(updatedStories);
+      },
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        console.error(error);
+      },
+    });
   };
 
   if (selectedStory) {

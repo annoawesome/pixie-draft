@@ -1,6 +1,6 @@
 import { authClient, AuthClient } from "./authClient";
 import * as settingsApi from "../api/settingsApi";
-import { HttpError } from "../type/httpError";
+import { assertResponseOk } from "../util/assertions";
 
 export class SettingsClient {
   private authClient;
@@ -9,10 +9,18 @@ export class SettingsClient {
     this.authClient = authClient;
   }
 
+  /**
+   *
+   * @returns The queried setting
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
+   */
   public async getSettings() {
     const response = await settingsApi.getSettings(
       await this.authClient.getUsableApiToken(),
     );
+
+    assertResponseOk(response);
+
     const settings = await response.json();
 
     console.log("Fetched settings:", settings);
@@ -20,19 +28,28 @@ export class SettingsClient {
     return settings;
   }
 
+  /**
+   *
+   * @param settings The updated setting to apply to the backend
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
+   */
   public async updateSettings(settings: unknown) {
     const response = await settingsApi.updateSettings(
       await this.authClient.getUsableApiToken(),
       settings,
     );
 
-    if (response.ok) {
-      console.log("Updated settings:", settings);
-    } else {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
+
+    console.log("Updated settings:", settings);
   }
 
+  /**
+   *
+   * @param settingName The name of the setting to modify
+   * @param setting The new value of specified setting
+   * @throws {TimeoutError | AbortError | HttpError | TypeError | SyntaxError}
+   */
   public async updateSetting(settingName: string, setting: unknown) {
     const response = await settingsApi.patchSettings(
       await this.authClient.getUsableApiToken(),
@@ -40,11 +57,9 @@ export class SettingsClient {
       setting,
     );
 
-    if (response.ok) {
-      console.log(`Updated settings with patch to '${settingName}':`, setting);
-    } else {
-      throw new HttpError(response.status, `HTTP status ${response.status}`);
-    }
+    assertResponseOk(response);
+
+    console.log(`Updated settings with patch to '${settingName}':`, setting);
   }
 }
 

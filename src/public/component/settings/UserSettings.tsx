@@ -3,6 +3,7 @@ import { downloadFromUrl } from "../../service/downloadClientService";
 import { getDownloadUrl } from "../../service/userDataService";
 import * as storiesService from "../../service/storiesService";
 import Dialog from "../Dialog";
+import { HttpError } from "../../type/error/httpError";
 
 function ImportStoriesDialog({
   showImportStoriesDialog,
@@ -26,11 +27,18 @@ function ImportStoriesDialog({
     const file = files[0];
 
     // upload file
-    const success = await storiesService.wipeExistingAndImportNewStories(file);
+    const result = await storiesService.wipeExistingAndImportNewStories(file);
 
-    if (!success) {
-      alert("Oops, that file is invalid. Try again.");
-    }
+    result.match({
+      Ok: () => {}, // TODO: Maybe tell the user that the operation succeeded?
+      Err: function (error: Error): void {
+        if (error instanceof HttpError && error.status === 400) {
+          alert("Oops, that file is invalid. Try again.");
+        } else {
+          alert("An unknown error has occurred: " + error.message);
+        }
+      },
+    });
 
     setShowImportStoriesDialog(false);
   };
@@ -78,14 +86,16 @@ export function UserSettings() {
   const [showImportStoriesDialog, setShowImportStoriesDialog] = useState(false);
 
   const onClickExportAllStories = async () => {
-    const url = await getDownloadUrl();
+    const result = await getDownloadUrl();
 
-    if (url) {
-      downloadFromUrl(url);
-    } else {
-      /* empty */
-      // Maybe do something if download URL cannot be generated?
-    }
+    result.match({
+      Ok: downloadFromUrl,
+      Err: function (error: Error): void {
+        // TODO: Actually handle the error
+        // Maybe do something if download URL cannot be generated?
+        console.error(error);
+      },
+    });
   };
 
   const onClickImportStories = () => {
