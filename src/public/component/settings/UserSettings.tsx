@@ -91,9 +91,9 @@ export function UserSettings() {
     result.match({
       Ok: downloadFromUrl,
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
-        // Maybe do something if download URL cannot be generated?
+        // Maybe do something more sophisticated if download URL cannot be generated?
         console.error(error);
+        alert("Failed to generate download. Please try again later.");
       },
     });
   };
