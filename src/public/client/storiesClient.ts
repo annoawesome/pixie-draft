@@ -43,7 +43,7 @@ export class StoriesClient {
       story.historyIndex,
     );
 
-    assertResponseOk(response);
+    assertResponseOk(response, "Could not duplicate story");
 
     const createdStory = await response.json();
 
@@ -61,7 +61,7 @@ export class StoriesClient {
       await this.authClient.getUsableApiToken(),
     );
 
-    assertResponseOk(response);
+    assertResponseOk(response, "Could not load user library");
 
     const stories = await response.json();
     console.log("Fetched stories:", stories);
@@ -81,7 +81,7 @@ export class StoriesClient {
 
     const story = await response.json();
 
-    assertResponseOk(response);
+    assertResponseOk(response, "Could not load story");
 
     console.log("Loaded story:", story);
 
@@ -98,7 +98,7 @@ export class StoriesClient {
       story,
     );
 
-    assertResponseOk(response);
+    assertResponseOk(response, "Could not save story");
 
     console.log("Saved story");
 
@@ -115,7 +115,7 @@ export class StoriesClient {
       id,
     );
 
-    assertResponseOk(response, "Error deleting story");
+    assertResponseOk(response, "Could not delete story");
 
     console.log("Deleted story");
 
@@ -132,7 +132,7 @@ export class StoriesClient {
       await this.authClient.getUsableApiToken(),
     );
 
-    assertResponseOk(response, "Error getting stories download");
+    assertResponseOk(response, "Could not generate stories download URL");
 
     return await response.text();
   }
@@ -149,7 +149,7 @@ export class StoriesClient {
       file,
     );
 
-    assertResponseOk(response, "Error importing stories");
+    assertResponseOk(response, "Could not import and overwrite stories");
 
     return response.ok;
   }
