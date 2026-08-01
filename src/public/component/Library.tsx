@@ -28,7 +28,6 @@ function StoryCard({
       Ok: function (updatedStories: Stories): void {
         setStories(updatedStories);
       },
-      // TODO: Actually handle the error
       Err: function (error: Error): void {
         console.log(error);
         notificationContextObject.setNotification(error.toString());
@@ -65,6 +64,8 @@ export default function Library({
   const [search, setSearch] = useState("");
   const [showImportDialog, setShowImportDialog] = useState(false);
 
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickNewStoryButton = async () => {
     const result = await storiesService.createStoryAndSave(
       stories,
@@ -76,9 +77,9 @@ export default function Library({
       Ok: function (updatedStories: Stories) {
         setStories(updatedStories);
       },
-      // TODO: Actually handle the error
       Err: function (error: Error) {
         console.error(error);
+        notificationContextObject.setNotification(error.toString());
       },
     });
   };
@@ -114,9 +115,9 @@ export default function Library({
         Ok: function (updatedStories: Stories) {
           setStories(updatedStories);
         },
-        // TODO: Actually handle the error
         Err: function (error: Error) {
           console.error(error);
+          notificationContextObject.setNotification(error.toString());
         },
       });
     } else if (file.type === MimeTypes.JSON) {
@@ -129,9 +130,9 @@ export default function Library({
         Ok: function (updatedStories: Stories): void {
           setStories(updatedStories);
         },
-        // TODO: Actually handle the error
         Err: function (error: Error): void {
           console.error(error);
+          notificationContextObject.setNotification(error.toString());
         },
       });
     }
