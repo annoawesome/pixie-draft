@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import Story, { Stories } from "../type/storyType";
 import ContentEditable from "./ContentEditable";
@@ -13,6 +13,7 @@ import { LlmEndpointClient } from "../type/llmEndpointClient";
 import { NoLlmClient } from "../client/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
 import Popover from "./Popover";
+import { NotificationContext } from "./NotificationProvider";
 
 function MainEditorEndpointMenu({
   endpoint,
@@ -86,6 +87,8 @@ function ActionBar({
   const [modelsLoaded, setModelsLoaded] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState("");
 
+  const notificationContextObject = useContext(NotificationContext);
+
   let llmEndpointClient: LlmEndpointClient = new NoLlmClient();
 
   if (endpointProfile) {
@@ -155,8 +158,8 @@ function ActionBar({
           setStories(updatedStories);
         },
         Err: function (error: Error): void {
-          // TODO: Actually handle the error
           console.error(error);
+          notificationContextObject.setNotification(error.toString());
         },
       });
 
@@ -188,8 +191,8 @@ function ActionBar({
         setStories(updatedStories);
       },
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
         console.error(error);
+        notificationContextObject.setNotification(error.toString());
       },
     });
   };
@@ -202,8 +205,8 @@ function ActionBar({
         setStories(updatedStories);
       },
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
         console.error(error);
+        notificationContextObject.setNotification(error.toString());
       },
     });
   };
@@ -330,6 +333,8 @@ export default function Editor({
   const [locked, setLocked] = useState(false);
   const [endpointProfile, setEndpointProfile] = useState<Endpoint | null>(null);
 
+  const notificationContextObject = useContext(NotificationContext);
+
   const contentEditableRef = useRef<HTMLDivElement | null>(null);
 
   const onChangeStoryTitle = (
@@ -352,8 +357,9 @@ export default function Editor({
       Ok: function (): void {
         // TODO: Handle success
       },
-      Err: function (): void {
-        // TODO: Actually handle the error
+      Err: function (error: Error): void {
+        console.error(error);
+        notificationContextObject.setNotification(error.toString());
       },
     });
   };
@@ -375,8 +381,8 @@ export default function Editor({
         setStories(updatedStories);
       },
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
         console.error(error);
+        notificationContextObject.setNotification(error.toString());
       },
     });
 
@@ -390,9 +396,9 @@ export default function Editor({
 
       result.match({
         Ok: setEndpointProfile,
-        // TODO: Actually handle the error
         Err: function (error: Error): void {
           console.error(error);
+          notificationContextObject.setNotification(error.toString());
         },
       });
     };
