@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import MainLayout from "./MainLayout";
 import {
@@ -10,6 +10,9 @@ import {
 import { CurrentPage } from "../type/currentPageType";
 import { authClient } from "../client/authClient";
 import SquareButtonContainer from "./SquareButtonContainer";
+import NotificationProvider, {
+  NotificationContext,
+} from "./NotificationProvider";
 
 function Header({
   zenMode,
@@ -20,6 +23,8 @@ function Header({
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
   setZenMode: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickLogOut = () => {
     authClient.logOut().then(() => window.location.reload());
   };
@@ -58,6 +63,13 @@ function Header({
           </button>
         </SquareButtonContainer>
       </div>
+      <div className="flex-row-center width-fill-max" id="header-center">
+        {notificationContextObject.notification ? (
+          <p>{notificationContextObject.notification}</p>
+        ) : (
+          <></>
+        )}
+      </div>
       <div className="flex-row-right width-fill-max" id="header-right">
         <SquareButtonContainer>
           <button
@@ -93,14 +105,16 @@ export default function HorizontalLayout({
   const [zenMode, setZenMode] = useState(false);
 
   return (
-    <div className="flex-column" id="header-body-layout">
-      <Header
-        zenMode={zenMode}
-        setCurrentPage={setCurrentPage}
-        setZenMode={setZenMode}
-      />
-      <MainLayout zenMode={zenMode} authenticated={authenticated} />
-      <Footer />
-    </div>
+    <NotificationProvider>
+      <div className="flex-column" id="header-body-layout">
+        <Header
+          zenMode={zenMode}
+          setCurrentPage={setCurrentPage}
+          setZenMode={setZenMode}
+        />
+        <MainLayout zenMode={zenMode} authenticated={authenticated} />
+        <Footer />
+      </div>
+    </NotificationProvider>
   );
 }

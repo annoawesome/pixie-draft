@@ -99,6 +99,10 @@ input::file-selector-button {
   flex-direction: row;
 }
 
+.flex-row-center {
+  display: flex;
+}
+
 .flex-row-right {
   display: flex;
   flex-direction: row-reverse;
@@ -484,9 +488,15 @@ button:disabled .path-icon {
 
 /* Headers and footers */
 #header-left,
-#header-right {
+#header-right,
+#header-center {
   margin: 8px;
   gap: 8px;
+}
+
+#header-center {
+  align-items: center;
+  justify-content: center;
 }
 
 #footer-blurb {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Story, { Stories, StoryPreview } from "../type/storyType";
 import { millisecondsToString } from "../util/time";
@@ -6,6 +6,7 @@ import * as storiesService from "../service/storiesService";
 import Dialog from "./Dialog";
 import MimeTypes from "../type/mimeType";
 import GradientScrollable from "./GradientScrollable";
+import { NotificationContext } from "./NotificationProvider";
 
 function StoryCard({
   story,
@@ -16,6 +17,8 @@ function StoryCard({
   stories: Stories;
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickStoryCard = async () => {
     const id = story.id;
 
@@ -28,6 +31,7 @@ function StoryCard({
       // TODO: Actually handle the error
       Err: function (error: Error): void {
         console.log(error);
+        notificationContextObject.setNotification(error.toString());
       },
     });
   };
