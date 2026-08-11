@@ -14,6 +14,7 @@ import { NoLlmClient } from "../client/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
 import Popover from "./Popover";
 import { NotificationContext } from "./NotificationProvider";
+import { humanReadableError } from "../service/displayErrorService";
 
 function MainEditorEndpointMenu({
   endpoint,
@@ -159,7 +160,7 @@ function ActionBar({
         },
         Err: function (error: Error): void {
           console.error(error);
-          notificationContextObject.setNotification(error.toString());
+          notificationContextObject.setNotification(humanReadableError(error));
         },
       });
 
@@ -192,7 +193,7 @@ function ActionBar({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -206,7 +207,7 @@ function ActionBar({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -359,7 +360,7 @@ export default function Editor({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -382,7 +383,7 @@ export default function Editor({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
 
@@ -398,7 +399,7 @@ export default function Editor({
         Ok: setEndpointProfile,
         Err: function (error: Error): void {
           console.error(error);
-          notificationContextObject.setNotification(error.toString());
+          notificationContextObject.setNotification(humanReadableError(error));
         },
       });
     };

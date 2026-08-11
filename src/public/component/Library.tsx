@@ -7,6 +7,7 @@ import Dialog from "./Dialog";
 import MimeTypes from "../type/mimeType";
 import GradientScrollable from "./GradientScrollable";
 import { NotificationContext } from "./NotificationProvider";
+import { humanReadableError } from "../service/displayErrorService";
 
 function StoryCard({
   story,
@@ -30,7 +31,7 @@ function StoryCard({
       },
       Err: function (error: Error): void {
         console.log(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -79,7 +80,7 @@ export default function Library({
       },
       Err: function (error: Error) {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -117,7 +118,7 @@ export default function Library({
         },
         Err: function (error: Error) {
           console.error(error);
-          notificationContextObject.setNotification(error.toString());
+          notificationContextObject.setNotification(humanReadableError(error));
         },
       });
     } else if (file.type === MimeTypes.JSON) {
@@ -132,7 +133,7 @@ export default function Library({
         },
         Err: function (error: Error): void {
           console.error(error);
-          notificationContextObject.setNotification(error.toString());
+          notificationContextObject.setNotification(humanReadableError(error));
         },
       });
     }

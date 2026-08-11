@@ -10,6 +10,7 @@ import GradientScrollable from "./GradientScrollable";
 import ContentEditable from "./ContentEditable";
 import CenterPanel from "./CenterPanel";
 import { NotificationContext } from "./NotificationProvider";
+import { humanReadableError } from "../service/displayErrorService";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -97,7 +98,7 @@ export default function AsideSettings({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -120,7 +121,7 @@ export default function AsideSettings({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -153,7 +154,7 @@ export default function AsideSettings({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -182,7 +183,7 @@ export default function AsideSettings({
       },
       Err: function (error: Error): void {
         console.error(error);
-        notificationContextObject.setNotification(error.toString());
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
