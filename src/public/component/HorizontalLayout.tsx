@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import MainLayout from "./MainLayout";
 import {
   BrainIcon,
+  ErrorIcon,
   HamburgerMenuIcon,
   LockIcon,
   MeditationIcon,
@@ -63,12 +64,16 @@ function Header({
           </button>
         </SquareButtonContainer>
       </div>
-      <div
-        className="flex-row-center width-fill-max hide-on-mobile"
-        id="header-center"
-      >
+      <div className="flex-row-center width-fill-max" id="header-center">
         {notificationContextObject.notification ? (
-          <p id="notification-text">{notificationContextObject.notification}</p>
+          <>
+            <p className="hide-on-mobile" id="notification-text">
+              {notificationContextObject.notification}
+            </p>
+            <SquareButtonContainer>
+              <ErrorIcon />
+            </SquareButtonContainer>
+          </>
         ) : (
           <></>
         )}

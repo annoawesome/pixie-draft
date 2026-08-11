@@ -297,6 +297,10 @@ input::file-selector-button:active {
   transform: translateY(2px);
 }
 
+.path-icon-alert {
+  fill: var(--destructive-color-6);
+}
+
 .path-icon-no-translation {
   transform: none;
 }
