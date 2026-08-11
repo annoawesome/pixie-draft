@@ -499,6 +499,14 @@ button:disabled .path-icon {
   justify-content: center;
 }
 
+#notification-text {
+  padding: 4px 8px;
+
+  background-color: var(--destructive-color-1);
+  border: 1px solid var(--destructive-color-4);
+  border-radius: 8px;
+}
+
 #footer-blurb {
   text-align: center;
   margin-bottom: 8px;

@@ -65,7 +65,7 @@ function Header({
       </div>
       <div className="flex-row-center width-fill-max" id="header-center">
         {notificationContextObject.notification ? (
-          <p>{notificationContextObject.notification}</p>
+          <p id="notification-text">{notificationContextObject.notification}</p>
         ) : (
           <></>
         )}
