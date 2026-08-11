@@ -63,7 +63,10 @@ function Header({
           </button>
         </SquareButtonContainer>
       </div>
-      <div className="flex-row-center width-fill-max" id="header-center">
+      <div
+        className="flex-row-center width-fill-max hide-on-mobile"
+        id="header-center"
+      >
         {notificationContextObject.notification ? (
           <p id="notification-text">{notificationContextObject.notification}</p>
         ) : (

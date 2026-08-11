@@ -123,6 +123,12 @@ input::file-selector-button {
   }
 }
 
+@media screen and (width <= 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+
 .width-fill-max {
   gap: 8px;
   width: 100%;
@@ -501,6 +507,8 @@ button:disabled .path-icon {
 
 #notification-text {
   padding: 4px 8px;
+
+  text-wrap: nowrap;
 
   background-color: var(--destructive-color-1);
   border: 1px solid var(--destructive-color-4);
