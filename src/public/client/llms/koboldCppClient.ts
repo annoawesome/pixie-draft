@@ -1,9 +1,13 @@
 import z from "zod";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 
-import { getDefaultFetch, getModel, postGenerate } from "../api/koboldCppApi";
-import { LlmEndpointClient } from "../type/llmEndpointClient";
-import { StreamableEndpoint, TokenStream } from "../type/streamableEndpoint";
+import {
+  getDefaultFetch,
+  getModel,
+  postGenerate,
+} from "../../api/koboldCppApi";
+import { LlmEndpointClient } from "../../type/llmEndpointClient";
+import { StreamableEndpoint, TokenStream } from "../../type/streamableEndpoint";
 
 const GenerationOutputSchema = z.object({
   results: z.array(

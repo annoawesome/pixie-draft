@@ -1,4 +1,4 @@
-import { LlmEndpointClient } from "../type/llmEndpointClient";
+import { LlmEndpointClient } from "../../type/llmEndpointClient";
 
 export class NoLlmClient implements LlmEndpointClient {
   generateResponse(): Promise<string> {
