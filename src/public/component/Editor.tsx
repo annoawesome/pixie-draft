@@ -10,7 +10,7 @@ import Endpoint from "../type/endpointType";
 import SquareButtonContainer from "./SquareButtonContainer";
 import CenterPanel from "./CenterPanel";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
-import { NoLlmClient } from "../client/noLlmClient";
+import { NoLlmClient } from "../client/llms/noLlmClient";
 import { isStreamableEndpoint } from "../type/streamableEndpoint";
 import Popover from "./Popover";
 import { NotificationContext } from "./NotificationProvider";

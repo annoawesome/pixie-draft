@@ -1,6 +1,6 @@
-import { KoboldCppClient } from "../client/koboldCppClient";
+import { KoboldCppClient } from "../client/llms/koboldCppClient";
 import { OpenAiCompletionsClient } from "../client/llms/openAiCompletionsClient";
-import { NoLlmClient } from "../client/noLlmClient";
+import { NoLlmClient } from "../client/llms/noLlmClient";
 import { settingsClient } from "../client/settingsClient";
 import Endpoint, { endpointTypes } from "../type/endpointType";
 import { LlmEndpointClient } from "../type/llmEndpointClient";
