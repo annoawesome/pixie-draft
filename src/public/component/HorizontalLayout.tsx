@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import MainLayout from "./MainLayout";
 import {
   BrainIcon,
+  ErrorIcon,
   HamburgerMenuIcon,
   LockIcon,
   MeditationIcon,
@@ -10,6 +11,10 @@ import {
 import { CurrentPage } from "../type/currentPageType";
 import { authClient } from "../client/authClient";
 import SquareButtonContainer from "./SquareButtonContainer";
+import NotificationProvider, {
+  NotificationContext,
+} from "./NotificationProvider";
+import Popover from "./Popover";
 
 function Header({
   zenMode,
@@ -20,6 +25,8 @@ function Header({
   setCurrentPage: React.Dispatch<React.SetStateAction<CurrentPage>>;
   setZenMode: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickLogOut = () => {
     authClient.logOut().then(() => window.location.reload());
   };
@@ -58,6 +65,33 @@ function Header({
           </button>
         </SquareButtonContainer>
       </div>
+      <div className="flex-row-center width-fill-max" id="header-center">
+        {notificationContextObject.notification ? (
+          <>
+            <p className="hide-on-mobile" id="notification-text">
+              {notificationContextObject.notification}
+            </p>
+            <SquareButtonContainer>
+              <button
+                type="button"
+                className="button-tertiary"
+                popoverTarget="mobile-notification-content"
+              >
+                <ErrorIcon />
+              </button>
+            </SquareButtonContainer>
+            <Popover
+              className="display-on-mobile"
+              id="mobile-notification-content"
+            >
+              <h1>Notification content</h1>
+              <p>{notificationContextObject.notification}</p>
+            </Popover>
+          </>
+        ) : (
+          <></>
+        )}
+      </div>
       <div className="flex-row-right width-fill-max" id="header-right">
         <SquareButtonContainer>
           <button
@@ -93,14 +127,16 @@ export default function HorizontalLayout({
   const [zenMode, setZenMode] = useState(false);
 
   return (
-    <div className="flex-column" id="header-body-layout">
-      <Header
-        zenMode={zenMode}
-        setCurrentPage={setCurrentPage}
-        setZenMode={setZenMode}
-      />
-      <MainLayout zenMode={zenMode} authenticated={authenticated} />
-      <Footer />
-    </div>
+    <NotificationProvider>
+      <div className="flex-column" id="header-body-layout">
+        <Header
+          zenMode={zenMode}
+          setCurrentPage={setCurrentPage}
+          setZenMode={setZenMode}
+        />
+        <MainLayout zenMode={zenMode} authenticated={authenticated} />
+        <Footer />
+      </div>
+    </NotificationProvider>
   );
 }

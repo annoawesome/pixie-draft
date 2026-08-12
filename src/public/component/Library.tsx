@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Story, { Stories, StoryPreview } from "../type/storyType";
 import { millisecondsToString } from "../util/time";
@@ -6,6 +6,8 @@ import * as storiesService from "../service/storiesService";
 import Dialog from "./Dialog";
 import MimeTypes from "../type/mimeType";
 import GradientScrollable from "./GradientScrollable";
+import { NotificationContext } from "./NotificationProvider";
+import { humanReadableError } from "../service/displayErrorService";
 
 function StoryCard({
   story,
@@ -16,6 +18,8 @@ function StoryCard({
   stories: Stories;
   setStories: React.Dispatch<React.SetStateAction<Stories>>;
 }) {
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickStoryCard = async () => {
     const id = story.id;
 
@@ -25,9 +29,9 @@ function StoryCard({
       Ok: function (updatedStories: Stories): void {
         setStories(updatedStories);
       },
-      // TODO: Actually handle the error
       Err: function (error: Error): void {
         console.log(error);
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -61,6 +65,8 @@ export default function Library({
   const [search, setSearch] = useState("");
   const [showImportDialog, setShowImportDialog] = useState(false);
 
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickNewStoryButton = async () => {
     const result = await storiesService.createStoryAndSave(
       stories,
@@ -72,9 +78,9 @@ export default function Library({
       Ok: function (updatedStories: Stories) {
         setStories(updatedStories);
       },
-      // TODO: Actually handle the error
       Err: function (error: Error) {
         console.error(error);
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -110,9 +116,9 @@ export default function Library({
         Ok: function (updatedStories: Stories) {
           setStories(updatedStories);
         },
-        // TODO: Actually handle the error
         Err: function (error: Error) {
           console.error(error);
+          notificationContextObject.setNotification(humanReadableError(error));
         },
       });
     } else if (file.type === MimeTypes.JSON) {
@@ -125,9 +131,9 @@ export default function Library({
         Ok: function (updatedStories: Stories): void {
           setStories(updatedStories);
         },
-        // TODO: Actually handle the error
         Err: function (error: Error): void {
           console.error(error);
+          notificationContextObject.setNotification(humanReadableError(error));
         },
       });
     }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import sanitize from "sanitize-filename";
 
 import Story, { Stories } from "../type/storyType";
@@ -9,6 +9,8 @@ import * as storiesService from "../service/storiesService";
 import GradientScrollable from "./GradientScrollable";
 import ContentEditable from "./ContentEditable";
 import CenterPanel from "./CenterPanel";
+import { NotificationContext } from "./NotificationProvider";
+import { humanReadableError } from "../service/displayErrorService";
 
 function downloadText(text: string, mimeType: string, fileName: string) {
   const file = new Blob([text], {
@@ -75,6 +77,8 @@ export default function AsideSettings({
   const [showDialog, setShowDialog] = useState(false);
   const selectedStory = storiesService.getSelectedStory(stories);
 
+  const notificationContextObject = useContext(NotificationContext);
+
   const onClickDelete = () => {
     if (selectedStory) {
       setShowDialog(true);
@@ -93,8 +97,8 @@ export default function AsideSettings({
         setStories(updatedStories);
       },
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
         console.error(error);
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -115,9 +119,9 @@ export default function AsideSettings({
       Ok: function (updatedStories: Stories): void {
         setStories(updatedStories);
       },
-      // TODO: Actually handle the error
       Err: function (error: Error): void {
         console.error(error);
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -149,8 +153,8 @@ export default function AsideSettings({
         setStories(updatedStories);
       },
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
         console.error(error);
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
@@ -178,8 +182,8 @@ export default function AsideSettings({
         setStories(updatedStories);
       },
       Err: function (error: Error): void {
-        // TODO: Actually handle the error
         console.error(error);
+        notificationContextObject.setNotification(humanReadableError(error));
       },
     });
   };
