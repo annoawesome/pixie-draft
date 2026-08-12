@@ -14,6 +14,7 @@ import SquareButtonContainer from "./SquareButtonContainer";
 import NotificationProvider, {
   NotificationContext,
 } from "./NotificationProvider";
+import Popover from "./Popover";
 
 function Header({
   zenMode,
@@ -71,8 +72,21 @@ function Header({
               {notificationContextObject.notification}
             </p>
             <SquareButtonContainer>
-              <ErrorIcon />
+              <button
+                type="button"
+                className="button-tertiary"
+                popoverTarget="mobile-notification-content"
+              >
+                <ErrorIcon />
+              </button>
             </SquareButtonContainer>
+            <Popover
+              className="display-on-mobile"
+              id="mobile-notification-content"
+            >
+              <h1>Notification content</h1>
+              <p>{notificationContextObject.notification}</p>
+            </Popover>
           </>
         ) : (
           <></>
