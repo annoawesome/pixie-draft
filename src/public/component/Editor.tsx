@@ -2,7 +2,13 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import Story, { Stories } from "../type/storyType";
 import ContentEditable from "./ContentEditable";
-import { RedoIcon, RefreshIcon, ServerIcon, UndoIcon } from "./Icons";
+import {
+  PaperAirplaneIcon,
+  RedoIcon,
+  RefreshIcon,
+  ServerIcon,
+  UndoIcon,
+} from "./Icons";
 import * as endpointProfilesService from "../service/endpointProfilesService";
 import * as storiesService from "../service/storiesService";
 import Pulse from "./Pulse";
@@ -291,13 +297,23 @@ function ActionBar({
       </div>
       <div className="flex-row-right width-fill-max" id="action-bar-right">
         <button
-          className="button-primary"
+          className="button-primary hide-on-mobile"
           type="button"
           disabled={!selectedModel || locked}
           onClick={onGenerate}
         >
           Generate
         </button>
+        <SquareButtonContainer className="display-on-mobile">
+          <button
+            className="button-primary button-icon"
+            type="button"
+            disabled={!selectedModel || locked}
+            onClick={onGenerate}
+          >
+            <PaperAirplaneIcon />
+          </button>
+        </SquareButtonContainer>
         <button
           className="flex-row button-secondary"
           id="endpoint-status-indicator"
