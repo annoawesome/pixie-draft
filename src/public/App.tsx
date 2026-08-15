@@ -68,7 +68,7 @@ export default function App() {
     <>
       <AuthenticatePrompt setAuthenticated={setAuthenticated} />
       <DocumentTitleRef
-        title={humanReadablePageLocation(currentPage) + " | PixieDraft"}
+        title={humanReadablePageLocation("login") + " | PixieDraft"}
       />
     </>
   );
