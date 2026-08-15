@@ -1,3 +1,5 @@
+import { secondsToMilliseconds } from "../util/time";
+
 /**
  *
  * @param apiToken The user's access token
@@ -9,7 +11,7 @@ export async function getSettings(apiToken: string) {
     headers: new Headers({
       Authorization: "Bearer " + apiToken,
     }),
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -30,7 +32,7 @@ export async function updateSettings(apiToken: string, settings: unknown) {
       "Content-Type": "application/json",
     }),
     body: JSON.stringify(settings),
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -56,7 +58,7 @@ export async function patchSettings(
       "Content-Type": "application/json",
     }),
     body: JSON.stringify(setting),
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
