@@ -4,6 +4,20 @@ import HorizontalLayout from "./component/HorizontalLayout";
 import { CurrentPage } from "./type/currentPageType";
 import Settings from "./component/Settings";
 import { authClient } from "./client/authClient";
+import DocumentTitleRef from "./component/DocumentTitleRef";
+
+function humanReadablePageLocation(currentPage: CurrentPage) {
+  switch (currentPage) {
+    case "main":
+      return "Editor";
+    case "login":
+      return "Login";
+    case "endpoints":
+      return "Settings";
+    default:
+      return "";
+  }
+}
 
 export default function App() {
   // Makes development a little easier with vite's dev server
@@ -26,17 +40,36 @@ export default function App() {
   if (authenticated) {
     if (currentPage === "main") {
       return (
-        <HorizontalLayout
-          authenticated={authenticated}
-          setCurrentPage={setCurrentPage}
-        />
+        <>
+          <HorizontalLayout
+            authenticated={authenticated}
+            setCurrentPage={setCurrentPage}
+          />
+          <DocumentTitleRef
+            title={humanReadablePageLocation(currentPage) + " | PixieDraft"}
+          />
+        </>
       );
     } else if (currentPage === "endpoints") {
-      return <Settings setCurrentPage={setCurrentPage} />;
+      return (
+        <>
+          <Settings setCurrentPage={setCurrentPage} />
+          <DocumentTitleRef
+            title={humanReadablePageLocation(currentPage) + " | PixieDraft"}
+          />
+        </>
+      );
     }
   } else if (!checkedAuth) {
     return <p>Loading...</p>;
   }
 
-  return <AuthenticatePrompt setAuthenticated={setAuthenticated} />;
+  return (
+    <>
+      <AuthenticatePrompt setAuthenticated={setAuthenticated} />
+      <DocumentTitleRef
+        title={humanReadablePageLocation("login") + " | PixieDraft"}
+      />
+    </>
+  );
 }
