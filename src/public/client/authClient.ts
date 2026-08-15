@@ -1,5 +1,13 @@
 import * as authApi from "../api/authApi";
 import { HttpError } from "../type/error/httpError";
+import { secondsToMilliseconds } from "../util/time";
+
+/**
+ * Exactly twelve minutes,
+ * as it says on the tin.
+ * Represented as the equivalent amount of milliseconds.
+ */
+const twelveMinutes = secondsToMilliseconds(60 * 12);
 
 export class AuthClient {
   private apiToken: string = "";
@@ -24,7 +32,7 @@ export class AuthClient {
 
   public async setRefreshInterval() {
     // Refresh api token every 12 minutes, 3 minutes before expiration
-    this.refreshIntervalId = setTimeout(() => this.refresh(), 1e3 * 60 * 12);
+    this.refreshIntervalId = setTimeout(() => this.refresh(), twelveMinutes);
   }
 
   /**
@@ -58,7 +66,7 @@ export class AuthClient {
   public async getUsableApiToken() {
     if (
       this.lastRefreshTime > -1 &&
-      Date.now() - this.lastRefreshTime > 1e3 * 60 * 12
+      Date.now() - this.lastRefreshTime > twelveMinutes
     ) {
       await this.refresh();
     }

@@ -21,6 +21,7 @@ import { isStreamableEndpoint } from "../type/streamableEndpoint";
 import Popover from "./Popover";
 import { NotificationContext } from "./NotificationProvider";
 import { humanReadableError } from "../service/displayErrorService";
+import { secondsToMilliseconds } from "../util/time";
 
 function MainEditorEndpointMenu({
   endpoint,
@@ -249,7 +250,7 @@ function ActionBar({
         setModelsLoaded([]);
         setSelectedModel("");
       }
-    }, 5e3);
+    }, secondsToMilliseconds(5));
 
     return () => clearInterval(intervalId);
   }, [endpointProfile]);

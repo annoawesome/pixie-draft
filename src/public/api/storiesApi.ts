@@ -1,4 +1,5 @@
 import Story, { HistoryNode } from "../type/storyType";
+import { secondsToMilliseconds } from "../util/time";
 
 /**
  * @throws {TimeoutError}
@@ -8,7 +9,7 @@ export async function getStories(apiToken: string) {
     headers: {
       Authorization: `Bearer ${apiToken}`,
     },
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -31,7 +32,7 @@ export async function createStory(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ title, content, history, historyIndex }),
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -48,7 +49,7 @@ export async function saveStory(apiToken: string, story: Story) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(story),
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -62,7 +63,7 @@ export async function loadStory(apiToken: string, id: string) {
     headers: {
       Authorization: `Bearer ${apiToken}`,
     },
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -77,7 +78,7 @@ export async function deleteStory(apiToken: string, id: string) {
     headers: {
       Authorization: `Bearer ${apiToken}`,
     },
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 
   return response;
@@ -91,7 +92,7 @@ export async function getStoriesDownload(apiToken: string) {
     headers: {
       Authorization: `Bearer ${apiToken}`,
     },
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 }
 
@@ -106,6 +107,6 @@ export async function postStoriesUpload(apiToken: string, file: File) {
       Authorization: `Bearer ${apiToken}`,
     },
     body: file,
-    signal: AbortSignal.timeout(5e3),
+    signal: AbortSignal.timeout(secondsToMilliseconds(5)),
   });
 }
