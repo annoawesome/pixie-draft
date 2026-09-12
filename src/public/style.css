@@ -266,6 +266,10 @@ input::file-selector-button:active {
   background-color: var(--destructive-color-2);
 }
 
+.button-destructive.button-primary:disabled {
+  background-color: var(--destructive-color-1);
+}
+
 .button-destructive.button-secondary {
   background-color: var(--destructive-color-2);
 }
