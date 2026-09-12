@@ -40,7 +40,7 @@ function DialogBox({
   onClickCancelDelete: () => void;
   onClickReallyDelete: () => void;
 }) {
-  const phrase = (Math.random() * 10000).toFixed(0).padStart(4, "0");
+  const phrase = selectedStory.title;
   const [confirmPhrase, setConfirmPhrase] = useState("");
 
   return (
@@ -51,7 +51,7 @@ function DialogBox({
         to delete it.
       </p>
       <div>
-        <p>Type {phrase} to confirm.</p>
+        <p>Type "{phrase}" to confirm.</p>
         <input
           type="text"
           className="input-secondary"
