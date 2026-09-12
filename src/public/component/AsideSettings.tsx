@@ -40,6 +40,9 @@ function DialogBox({
   onClickCancelDelete: () => void;
   onClickReallyDelete: () => void;
 }) {
+  const phrase = (Math.random() * 10000).toFixed(0).padStart(4, "0");
+  const [confirmPhrase, setConfirmPhrase] = useState("");
+
   return (
     <div className="flex-column gap-medium">
       <h1>Delete "{selectedStory.title}"?</h1>
@@ -47,6 +50,15 @@ function DialogBox({
         This is an irreversible process. You will lose this story if you choose
         to delete it.
       </p>
+      <div>
+        <p>Type {phrase} to confirm.</p>
+        <input
+          type="text"
+          className="input-secondary"
+          value={confirmPhrase}
+          onChange={(e) => setConfirmPhrase(e.target.value)}
+        />
+      </div>
       <div className="flex-row gap-medium">
         <button
           type="button"
@@ -59,6 +71,7 @@ function DialogBox({
           type="button"
           className="button-primary button-destructive width-fill-max"
           onClick={onClickReallyDelete}
+          disabled={confirmPhrase !== phrase}
         >
           Yes, Delete
         </button>
