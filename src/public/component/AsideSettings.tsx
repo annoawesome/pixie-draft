@@ -43,6 +43,10 @@ function DialogBox({
   const phrase = selectedStory.title;
   const [confirmPhrase, setConfirmPhrase] = useState("");
 
+  const onChangePhraseInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPhrase(event.target.value);
+  };
+
   return (
     <div className="flex-column gap-medium">
       <h1>Delete "{selectedStory.title}"?</h1>
@@ -56,7 +60,7 @@ function DialogBox({
           type="text"
           className="input-secondary"
           value={confirmPhrase}
-          onChange={(e) => setConfirmPhrase(e.target.value)}
+          onChange={onChangePhraseInput}
         />
       </div>
       <div className="flex-row gap-medium">
