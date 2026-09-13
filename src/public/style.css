@@ -246,7 +246,7 @@ input::file-selector-button:active {
   background-color: var(--neutral-color-3);
 }
 
-.button-selected.button.tertiary:hover {
+.button.button-selected.tertiary:hover {
   background-color: var(--accent-color-4);
 }
 
@@ -280,15 +280,15 @@ button.button-destructive.primary:disabled {
   background-color: var(--destructive-color-1);
 }
 
-.button-destructive.button.secondary {
+.button.button-destructive.secondary {
   background-color: var(--destructive-color-2);
 }
 
-.button-destructive.button.secondary:hover {
+.button.button-destructive.secondary:hover {
   background-color: var(--destructive-color-3);
 }
 
-.button-destructive.button.secondary:active {
+.button.button-destructive.secondary:active {
   background-color: var(--destructive-color-1);
 }
 
