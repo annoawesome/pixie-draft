@@ -151,7 +151,7 @@ export default function Library({
     <GradientScrollable>
       <div className="flex-column side-column" id="library">
         <button
-          className="button-primary"
+          className="primary"
           id="new-story-button"
           onClick={onClickNewStoryButton}
         >

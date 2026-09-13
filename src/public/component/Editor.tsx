@@ -298,7 +298,7 @@ function ActionBar({
       </div>
       <div className="flex-row-right width-fill-max" id="action-bar-right">
         <button
-          className="button-primary hide-on-mobile"
+          className="primary hide-on-mobile"
           type="button"
           disabled={!selectedModel || locked}
           onClick={onGenerate}
@@ -307,7 +307,7 @@ function ActionBar({
         </button>
         <SquareButtonContainer className="display-on-mobile">
           <button
-            className="button-primary button-icon"
+            className="primary button-icon"
             type="button"
             disabled={!selectedModel || locked}
             onClick={onGenerate}

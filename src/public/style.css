@@ -172,7 +172,7 @@ code {
 }
 
 .input-secondary,
-.button-primary {
+button.primary {
   background-color: transparent;
 
   border: 1px solid var(--neutral-color-4);
@@ -188,7 +188,7 @@ code {
   background-color: var(--neutral-color-1);
 }
 
-.button-primary {
+button.primary {
   border: 0;
   border-top: 1px solid var(--accent-color-7);
   background-color: var(--accent-color-4);
@@ -198,15 +198,15 @@ code {
   transition: background-color 0.15s ease-out;
 }
 
-.button-primary:hover {
+button.primary:hover {
   background-color: var(--accent-color-6);
 }
 
-.button-primary:active {
+button.primary:active {
   background-color: var(--accent-color-3);
 }
 
-.button-primary:disabled {
+button.primary:disabled {
   background-color: var(--accent-color-2);
   border: 0;
 }
@@ -264,19 +264,19 @@ input::file-selector-button:active {
   transition: background-color 0.15s ease-out;
 }
 
-.button-destructive.button-primary {
+button.button-destructive.primary {
   background-color: var(--destructive-color-3);
 }
 
-.button-destructive.button-primary:hover {
+button.button-destructive.primary:hover {
   background-color: var(--destructive-color-4);
 }
 
-.button-destructive.button-primary:active {
+button.button-destructive.primary:active {
   background-color: var(--destructive-color-2);
 }
 
-.button-destructive.button-primary:disabled {
+button.button-destructive.primary:disabled {
   background-color: var(--destructive-color-1);
 }
 
