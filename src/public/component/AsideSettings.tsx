@@ -40,6 +40,13 @@ function DialogBox({
   onClickCancelDelete: () => void;
   onClickReallyDelete: () => void;
 }) {
+  const phrase = selectedStory.title;
+  const [confirmPhrase, setConfirmPhrase] = useState("");
+
+  const onChangePhraseInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPhrase(event.target.value);
+  };
+
   return (
     <div className="flex-column gap-medium">
       <h1>Delete "{selectedStory.title}"?</h1>
@@ -47,18 +54,34 @@ function DialogBox({
         This is an irreversible process. You will lose this story if you choose
         to delete it.
       </p>
+      <p>
+        Type <code>{phrase}</code> to confirm.
+      </p>
+      <input
+        type="text"
+        className="input-secondary"
+        value={confirmPhrase}
+        onChange={onChangePhraseInput}
+      />
       <div className="flex-row gap-medium">
         <button
           type="button"
           className="button-secondary width-fill-max"
-          onClick={onClickCancelDelete}
+          onClick={() => {
+            setConfirmPhrase("");
+            onClickCancelDelete();
+          }}
         >
           Cancel
         </button>
         <button
           type="button"
           className="button-primary button-destructive width-fill-max"
-          onClick={onClickReallyDelete}
+          onClick={() => {
+            setConfirmPhrase("");
+            onClickReallyDelete();
+          }}
+          disabled={confirmPhrase !== phrase}
         >
           Yes, Delete
         </button>

@@ -89,6 +89,16 @@ input::file-selector-button {
   color: var(--neutral-color-8);
 }
 
+code {
+  background-color: var(--neutral-color-3);
+
+  border-radius: 4px;
+  padding: 4px;
+
+  font-family: monospace;
+  font-size: 12px;
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -264,6 +274,10 @@ input::file-selector-button:active {
 
 .button-destructive.button-primary:active {
   background-color: var(--destructive-color-2);
+}
+
+.button-destructive.button-primary:disabled {
+  background-color: var(--destructive-color-1);
 }
 
 .button-destructive.button-secondary {
