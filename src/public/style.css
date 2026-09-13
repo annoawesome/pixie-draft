@@ -171,7 +171,7 @@ code {
   border-radius: 8px;
 }
 
-.input-secondary,
+.input.secondary,
 button.primary {
   background-color: transparent;
 
@@ -180,11 +180,11 @@ button.primary {
   transition: border-color 0.15s ease-out;
 }
 
-.input-secondary:hover {
+.input.secondary:hover {
   border-color: var(--neutral-color-5);
 }
 
-.input-secondary {
+.input.secondary {
   background-color: var(--neutral-color-1);
 }
 
@@ -211,24 +211,24 @@ button.primary:disabled {
   border: 0;
 }
 
-.button-secondary,
+.button.secondary,
 input::file-selector-button {
   background-color: var(--neutral-color-2);
 
   transition: background-color 0.15s ease-out;
 }
 
-.button-secondary:hover,
+.button.secondary:hover,
 input::file-selector-button:hover {
   background-color: var(--neutral-color-3);
 }
 
-.button-secondary:active,
+.button.secondary:active,
 input::file-selector-button:active {
   background-color: var(--neutral-color-3);
 }
 
-.button-secondary:disabled {
+.button.secondary:disabled {
   background-color: var(--neutral-color-1);
   box-shadow: 0 0 0 1px var(--neutral-color-3);
 }
@@ -280,15 +280,15 @@ button.button-destructive.primary:disabled {
   background-color: var(--destructive-color-1);
 }
 
-.button-destructive.button-secondary {
+.button-destructive.button.secondary {
   background-color: var(--destructive-color-2);
 }
 
-.button-destructive.button-secondary:hover {
+.button-destructive.button.secondary:hover {
   background-color: var(--destructive-color-3);
 }
 
-.button-destructive.button-secondary:active {
+.button-destructive.button.secondary:active {
   background-color: var(--destructive-color-1);
 }
 
@@ -319,12 +319,12 @@ button.button-destructive.primary:disabled {
   transform: none;
 }
 
-.text-secondary {
+.text.secondary {
   color: var(--neutral-color-5);
   font-size: 12px;
 }
 
-.button-selected .text-secondary {
+.button-selected .text.secondary {
   color: var(--accent-color-7);
   font-size: 12px;
 }

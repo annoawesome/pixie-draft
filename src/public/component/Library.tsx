@@ -41,14 +41,14 @@ function StoryCard({
   return (
     <button
       className={
-        "button-secondary flex-column story-card" +
+        "button secondary flex-column story-card" +
         (selectedStory?.id === story.id ? " button-selected" : "")
       }
       onClick={onClickStoryCard}
     >
       <h2>{story.title}</h2>
       <i className="story-card-desc">{story.desc}</i>
-      <p className="text-secondary">
+      <p className="text secondary">
         {`${millisecondsToString(story.time.modified)}`}
       </p>
     </button>
@@ -159,7 +159,7 @@ export default function Library({
         </button>
         <button
           type="button"
-          className="button-secondary"
+          className="button secondary"
           onClick={onClickImport}
         >
           Import
@@ -167,14 +167,14 @@ export default function Library({
         <input
           type="search"
           name=""
-          className="input-secondary"
+          className="input secondary"
           id=""
           placeholder="Search"
           value={search}
           onChange={onChangeSearch}
         />
         {search.length > 0 ? (
-          <p className="text-secondary">
+          <p className="text secondary">
             {filteredPreviews.length} out of {allPreviews.length} stories found
           </p>
         ) : (
@@ -202,7 +202,7 @@ export default function Library({
             />
             <button
               type="button"
-              className="button-secondary"
+              className="button secondary"
               onClick={onClickCancelImport}
             >
               Cancel

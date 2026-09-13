@@ -109,7 +109,7 @@ function Header({
 function Footer() {
   return (
     <footer>
-      <p className="text-secondary" id="footer-blurb">
+      <p className="text secondary" id="footer-blurb">
         Icons provided by Material Design · &#169; 2026 Seth Hoong · Made with
         ❤️
       </p>

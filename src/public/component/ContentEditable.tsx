@@ -49,7 +49,7 @@ export default function ContentEditable({
     <div
       ref={contentEditableRef}
       id={id}
-      className="input-secondary scrollable"
+      className="input secondary scrollable"
       contentEditable={!locked}
       onBlur={onBlurContentEditable}
     ></div>

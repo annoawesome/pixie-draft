@@ -48,17 +48,17 @@ function MainEditorEndpointMenu({
         <h1>{endpointName}</h1>
 
         <div className="flex-column">
-          <label className="text-secondary">Status</label>
+          <label className="text secondary">Status</label>
           <p>{models.length > 0 ? "Online" : "Offline"}</p>
         </div>
 
         <div className="flex-column">
-          <label htmlFor="selected-model" className="text-secondary">
+          <label htmlFor="selected-model" className="text secondary">
             Selected model
           </label>
           <select
             name="selected-model"
-            className="input-secondary"
+            className="input secondary"
             id=""
             value={selectedModel}
             onChange={onChangeSelectedModel}
@@ -260,7 +260,7 @@ function ActionBar({
       <div className="flex-row width-fill-max" id="action-bar-left">
         <SquareButtonContainer>
           <button
-            className="button-secondary button-icon"
+            className="button secondary button-icon"
             type="button"
             disabled={selectedStory.historyIndex === 0 || locked}
             onClick={onClickUndo}
@@ -270,7 +270,7 @@ function ActionBar({
         </SquareButtonContainer>
         <SquareButtonContainer>
           <button
-            className="button-secondary button-icon"
+            className="button secondary button-icon"
             type="button"
             disabled={
               selectedStory.historyIndex === selectedStory.history.length - 1 ||
@@ -283,7 +283,7 @@ function ActionBar({
         </SquareButtonContainer>
         <SquareButtonContainer>
           <button
-            className="button-secondary button-icon"
+            className="button secondary button-icon"
             type="button"
             disabled={
               !selectedModel ||
@@ -316,7 +316,7 @@ function ActionBar({
           </button>
         </SquareButtonContainer>
         <button
-          className="flex-row button-secondary"
+          className="flex-row button secondary"
           id="endpoint-status-indicator"
           popoverTarget="main-editor-endpoint-menu"
         >
@@ -439,7 +439,7 @@ export default function Editor({
         <>
           <input
             type="text"
-            className="input-secondary"
+            className="input secondary"
             id="story-title"
             autoComplete="false"
             placeholder="Story Title"
