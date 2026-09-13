@@ -67,14 +67,20 @@ function DialogBox({
         <button
           type="button"
           className="button-secondary width-fill-max"
-          onClick={onClickCancelDelete}
+          onClick={() => {
+            setConfirmPhrase("");
+            onClickCancelDelete();
+          }}
         >
           Cancel
         </button>
         <button
           type="button"
           className="button-primary button-destructive width-fill-max"
-          onClick={onClickReallyDelete}
+          onClick={() => {
+            setConfirmPhrase("");
+            onClickReallyDelete();
+          }}
           disabled={confirmPhrase !== phrase}
         >
           Yes, Delete
