@@ -76,7 +76,7 @@ function DialogBox({
         </button>
         <button
           type="button"
-          className="primary button-destructive width-fill-max"
+          className="button primary button-destructive width-fill-max"
           onClick={() => {
             setConfirmPhrase("");
             onClickReallyDelete();

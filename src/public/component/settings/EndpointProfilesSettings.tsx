@@ -239,7 +239,7 @@ function EndpointEditor({
         onChange={onChangeAuthorization}
       />
       <div className="flex-row" id="settings-endpoints-editor-actions">
-        <button type="submit" className="primary">
+        <button type="submit" className="button primary">
           Save
         </button>
         <button
