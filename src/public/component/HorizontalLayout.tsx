@@ -38,14 +38,14 @@ function Header({
     <header className="flex-row">
       <div className="flex-row width-fill-max" id="header-left">
         <SquareButtonContainer>
-          <button className="button-tertiary button-icon">
+          <button className="button tertiary button-icon">
             <HamburgerMenuIcon />
           </button>
         </SquareButtonContainer>
         <SquareButtonContainer>
           <button
             type="button"
-            className="button-tertiary button-icon"
+            className="button tertiary button-icon"
             onClick={onClickLogOut}
           >
             <LockIcon />
@@ -55,7 +55,7 @@ function Header({
           <button
             type="button"
             className={
-              "button-tertiary button-icon" +
+              "button tertiary button-icon" +
               (zenMode ? " button-selected" : "")
             }
             title="Zen Mode: Toggle for distraction-free work"
@@ -74,7 +74,7 @@ function Header({
             <SquareButtonContainer>
               <button
                 type="button"
-                className="button-tertiary"
+                className="button tertiary"
                 popoverTarget="mobile-notification-content"
               >
                 <ErrorIcon />
@@ -95,7 +95,7 @@ function Header({
       <div className="flex-row-right width-fill-max" id="header-right">
         <SquareButtonContainer>
           <button
-            className="button-tertiary button-icon"
+            className="button tertiary button-icon"
             onClick={onClickEndpointSettings}
           >
             <BrainIcon />

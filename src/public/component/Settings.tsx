@@ -24,7 +24,7 @@ function SidebarActionsBar({
         <SquareButtonContainer>
           <button
             type="button"
-            className="button-tertiary button-icon"
+            className="button tertiary button-icon"
             title="Return to main editor"
             hidden={hideSidebar}
             onClick={onClickReturnToMainEditor}
@@ -37,7 +37,7 @@ function SidebarActionsBar({
         <SquareButtonContainer>
           <button
             type="button"
-            className="button-tertiary button-icon"
+            className="button tertiary button-icon"
             title="Hide sidebar"
             onClick={onClickHideSidebar}
           >
@@ -75,14 +75,14 @@ function SettingsSidebar({
         setCurrentPage={setCurrentPage}
       />
       <button
-        className="button-tertiary button-settings-sidebar"
+        className="button tertiary button-settings-sidebar"
         hidden={hideSidebar}
         onClick={buildSectionSetter("user")}
       >
         User
       </button>
       <button
-        className="button-tertiary button-settings-sidebar"
+        className="button tertiary button-settings-sidebar"
         hidden={hideSidebar}
         onClick={buildSectionSetter("endpoint-profiles")}
       >

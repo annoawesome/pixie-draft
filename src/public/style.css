@@ -233,7 +233,7 @@ input::file-selector-button:active {
   box-shadow: 0 0 0 1px var(--neutral-color-3);
 }
 
-.button-tertiary {
+.button.tertiary {
   background-color: transparent;
   border: 0;
   border-radius: 8px;
@@ -242,15 +242,15 @@ input::file-selector-button:active {
   transition: background-color 0.15s ease-out;
 }
 
-.button-tertiary:hover {
+.button.tertiary:hover {
   background-color: var(--neutral-color-3);
 }
 
-.button-selected.button-tertiary:hover {
+.button-selected.button.tertiary:hover {
   background-color: var(--accent-color-4);
 }
 
-.button-tertiary:active {
+.button.tertiary:active {
   background-color: var(--neutral-color-1);
 }
 
