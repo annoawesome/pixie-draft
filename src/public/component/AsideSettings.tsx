@@ -54,15 +54,15 @@ function DialogBox({
         This is an irreversible process. You will lose this story if you choose
         to delete it.
       </p>
-      <div>
-        <p>Type "{phrase}" to confirm.</p>
-        <input
-          type="text"
-          className="input-secondary"
-          value={confirmPhrase}
-          onChange={onChangePhraseInput}
-        />
-      </div>
+      <p>
+        Type <code>{phrase}</code> to confirm.
+      </p>
+      <input
+        type="text"
+        className="input-secondary"
+        value={confirmPhrase}
+        onChange={onChangePhraseInput}
+      />
       <div className="flex-row gap-medium">
         <button
           type="button"
