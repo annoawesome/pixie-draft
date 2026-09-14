@@ -71,7 +71,7 @@ function ImportStoriesDialog({
         <div className="flex-row gap-small">
           <button
             type="button"
-            className="button-secondary width-fill-max"
+            className="button secondary width-fill-max"
             onClick={onClickCancelImportStories}
           >
             Cancel
@@ -108,14 +108,14 @@ export function UserSettings() {
       <div className="flex-row gap-small">
         <button
           type="button"
-          className="button-secondary"
+          className="button secondary"
           onClick={onClickExportAllStories}
         >
           Export all stories
         </button>
         <button
           type="button"
-          className="button-secondary"
+          className="button secondary"
           onClick={onClickImportStories}
         >
           Import stories

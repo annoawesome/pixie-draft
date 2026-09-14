@@ -20,7 +20,7 @@ function EndpointCard({
   return (
     <button
       className={
-        "button-secondary " +
+        "button secondary " +
         (selectedEndpoint?.id === endpoint.id ? "button-selected" : "")
       }
       disabled={locked}
@@ -65,7 +65,7 @@ function EndpointsList({
       <div className="flex-column scrollable" id="settings-endpoints-list">
         <button
           type="button"
-          className="button-secondary"
+          className="button secondary"
           onClick={onClickCreateNewProfile}
         >
           Create new profile
@@ -186,26 +186,26 @@ function EndpointEditor({
       id="settings-endpoints-editor"
       onSubmit={onSubmitEndpointsEditor}
     >
-      <label htmlFor="name" className="text-secondary">
+      <label htmlFor="name" className="text secondary">
         Profile Name
       </label>
       <input
         type="text"
         name="name"
-        className="input-secondary"
+        className="input secondary"
         id=""
         autoComplete="false"
         placeholder="My Endpoint"
         value={selectedEndpoint.name}
         onChange={onChangeName}
       />
-      <label htmlFor="authorization" className="text-secondary">
+      <label htmlFor="authorization" className="text secondary">
         Endpoint URI
       </label>
       <input
         type="text"
         name="uri"
-        className="input-secondary"
+        className="input secondary"
         autoComplete="false"
         placeholder="http://localhost:5001"
         value={selectedEndpoint.uri}
@@ -214,7 +214,7 @@ function EndpointEditor({
       <label htmlFor="endpointType">Endpoint Type</label>
       <select
         name="endpointType"
-        className="input-secondary"
+        className="input secondary"
         id=""
         value={selectedEndpoint.type}
         onChange={onChangeType}
@@ -225,13 +225,13 @@ function EndpointEditor({
           </option>
         ))}
       </select>
-      <label htmlFor="authorization" className="text-secondary">
+      <label htmlFor="authorization" className="text secondary">
         Authorization Key
       </label>
       <input
         type="password"
         name="authorization"
-        className="input-secondary"
+        className="input secondary"
         autoComplete="false"
         title="Authorization Key"
         placeholder="Authorization key here... (Leave this empty if no authorization is needed)"
@@ -239,12 +239,12 @@ function EndpointEditor({
         onChange={onChangeAuthorization}
       />
       <div className="flex-row" id="settings-endpoints-editor-actions">
-        <button type="submit" className="button-primary">
+        <button type="submit" className="button primary">
           Save
         </button>
         <button
           type="button"
-          className="button-secondary button-destructive"
+          className="button secondary button-destructive"
           onClick={onClickDelete}
         >
           Delete

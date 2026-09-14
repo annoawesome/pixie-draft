@@ -59,14 +59,14 @@ function DialogBox({
       </p>
       <input
         type="text"
-        className="input-secondary"
+        className="input secondary"
         value={confirmPhrase}
         onChange={onChangePhraseInput}
       />
       <div className="flex-row gap-medium">
         <button
           type="button"
-          className="button-secondary width-fill-max"
+          className="button secondary width-fill-max"
           onClick={() => {
             setConfirmPhrase("");
             onClickCancelDelete();
@@ -76,7 +76,7 @@ function DialogBox({
         </button>
         <button
           type="button"
-          className="button-primary button-destructive width-fill-max"
+          className="button primary button-destructive width-fill-max"
           onClick={() => {
             setConfirmPhrase("");
             onClickReallyDelete();
@@ -218,7 +218,7 @@ export default function AsideSettings({
           {selectedStory ? (
             <>
               <div>
-                <label htmlFor="story-desc" className="text-secondary">
+                <label htmlFor="story-desc" className="text secondary">
                   Description
                 </label>
                 <ContentEditable
@@ -229,18 +229,18 @@ export default function AsideSettings({
                 />
               </div>
               <div className="separator"></div>
-              <button className="button-secondary" onClick={onClickDuplicate}>
+              <button className="button secondary" onClick={onClickDuplicate}>
                 Duplicate Story
               </button>
               <div className="separator"></div>
               <button
-                className="button-secondary"
+                className="button secondary"
                 onClick={onClickExportAsText}
               >
                 Download as text
               </button>
               <button
-                className="button-secondary"
+                className="button secondary"
                 onClick={onClickExportAsJson}
               >
                 Download as JSON
@@ -248,23 +248,23 @@ export default function AsideSettings({
               <div className="separator"></div>
               <button
                 type="button"
-                className="button-secondary"
+                className="button secondary"
                 onClick={onClickClearHistory}
               >
                 Clear History
               </button>
               <button
-                className="button-secondary button-destructive"
+                className="button secondary button-destructive"
                 onClick={onClickDelete}
               >
                 Delete
               </button>
               <div className="separator"></div>
 
-              <p className="text-secondary">
+              <p className="text secondary">
                 Word count: {selectedStory.content.split(/[\s]+/).length}
               </p>
-              <p className="text-secondary">
+              <p className="text secondary">
                 Sentence count:{" "}
                 {
                   selectedStory.content
@@ -272,20 +272,20 @@ export default function AsideSettings({
                     .filter((sentence) => sentence.length > 0).length
                 }
               </p>
-              <p className="text-secondary">
+              <p className="text secondary">
                 Created: {millisecondsToString(selectedStory.time.created)}
               </p>
-              <p className="text-secondary">
+              <p className="text secondary">
                 {`Edited: ${millisecondsToString(selectedStory.time.modified)}`}
               </p>
               <div className="separator"></div>
 
-              <p className="text-secondary">
+              <p className="text secondary">
                 Story size:
                 {" " +
                   humanFileSize(JSON.stringify(selectedStory).length, true)}
               </p>
-              <p className="text-secondary">Id: {selectedStory.id}</p>
+              <p className="text secondary">Id: {selectedStory.id}</p>
 
               <Dialog showDialog={showDialog} setShowDialog={setShowDialog}>
                 <DialogBox

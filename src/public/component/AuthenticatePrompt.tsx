@@ -28,17 +28,17 @@ export default function AuthenticatePrompt({
     >
       <h1>You need to login</h1>
       <div className="flex-column">
-        <label htmlFor="password" className="text-secondary">
+        <label htmlFor="password" className="text secondary">
           Password
         </label>
         <input
           type="password"
           name="password"
-          className="input-secondary"
+          className="input secondary"
           id="login-password"
         />
       </div>
-      <button type="submit" className="button-primary">
+      <button type="submit" className="button primary">
         Login
       </button>
     </form>
